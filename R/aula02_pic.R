@@ -88,6 +88,8 @@ fig_pic_reg <- function() {
     geom_point(size = 4.5, shape = 21, fill = cores[["ocre"]], colour = "white", stroke = .8) +
     geom_text(aes(label = paste0("nó ", `Nó`)), vjust = -1.1, size = 4.8) +
     scale_y_continuous(expand = expansion(mult = c(.08, .15))) +
+    scale_x_continuous(expand = expansion(mult = .12)) +
+    coord_cartesian(clip = "off") +
     labs(x = "contraste de A", y = "contraste de B") + tema_aula(17)
 }
 

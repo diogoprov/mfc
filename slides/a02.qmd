@@ -775,6 +775,13 @@ Regressão **sem intercepto**: o sinal de cada contraste depende só da ordem
 em que as irmãs foram subtraídas, e trocar a ordem tem de dar a mesma
 reta.
 
+```{r}
+#| echo: true
+#| eval: false
+lm(pic_B ~ pic_A - 1)
+lm(pic_B ~ 0 + pic_A)
+```
+
 ::: {.fragment}
 Inclinação: `r num(b_pic, 3)`.
 :::
