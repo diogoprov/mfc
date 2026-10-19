@@ -1,0 +1,35 @@
+---
+title: "Aula 06 — Métodos para atributos multivariados"
+order: 6
+description: "Extensão dos modelos comparativos para múltiplos atributos simultaneamente — mvMORPH, PhyloPars, phyl.pca. Quando usar cada um."
+---
+
+::: {.aula-meta}
+**Sexta-feira (tarde)**  ·  **Curso:** Evolução fenotípica e métodos filogenéticos comparativos (PPGEC/UFMS)
+:::
+
+Extensão dos modelos comparativos para múltiplos atributos simultaneamente — mvMORPH, PhyloPars, phyl.pca. Quando usar cada um.
+
+## Slides
+
+[{{< fa solid file-pdf >}} Baixar slides em PDF](../slides/aula-06.pdf){.btn .btn-outline-primary}
+
+## Código R (aula prática)
+
+*Aula sem código R associado.*
+
+## Dados utilizados
+
+*Sem datasets associados.*
+
+## Leituras recomendadas
+
+*Bibliografia listada nos slides.*
+
+## Recursos externos
+
+*Sem recursos externos para esta aula.*
+
+---
+
+*Volta para o [índice do curso](../index.qmd).*

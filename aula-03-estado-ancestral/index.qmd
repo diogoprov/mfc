@@ -1,0 +1,56 @@
+---
+title: "Aula 03 — Estimativa de estado ancestral e sinal filogenético"
+order: 3
+description: "Reconstrução de estados ancestrais para atributos discretos (modelos ER, SYM, ARD) e contínuos (Brownian, OU). Medidas de sinal filogenético: λ de Pagel e K de Blomberg."
+---
+
+::: {.aula-meta}
+**Quarta-feira**  ·  **Curso:** Evolução fenotípica e métodos filogenéticos comparativos (PPGEC/UFMS)
+:::
+
+Reconstrução de estados ancestrais para atributos discretos (modelos ER, SYM, ARD) e contínuos (Brownian, OU). Medidas de sinal filogenético: λ de Pagel e K de Blomberg.
+
+## Slides
+
+[{{< fa solid file-pdf >}} Baixar slides em PDF](../slides/aula-03.pdf){.btn .btn-outline-primary}
+
+## Código R (aula prática)
+
+- {{< fa solid eye >}} **[Ver walkthrough HTML](walkthrough-aula-3-quarta-modificada.html)**  
+  *Walkthrough principal — ASR e sinal filogenético*  
+  [{{< fa solid file-code >}} baixar `aula-3-quarta-modificada.R`](aula-3-quarta-modificada.R)
+- {{< fa solid eye >}} **[Ver walkthrough HTML](walkthrough-phylogenetic-distogram.html)**  
+  *Distograma filogenético*  
+  [{{< fa solid file-code >}} baixar `phylogenetic-distogram.R`](phylogenetic-distogram.R)
+- {{< fa solid eye >}} **[Ver walkthrough HTML](walkthrough-supfileac.html)**  
+  *Material suplementar*  
+  [{{< fa solid file-code >}} baixar `SUPFILEAc.R`](SUPFILEAc.R)
+
+## Dados utilizados
+
+- [`Anolis.tre`](Anolis.tre)
+- [`anguila.nex`](anguila.nex)
+- [`arvore.txt`](arvore.txt)
+- [`canto.csv`](canto.csv)
+- [`elopomorph.csv`](elopomorph.csv)
+- [`elopomorph.tre`](elopomorph.tre)
+- [`filogenia_bocaina.txt`](filogenia_bocaina.txt)
+- [`svl.csv`](svl.csv)
+- [`testes_matrix_r.txt`](testes_matrix_r.txt)
+- [`traits selecionados.txt`](traits%20selecionados.txt)
+
+## Leituras recomendadas
+
+- Pagel, M. 1999. *Inferring the historical patterns of biological evolution.* Nature 401:877–884.
+- Blomberg, S.P.; Garland, T.; Ives, A.R. 2003. *Testing for phylogenetic signal in comparative data: behavioral traits are more labile.* Evolution.
+- Münkemüller, T. et al. 2012. *How to measure and test phylogenetic signal.* Methods Ecol Evol.
+- Revell, L.J.; Harmon, L.J.; Collar, D.C. 2008. *Phylogenetic signal, evolutionary process, and rate.* Syst Biol.
+- Diniz-Filho, J.A.F. et al. 2012. *On the selection of phylogenetic eigenvectors for ecological analyses.* Ecography.
+
+## Recursos externos
+
+- [Vídeo — ASR com phytools](https://www.youtube.com/results?search_query=ancestral+state+reconstruction+phytools)
+
+---
+
+*Volta para o [índice do curso](../index.qmd).*

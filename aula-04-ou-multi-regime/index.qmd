@@ -1,0 +1,51 @@
+---
+title: "Aula 04 — Correlação de atributos e modelo Ornstein-Uhlenbeck multi-regime"
+order: 4
+description: "Correlação evolutiva entre atributos contínuos. Modelos OU com múltiplos regimes seletivos (OUwie). Teste de Pagel (fitPagel) para correlação entre caracteres binários."
+---
+
+::: {.aula-meta}
+**Quinta-feira**  ·  **Curso:** Evolução fenotípica e métodos filogenéticos comparativos (PPGEC/UFMS)
+:::
+
+Correlação evolutiva entre atributos contínuos. Modelos OU com múltiplos regimes seletivos (OUwie). Teste de Pagel (fitPagel) para correlação entre caracteres binários.
+
+## Slides
+
+[{{< fa solid file-pdf >}} Baixar slides em PDF](../slides/aula-04.pdf){.btn .btn-outline-primary}
+
+## Código R (aula prática)
+
+- {{< fa solid eye >}} **[Ver walkthrough HTML](walkthrough-aula-quinta.html)**  
+  *Walkthrough — correlação evolutiva, OU multi-regime (OUwie), fitPagel*  
+  [{{< fa solid file-code >}} baixar `aula-quinta.R`](aula-quinta.R)
+
+## Dados utilizados
+
+- [`Centrarchidae.csv`](Centrarchidae.csv)
+- [`Centrarchidae.tre`](Centrarchidae.tre)
+- [`filogenia_gabi.txt`](filogenia_gabi.txt)
+- [`filogenia_quinta.txt`](filogenia_quinta.txt)
+- [`fitPagel-challenge.csv`](fitPagel-challenge.csv)
+- [`fitPagel-challenge.tre`](fitPagel-challenge.tre)
+- [`fitPagel-data.csv`](fitPagel-data.csv)
+- [`fitPagel-tree.tre`](fitPagel-tree.tre)
+- [`testes_matrix_r.txt`](testes_matrix_r.txt)
+- [`uca_matrix.txt`](uca_matrix.txt)
+
+## Leituras recomendadas
+
+- Butler, M.A. & King, A.A. 2004. *Phylogenetic comparative analysis: a modeling approach for adaptive evolution.* American Naturalist 164:683–695.
+- Hansen, T.F. 1997. *Stabilizing selection and the comparative analysis of adaptation.* Evolution 51:1341–1351.
+- Beaulieu, J.M. et al. 2012. *Modeling stabilizing selection: expanding the Ornstein–Uhlenbeck model of adaptive evolution.* Evolution.
+- Cooper, N. et al. 2016. *A cautionary note on the use of Ornstein Uhlenbeck models in macroevolutionary studies.* Biol J Linn Soc.
+
+## Recursos externos
+
+- [Vídeo — Anolis e radiação adaptativa (Jonathan Losos)](https://www.youtube.com/results?search_query=anolis+adaptive+radiation+losos)
+- [Cadeias de Markov — introdução interativa (Setosa.io)](https://setosa.io/ev/markov-chains/)
+- [Palestra — Models of pulsed evolution (Michael Landis)](https://www.youtube.com/results?search_query=michael+landis+pulsed+evolution)
+
+---
+
+*Volta para o [índice do curso](../index.qmd).*

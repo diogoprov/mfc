@@ -1,0 +1,225 @@
+---
+title: "Walkthrough — correlação evolutiva, OU multi-regime (OUwie), fitPagel"
+subtitle: "Walkthrough do código — Aula 4: Correlação de atributos e modelo Ornstein-Uhlenbeck multi-regime"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-tools: true
+    code-overflow: scroll
+execute:
+  eval: false
+---
+
+::: {.callout-note appearance="minimal"}
+Walkthrough do código usado em sala. Os comandos **não são executados**
+pelo renderizador — copie e cole no seu R local. Você pode baixar o
+script `.R` original e os datasets em [Aula 4](./).
+:::
+
+```{r}
+#Aula 4 - quarta
+#Modelo de Pagel
+#evol.vcv
+#threshold model
+#SURFACE
+
+#---SURFACE
+library(surface)
+library(phytools)
+library(picante)
+phylog<-read.tree("filogenia_quinta.txt")#Shih et al. Bayesuan tree
+is.ultrametric(phylog)
+plot.phylo(phylog);axisPhylo()#plotting pruned phylogeny
+phylog<-chronos(phylog)#using the correlated rate model to transform the mean number of substitution per sites into a chronogram
+class(phylog) <- "phylo"
+plot.phylo(phylog, cex=0.9);axisPhylo()#plotting ultrametric phylogeny
+is.ultrametric(phylog)
+
+Trait<-read.table("uca_matrix.txt", dec = ".")#trait matrix
+uca.data<-Trait[, c(1:9)]
+uca.data
+
+uca.phylog<-nameNodes(phylog)
+fwd<-runSurface(uca.phylog, uca.data)
+rsum<-surfaceSummary(fwd$bwd)
+rsum$n_regimes#measures of the regime structure in the final model
+rsum$alpha#estimate of alpha (selection strength) for each trait 
+#in the final model
+rsum$sigma_squared#estimate of sigma_squared (trait evolution rate) 
+#for each trait in the final model
+rsum$theta#matrix of estimated optima (one per regime per trait) 
+#in the final model
+newkk<-length(fwd$bwd)
+surfaceTreePlot(uca.phylog, fwd$bwd[[newkk]], cex=1.2, cols = c("blue","red", "black"))
+surfaceTraitPlot(uca.data, fwd$bwd[[newkk]], cols = c("blue","red", "black"))#for Habitat and OsmoHem
+
+#---BayOU
+library(bayou)
+prior <- make.prior(uca.phylog, dists=list(dalpha="dhalfcauchy",
+                      dsig2="dhalfcauchy",dsb="dsb", dk="cdpois", 
+                      dtheta="dnorm"), param=list(dalpha=list(scale=1), 
+                      dsig2=list(scale=1), dk=list(lambda=15, kmax=200), 
+                      dsb=list(bmax=1,prob=1), dtheta=list(mean=mean(OsmoHem))))
+par(mfrow=c(2,3))
+fit1 <- bayou.mcmc(uca.phylog, log(OsmoHem), model="OU", prior=prior, ngen=10000, new.dir=getwd(), plot.freq=2000, ticker.freq=1000)
+chain <- load.bayou(fit1, save.Rdata=FALSE, cleanup=TRUE)
+chain <- set.burnin(chain, 0.3)
+plot(chain)
+par(mfrow=c(1,1))
+plotSimmap.mcmc(chain, burnin=0.3, lwd=2, edge.type="theta", pal=colorRampPalette(c("black", "gray90")), show.tip.label=FALSE)
+phenogram.density(uca.phylog, log(OsmoHem), chain=chain, burnin=0.3, pp.cutoff=0.3)
+
+#---evol.vcv
+library(phytools)
+fish.tree<-read.tree("Centrarchidae.tre")
+fish.data<-read.csv("Centrarchidae.csv",header=TRUE,row.names=1)
+
+fmode<-setNames(fish.data[,1],rownames(fish.data))
+#a função evol.vcv pede que os clados onde se espera que haja diferença
+#sejam indicados na filogenia, uma maneira simples de fazer isso é mapeando um caracter
+#binário de forma estocástica, como já vimos
+fish.tree<-make.simmap(fish.tree,fmode,model="ARD")
+cols<-setNames(c("blue","red"),c("non","pisc"))
+plot(fish.tree,colors=cols,ftype="i")
+add.simmap.legend(colors=cols,prompt=FALSE,x=0,y=Ntip(fish.tree))
+fish.X<-as.matrix(fish.data[,2:3])
+fitMV<-evol.vcv(fish.tree,fish.X)
+fitMV
+#dados usados pelo artigo que descreve o método na Evolution
+#aqui vimos que o teste de likelihood ratio mostra que o modelo com 2 matrizes 
+#se ajustou melhor aos dados
+cov2cor(fitMV$R.single)
+
+#---Método do Pagel correlação de taxas de evolução de caracteres binários
+
+#Além da função phytools::fitPagel, esta análise está disponível no programa BayesTraits
+#na função corHMM::corDISC e no pacote btw, um wrapper no Mac para o BayesTraits disponível em
+#https://rgriff23.github.io/projects/btw.html
+#as estimativas das taxas podem diferir grandemente entre os métodos
+
+tree<-read.tree("fitPagel-tree.tre")
+X<-read.csv("fitPagel-data.csv",row.names=1,header=TRUE)
+head(X)
+
+#Visualizando a distribuição dos caracteres discretos na filogenia
+par(mfrow=c(1,2))
+plot(tree,show.tip.label=FALSE,no.margin=TRUE)
+par(fg="transparent")
+x<-setNames(X[[1]],rownames(X))
+tiplabels(pie=to.matrix(x[tree$tip.label],c("a","b")),piecol=c("blue","red"),
+          cex=0.3)
+par(fg="black")
+add.simmap.legend(colors=setNames(c("blue","red"),c("a","b")),prompt=FALSE,
+                  x=0,y=10,fsize=1)
+par(fg="transparent")
+plot(tree,show.tip.label=FALSE,no.margin=TRUE,direction="leftwards")
+y<-setNames(X[[2]],rownames(X))
+tiplabels(pie=to.matrix(y[tree$tip.label],c("a","b")),piecol=c("blue","red"),
+          cex=0.3)
+
+par(fg="black")
+par(mfrow=c(1,2))
+plot(tree,show.tip.label=FALSE,no.margin=TRUE)
+par(fg="transparent")
+x<-setNames(X[[1]],rownames(X))
+tiplabels(pie=to.matrix(x[tree$tip.label],c("a","b")),piecol=c("blue","red"),
+          cex=0.3)
+par(fg="black")
+add.simmap.legend(colors=setNames(c("blue","red"),c("a","b")),prompt=FALSE,
+                  x=0,y=10,fsize=1)
+par(fg="transparent")
+plot(tree,show.tip.label=FALSE,no.margin=TRUE,direction="leftwards")
+z<-setNames(X[[3]],rownames(X))
+tiplabels(pie=to.matrix(z[tree$tip.label],c("a","b")),piecol=c("blue","red"),
+          cex=0.3)
+par(fg="black")
+
+fit.xy<-fitPagel(tree,x,y)
+fit.xy
+
+plot(fit.xy,lwd.by.rate=TRUE)
+fit.x<-fitPagel(tree,x,y,dep.var="x")#fit a model in which x depends on y, but not the converse
+fit.x
+plot(fit.x,lwd.by.rate=TRUE)
+aic<-setNames(c(fit.xy$independent.AIC,
+                fit.x$dependent.AIC,
+                fit.xy$dependent.AIC),
+              c("independent","dependent x",
+                "dependent x&y"))
+aic
+
+aic.w<-function(aic,signif=4){
+       d.aic<-aic-min(aic)
+       round(exp(-1/2*d.aic)/sum(exp(-1/2*d.aic)),signif)
+}
+aic.w(aic)
+
+#Entendendo o problema de pseudo-replicação filogenética
+
+tree<-read.tree("fitPagel-challenge.tre")
+X<-read.csv("fitPagel-challenge.csv",row.names=1)
+x<-setNames(X[,1],rownames(X))
+y<-setNames(as.factor(X[,2]),rownames(X))
+
+dotTree(tree,X,fsize=0.6,ftype="i")
+#Só existe uma mudança no caracter 1, ou seja, não há replicações da mudança ao longo da filogenia
+#no entanto isso é bastante pra alterar a taxa de evolução do outro caracter.
+
+fitted.model<-fitPagel(tree,x,y)
+fitted.model
+
+#O método de Pagel mostra que esse modelo é significativo, quando deveria não ser
+#esse é o mesmo problema com modelo de diversificação dependente de estados,
+#os modelos da família xxSSE.
+
+#---Threshold model
+library(phytools)
+filogenia<-read.tree("filogenia_gabi.txt")
+trait<-read.table("testes_matrix_r.txt", h=TRUE, dec = ",")
+head(trait)
+
+saz<-trait$sazonalidade
+names(saz)<-rownames(trait)
+diam<-trait$diametro
+names(diam)<-rownames(trait)
+repmode<-as.factor(trait$modos)
+names(repmode)<-rownames(trait)
+ret<-trait$reticular
+names(ret)<-rownames(trait)
+
+##--- Testing correlation between seasonality and testicular characters
+
+##Manipulate data to enter in threshBayes
+diam.saz<-trait[,c(1,3)]
+diam.saz[,1]<-log(diam.saz[,1])
+diam.saz<-as.matrix(diam.saz)
+
+ret.saz<-trait[,c(2,3)]
+ret.saz<-as.matrix(ret.saz)
+
+## set some parameters for the MCMC
+sample <- 500
+ngen <- 500000
+burnin <- 0.2 * ngen
+set.seed(103)
+
+#---Correlation between seasonality and diameter
+cor.saz.diam <- threshBayes(filogenia, diam.saz, types = c("cont", "disc"),
+                            ngen = ngen,control=list(sample=sample))
+
+## what is our estimate of the correlation?
+mean(cor.saz.diam$par[(burnin/sample + 1):nrow(cor.saz.diam$par), "r"])
+
+## plot our likelihood profile
+plot(cor.saz.diam$par[, "logL"], type = "l", xlab = "generation", 
+     ylab = "logL")
+
+## plot our posterior sample for the correlation
+h<-hist(cor.saz.diam$par[(burnin/sample + 1):nrow(cor.saz.diam$par), "r"],
+        xlab = "r", ylab = "frequency",  main = NULL)
+lines(c(0.03,0.03),c(0,max(h$counts)),lty="dashed")
+plot(density(cor.saz.diam$par[(burnin/sample+1):nrow(cor.saz.diam$par),
+                              "r"],bw=0.1),xlab="r",main="posterior density for r")
+lines(c(r,r),c(0,1000),lty="dashed")
+```

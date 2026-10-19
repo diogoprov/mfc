@@ -1,0 +1,189 @@
+---
+title: "Walkthrough principal — ASR (atributos discretos e contínuos), sinal filogenético"
+subtitle: "Walkthrough do código — Aula 3: Estimativa de estado ancestral e sinal filogenético"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-tools: true
+    code-overflow: scroll
+execute:
+  eval: false
+---
+
+::: {.callout-note appearance="minimal"}
+Walkthrough do código usado em sala. Os comandos **não são executados**
+pelo renderizador — copie e cole no seu R local. Você pode baixar o
+script `.R` original e os datasets em [Aula 3](./).
+:::
+
+```{r}
+#Aula 3 - quarta
+#Estimativa de estado ancestral para atributos conínuos e categóricos
+#Estimativa e teste de sinal filogenético
+
+library(caper)
+library(phytools)
+library(geiger)
+
+###---ACE atributos continuos
+
+anolis.tree<-read.tree("Anolis.tre")
+plotTree(anolis.tree,type="fan",ftype="i")
+svl<-read.csv("svl.csv",
+              row.names=1)
+head(svl)
+svl<-setNames(svl$svl,rownames(svl))
+name.check(anolis.tree, svl)
+fit<-fastAnc(anolis.tree,svl,vars=TRUE,CI=TRUE)
+print(fit,printlen=10)
+obj<-contMap(anolis.tree,svl,plot=FALSE)
+plot(obj,type="fan",legend=0.7*max(nodeHeights(anolis.tree)))
+obj<-setMap(obj, invert=TRUE)
+plot(obj,type="fan",legend=0.7*max(nodeHeights(anolis.tree)))
+
+plot.phylo(anolis.tree, type = "fan")
+nodelabels(round(fit$ace, digits=1))
+fit$CI95
+plot.phylo(anolis.tree, type = "fan")
+nodelabels(cex=0.9, frame = 'n', bg = NULL, col = NULL)#to check the node numbers in the tree
+
+#---Atributos discretos
+
+X<-read.csv("elopomorph.csv",row.names=1)
+feed.mode<-setNames(X[,1],rownames(X))
+head(feed.mode)
+eel.tree<-read.tree("elopomorph.tre")
+eel.tree
+plotTree(eel.tree,type="fan",fsize=0.7,ftype="i",lwd=1)
+cols<-setNames(c("red","blue"),levels(feed.mode))
+tiplabels(pie=to.matrix(feed.mode[eel.tree$tip.label],levels(feed.mode)),
+          piecol=cols,cex=0.3)
+add.simmap.legend(colors=cols,prompt=FALSE,x=0.9*par()$usr[1],
+                  y=0.8*par()$usr[3],fsize=0.8)
+
+fitER<-ace(feed.mode,eel.tree,model="ER",type="discrete")
+fitER
+#The element lik.anc gives us the marginal ancestral states, 
+#also known as the 'empirical Bayesian posterior probabilities.'
+#the matrix is in the same numerical order of the nodes in the tree
+fitER$lik.anc
+
+
+plotTree(eel.tree,type="fan",fsize=0.7,ftype="i",lwd=1)
+par(fg="transparent")#pie sem os outline pretos
+nodelabels(node=1:eel.tree$Nnode+Ntip(eel.tree),
+           pie=fitER$lik.anc,piecol=cols,cex=0.4)
+tiplabels(pie=to.matrix(feed.mode[eel.tree$tip.label],levels(feed.mode)),
+          piecol=cols,cex=0.3)
+par(fg="black")
+add.simmap.legend(colors=cols,prompt=FALSE,x=0.9*par()$usr[1],
+                  y=0.8*par()$usr[3],fsize=0.8)
+
+#---Como resumir informações de mapeamento estocástico de caracteres
+anguilatree<-read.nexus("anguila.nex")
+class(anguilatree)
+anguilatree[[1]]
+pruned.trees<-lapply(anguilatree,treedata,feed.mode)
+class(pruned.trees)<-"multiPhylo"
+pruned.trees<-lapply(pruned.trees,function(x) x$phy)
+class(pruned.trees)<-"multiPhylo"
+scr<-make.simmap(pruned.trees, feed.mode)
+describe.simmap(scr)
+cons.tree<-consensus.edges(pruned.trees,method="least.squares")
+obj<-summary(scr,ref.tree=cons.tree)
+obj
+colors<-setNames(c("red","blue"),c("bite","suction"))
+plot(obj,ftype="i",fsize=0.7,colors=colors)
+add.simmap.legend(x=0,y=5,prompt=FALSE,colors=colors,shape="circle")
+
+#---Sinal filogenético
+
+#decomposição entropia quadrática
+
+library(ade4)
+source("SUPFILEAc.R")#Carrega a função que realiza os testes
+filo="((Elachistocleis_cesarii:41.65909598,Dermatonotus_muelleri:41.65909296):130.6759311,((((((((Leptodactylus_latinasus:19.99081957,Leptodactylus_podicipinus:19.99081999):21.39223911,(Leptodactylus_furnarius:36.78100277,((Leptodactylus_mystaceus:24.51631316,Leptodactylus_fuscus:24.51631401):2.926964726,Leptodactylus_mystacinus:27.44327579):9.337726985):4.602052962):14.62924222,Adenomera_bokermanni:56.0123002):21.07195011,(((((Physalaemus_centralis:18.74795043,Physalaemus_cuvieri:18.74795043):13.97291572,Physalaemus_olfersii:32.72086615):12.45573016,(Physalaemus_marmoratus:33.51018394,Eupemphix_nattereri:33.51018143):11.66641381):14.73984391,Pleurodema_tucumanum:59.91644488):15.70595544,Pseudopaludicola_murundu:75.62239676):1.461867095):15.598816,((Rhinella_schneideri:15.99225121,Rhinella_ornata:15.99225112):70.87053535,(Odontophrynus_americanus:38.18978918,(Proceratophrys_boiei:24.95467863,Proceratophrys_melanopogon:24.95468034):13.23510769):48.67300639):5.820258):2.655002,((((Scinax_fuscomarginatus:28.82698777,Scinax_similis:28.82699371):4.472076052,Scinax_fuscovarius:33.29907001):35.21992923,(Dendropsophus_jimi:42.90155319,(Dendropsophus_minutus:36.95028212,Dendropsophus_nanus:36.95028595):5.951269464):25.61743536):9.145439519,(Hypsiboas_prasinus:14.13890513,Hypsiboas_latistriatus:14.13890212):63.52552477):17.673621):11.463261,((Hylodes_cardosoi:30.4819059,Hylodes_sazimai:30.48190016):10.31759659,(Crossodactylus_caramaschii:29.19061118,Crossodactylus_gaudichaudii:29.19061793):11.60887814):66.00184117):24.96725,(Ischnocnema_guentheri:63.77862054,Ischnocnema_juipoca:63.77860605):67.98996335):40.566457);"
+trait<-read.table("testes_matrix_r.txt", h=TRUE, dec = ",")
+head(trait)
+
+mel.phy=newick2phylog(filo, add.tools = FALSE) #converte a árvore para formato phylog
+mel.phy
+trait.dist=dist.ktab(ktab.list.df(list(as.data.frame(trait[,2]))), type="Q", scan=T)
+decompos=decdiv(mel.phy, rep(1, 35), trait.dist)
+sum(decompos)
+dev1=rtest.decdiv(mel.phy, rep(1, 35), trait.dist, optiontest="greater")
+dev1
+plot.decdiv(mel.phy, vnodes = decompos)
+
+#---K de Blomberg
+library(picante)
+library(phytools)
+phylosignal(svl, anolis.tree)
+phylosig(anolis.tree, svl, test = TRUE)
+
+#---Lambda de Pagel
+phylosig(anolis.tree, svl, test = TRUE, method = "lambda")
+
+#---Fritz's D
+
+library(caper)
+phy=read.tree("arvore.txt")#filogenia
+Trait=read.table("traits selecionados.txt", h=T)
+head(Trait)
+traits.bin=Trait[, c(1,4,8)]#Separando os traits binários
+dados.bin=comparative.data(phy, traits.bin, X)
+ab<-phylo.d(dados.bin, binvar=posolhos)#pos.olhos Tem sinal filogenetico
+ab
+
+#---PVR
+library(phylobase)
+library(adephylo)
+library(PVR)
+filo<-read.tree("filogenia_bocaina.txt")
+cc <- PVRdecomp(filo)
+trait<-read.csv2("canto.csv", h=TRUE, dec = ".")
+trait<-trait[,-c(1,2,4,8)]
+head(trait)
+
+obj<-phylo4d(filo, trait[,-7])
+table.phylo4d(obj, box = FALSE, cex.label = 0.7)
+phylo.pca<-ppca(obj, method = "patristic",scannf=FALSE, nfposi=2)
+vectors<-phylo.pca$li#eigenvectors of PCA
+temporal=as.matrix(vectors)[,2]
+names(temporal)=rownames(vectors)
+espectral=as.matrix(vectors)[,1]
+names(espectral)=rownames(vectors)
+
+psrcurve<-PSR(x, trait = vectors, null.model = TRUE, Brownian.model = TRUE, times = 999)
+PSRplot(psrcurve, info = "both")
+anal_pvr<-PVR(psrcurve, trait = espectral, envVar = new.data2$data)
+VarPartplot(anal_pvr)#plot of variation partitioning
+
+#---Correlograma de Moran
+source('https://www.mail-archive.com/r-sig-phylo@r-project.org/msg02131/distcor.R')
+source('Phylogenetic distogram.R')
+
+library(phylosignal)
+core<-phyloCorrelogram(obj, trait = "F_max")
+plot(core)
+
+distcor(temporal, filo, "IM")#correlograma
+distcor(temporal, filo, "ED")#distograma
+
+library(letsR)
+lets.correl(espectral, cophenetic.phylo(filo), 4)
+lets.correl(temporal, cophenetic.phylo(filo), 4)
+
+#---correlação de Mantel
+library(vegan)#o phytools tem o multi.mantel
+library(phytools)
+tr.dist<-vegdist(trait, "gower")#All call parameters
+dist.phyl<-cophenetic.phylo(filo)
+multi.mantel(tr.dist, dist.phyl)$r.squared
+multi.mantel(tr.dist, dist.phyl)$probF
+mantel(tr.dist, dist.phyl)
+
+plot(as.dist(dist.phyl), tr.dist)
+lines(lowess(as.dist(dist.phyl), tr.dist), col="red", lty=2, lwd=3)
+```

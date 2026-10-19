@@ -1,0 +1,38 @@
+---
+title: "Aula 05 — Métodos baseados em autovetores e visualização"
+order: 5
+description: "PVR (phylogenetic eigenvector regression) e ordenação filogenética. Visualização avançada de dados em árvores (phylomorfospaces, contMap, ggtree)."
+---
+
+::: {.aula-meta}
+**Sexta-feira (manhã)**  ·  **Curso:** Evolução fenotípica e métodos filogenéticos comparativos (PPGEC/UFMS)
+:::
+
+PVR (phylogenetic eigenvector regression) e ordenação filogenética. Visualização avançada de dados em árvores (phylomorfospaces, contMap, ggtree).
+
+## Slides
+
+[{{< fa solid file-pdf >}} Baixar slides em PDF](../slides/aula-05.pdf){.btn .btn-outline-primary}
+
+## Código R (aula prática)
+
+- {{< fa solid eye >}} **[Ver walkthrough HTML](walkthrough-aula-5-sexta.html)**  
+  *Walkthrough — PVR, visualização em árvores*  
+  [{{< fa solid file-code >}} baixar `aula-5-sexta.R`](aula-5-sexta.R)
+
+## Dados utilizados
+
+- [`canto.csv`](canto.csv)
+- [`filogenia_bocaina.txt`](filogenia_bocaina.txt)
+
+## Leituras recomendadas
+
+*Bibliografia listada nos slides.*
+
+## Recursos externos
+
+*Sem recursos externos para esta aula.*
+
+---
+
+*Volta para o [índice do curso](../index.qmd).*

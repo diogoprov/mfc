@@ -1,0 +1,48 @@
+---
+title: "Aula 02 — Modelos de evolução de atributos contínuos e PGLS"
+order: 2
+description: "Movimento Browniano como modelo nulo de evolução de atributos contínuos. Regressão filogenética generalizada (PGLS) e estimativa de λ de Pagel para regressões entre atributos."
+---
+
+::: {.aula-meta}
+**Terça-feira**  ·  **Curso:** Evolução fenotípica e métodos filogenéticos comparativos (PPGEC/UFMS)
+:::
+
+Movimento Browniano como modelo nulo de evolução de atributos contínuos. Regressão filogenética generalizada (PGLS) e estimativa de λ de Pagel para regressões entre atributos.
+
+## Slides
+
+[{{< fa solid file-pdf >}} Baixar slides em PDF](../slides/aula-02.pdf){.btn .btn-outline-primary}
+
+## Código R (aula prática)
+
+- {{< fa solid eye >}} **[Ver walkthrough HTML](walkthrough-aula-2-terca.html)**  
+  *Walkthrough da aula prática — Movimento Browniano, OU básico, PGLS, λ*  
+  [{{< fa solid file-code >}} baixar `aula-2-terca.R`](aula-2-terca.R)
+
+## Dados utilizados
+
+- [`BarbetTree.nex`](BarbetTree.nex)
+- [`Barbetdata.csv`](Barbetdata.csv)
+- [`anolis.phy`](anolis.phy)
+- [`anolisDataAppended.csv`](anolisDataAppended.csv)
+- [`brandley_table.csv`](brandley_table.csv)
+- [`filogenia_gabi.txt`](filogenia_gabi.txt)
+- [`squamate.tre`](squamate.tre)
+- [`testes_matrix_r.txt`](testes_matrix_r.txt)
+
+## Leituras recomendadas
+
+- Revell, L.J. 2010. *Phylogenetic signal and linear regression on species data.*
+- Symonds, M.R.E. & Blomberg, S.P. 2014. *A primer on phylogenetic generalised least squares (PGLS).*
+- Revell, L.J. 2013. *Two new graphical methods for mapping trait evolution on phylogenies.*
+
+## Recursos externos
+
+- [Simulação de Movimento Browniano (Luke Harmon)](https://lukejharmon.github.io/pcm/chapter3_bmintro/)
+- [PGLS — tutorial (Liam Revell)](http://www.phytools.org/eqg2015/asr.html)
+- [Roteiro tutorial de PGLS](http://www.phytools.org/Cordoba2017/ex/4/PGLS.html)
+
+---
+
+*Volta para o [índice do curso](../index.qmd).*
