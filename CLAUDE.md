@@ -69,8 +69,11 @@ períodos. Decks de ~50–65 slides.
    seção 4 do plano. Encolher só o que o Diogo aprovar (plano, seção 6).
 3. **Passo a passo das contas**, um passo por fragmento (montar **C**, os
    contrastes, *P(t) = e^Qt*).
-4. **Texto grande**: corpo em 32 px, nada abaixo de ~26 px fora das `.ref`;
-   `{.medio}` para slide denso; figuras ocupando o espaço livre.
+4. **Texto grande e espaço aproveitado** (pedido do Diogo na revisão da
+   Aula 2): corpo em 32 px, nada abaixo de ~26 px fora das `.ref`. Slide de
+   texto com espaço sobrando leva `{.grande}` (1,15em) ou `{.muito-grande}`
+   (1,3em); `{.medio}` só quando não couber. Figuras na largura toda
+   (`out.width: "100%"`). Meça a altura usada: mire em 600–745 px.
 5. **Referências com link** para o DOI, conferidas no Crossref.
 6. **Reaproveite** cursos irmãos: Procrustes e PCA da multidimensionais
    (Aulas 6 e 4) na Aula 8; OLS e pressupostos da univariada/Bioestatística
@@ -143,6 +146,11 @@ quando ele decidir.
   Nada de `brms` nem de modelos mistos (exigem background demais).
 - **Abertura da Aula 1** (aprovada): 3–4 slides que retomam as leituras
   prévias (perguntas, mapa como síntese, não independência, linha do tempo).
+- **Créditos de slides de colegas**: o original não marca tudo. Já
+  identificados pelo Diogo: o esquema de Hansen & Martins e o caminho inverso
+  (J. A. F. Diniz-Filho, Aula 2), os dados como processo estocástico (José
+  Hidasi-Neto, Aula 2). `.ref`: "Ideia de um slide de ...". Na dúvida,
+  pergunte de quem é um slide sem crédito.
 - **Figuras de terceiros**: livro de Harmon (2019) é CC BY-SA 4.0 →
   redesenhar. Slides de J. A. F. Diniz-Filho (Aula 3 original) → aproveitar a
   ideia e **redesenhar pesadamente** (aprovado); `.ref`: "Ideia de um slide

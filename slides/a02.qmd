@@ -59,7 +59,7 @@ X_sim  <- sims_guia()
 p10    <- ps[ps$no == 10, ]
 ```
 
-## Hoje
+## Hoje {.muito-grande}
 
 1. Do processo ao padrão
 2. O movimento browniano (BM)
@@ -117,10 +117,10 @@ fig_hansen_martins(1)
 Baseado no esquema de [Hansen & Martins (1996)](https://doi.org/10.1111/j.1558-5646.1996.tb03914.x).
 :::
 
-## O caminho inverso não é tão simples... {.medio}
+## O caminho inverso não é tão simples...
 
 ```{r}
-#| fig-height: 3.9
+#| fig-height: 3.4
 #| fig-alt: "O mesmo esquema, com uma seta vermelha que sobe dos dados interespecíficos até os mecanismos microevolutivos, marcada com um ponto de interrogação."
 fig_hansen_martins(2)
 ```
@@ -129,7 +129,11 @@ O caminho dos mecanismos microevolutivos para a variação interespecífica é
 conceitual. Inferir esses mesmos mecanismos a partir de padrões
 interespecíficos (filogenéticos) é difícil, senão impossível.
 
-## Padrão, não processo
+::: {.ref}
+Ideia de um slide de J. A. F. Diniz-Filho, sobre o esquema de [Hansen & Martins (1996)](https://doi.org/10.1111/j.1558-5646.1996.tb03914.x).
+:::
+
+## Padrão, não processo {.muito-grande}
 
 > "Phylogenies can only depict patterns, not underlying processes"
 
@@ -218,17 +222,21 @@ O BM entrou na filogenética com [Cavalli-Sforza & Edwards (1967)](https://doi.o
 ## ...mas o que é um processo estocástico de tempo contínuo?
 
 ```{r}
-#| fig-height: 4
+#| fig-height: 3.6
 #| fig-alt: "Soma de seis dados em dez jogadas sucessivas, ligadas por uma linha, com o valor de cada soma escrito sobre o ponto."
 fig_dados(1)
 ```
 
 Soma dos resultados de **6 dados** (de 6 a 36), jogados 10 vezes.
 
+::: {.ref}
+Ideia de um slide de José Hidasi-Neto.
+:::
+
 ## ...mas o que é um processo estocástico de tempo contínuo?
 
 ```{r}
-#| fig-height: 3.3
+#| fig-height: 3.0
 #| fig-alt: "Sessenta séries de dez jogadas sobrepostas, formando uma faixa embaralhada, e ao lado o histograma das somas, com forma de sino centrada em 21."
 fig_dados(2)
 ```
@@ -237,7 +245,11 @@ O resultado de cada jogada é **imprevisível**, mas a distribuição de
 probabilidade de um conjunto de curvas é **conhecida** (aproximadamente
 normal) e permite predizer eventos futuros.
 
-## Movimento browniano: os parâmetros
+::: {.ref}
+Ideia de um slide de José Hidasi-Neto.
+:::
+
+## Movimento browniano: os parâmetros {.muito-grande}
 
 Dois parâmetros:
 
@@ -250,7 +262,7 @@ inicial aparece como $\theta$. Neste curso, $\theta$ fica reservado para o
 **ótimo** do modelo Ornstein-Uhlenbeck (Aula 5).
 :::
 
-## Movimento browniano: o processo de Wiener {.medio}
+## Movimento browniano: o processo de Wiener {.grande}
 
 Três fatos descrevem um BM. Se $W(t)$ é o valor do caráter no tempo $t$:
 
@@ -264,11 +276,11 @@ com **média igual ao valor inicial** $W(0)$ e **variância igual à taxa
 vezes o tempo**, $\sigma^2 t$.
 :::
 
-## A equação do BM
+## A equação do BM {.muito-grande}
 
 <br>
 
-$$\Large \color{#a15e3f}{dX(t)} \;=\; \color{#527238}{\sigma}\; \color{#1c6e8c}{dB(t)}$$
+$$\huge \color{#a15e3f}{dX(t)} \;=\; \color{#527238}{\sigma}\; \color{#1c6e8c}{dB(t)}$$
 
 <br>
 
@@ -401,7 +413,7 @@ Os quatro processos do original (deriva; mudança pontuada aleatória;
 seleção fraca em relação à escala de tempo considerada; seleção que muda de
 direção aleatoriamente ao longo do tempo) produzem leques como o do BM.
 
-## BM: modelo nulo, não hipótese biológica
+## BM: modelo nulo, não hipótese biológica {.muito-grande}
 
 ::: {.definicao}
 Processos muito diferentes produzem o mesmo padrão de BM. Ajustar bem um
@@ -420,7 +432,7 @@ na Aula 3.
 
 [O BM e a matriz C]{.familia .base}
 
-## Como a filogenia influencia a evolução sob BM?
+## Como a filogenia influencia a evolução sob BM? {.muito-grande}
 
 O parentesco comum **aumenta** ou **diminui** a similaridade entre espécies
 em termos de fenótipo?
@@ -533,7 +545,7 @@ fenótipo) do que as espécies 1 e 2, porque compartilham maior **proporção
 de história evolutiva comum** (`r num(C[3, 4])` contra `r num(C[1, 2])`).
 :::
 
-## A regra geral
+## A regra geral {.grande}
 
 ::: {.definicao}
 $C_{ij}$ = comprimento do caminho **compartilhado** da raiz até o ancestral
@@ -735,7 +747,7 @@ Aula 7.
 :::
 ::::
 
-## Os contrastes de A e de B {.tabela-grande}
+## Os contrastes de A e de B {.tabela-grande .grande}
 
 ```{r}
 tab_pic |>
@@ -780,7 +792,7 @@ fig_bruto_vs_pic()
 Mesmos dados, conclusões diferentes: com as espécies tratadas como
 independentes, a inclinação é `r num(b_ols)`; com os contrastes, `r num(b_pic)`.
 
-## PIC = PGLS sob BM
+## PIC = PGLS sob BM {.grande}
 
 ```{r}
 #| echo: true
@@ -793,16 +805,20 @@ nlme::gls(B ~ A, data = dados,              # PGLS com C
           correlation = ape::corBrownian(1, arvore, form = ~sp))
 ```
 
+::: {.tabela-grande}
+
 | | Inclinação |
 |---|---:|
 | Contrastes (pela origem) | `r num(b_pic, 4)` |
 | PGLS com `corBrownian` | `r num(b_pgls, 4)` |
 
+:::
+
 ::: {.ref}
 A equivalência é exata sob BM: [Blomberg, Lefevre, Wells & Waterhouse (2012)](https://doi.org/10.1093/sysbio/syr118), *Syst. Biol.* 61: 382–391.
 :::
 
-## Pressupostos dos contrastes {.medio}
+## Pressupostos dos contrastes
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -834,7 +850,7 @@ O diagnóstico vem de [Garland, Harvey & Ives (1992)](https://doi.org/10.2307/29
 mapa_plot(aula = 2)
 ```
 
-## Leituras
+## Leituras {.muito-grande}
 
 - [Harmon (2019), cap. 3](https://lukejharmon.github.io/pcm/chapter3_bmintro/) e [cap. 4](https://lukejharmon.github.io/pcm/chapter4_fitbm/): o movimento browniano e o seu ajuste
 - [Felsenstein (1985)](https://doi.org/10.1086/284325): os contrastes independentes

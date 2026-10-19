@@ -72,7 +72,7 @@ mapa_plot <- function(aula = NULL, base = 4.8) {
 
   ggplot() +
     geom_polygon(data = pol_cab, aes(px, py, group = id), fill = pol_cab$fill) +
-    geom_text(data = cab, aes(x, y, label = l), colour = "white", size = base,
+    geom_text(data = cab, aes(x, y, label = l), colour = "white", size = base * .8,
               fontface = "bold", lineheight = .9) +
     geom_polygon(data = caixas, aes(px, py, group = id), fill = caixas$fill) +
     geom_text(data = cel, aes(x, y - .1, label = metodos), colour = cel$txt,

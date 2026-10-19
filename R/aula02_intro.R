@@ -67,17 +67,17 @@ fig_hansen_martins <- function(etapa = 1) {
     tema_aula(16, conceitual = TRUE)
   caixas <- tibble::tribble(
     ~x, ~y, ~w, ~h, ~rotulo,
-    0, 4, 4.6, 1.3, "Mecanismos microevolutivos\n(deriva, seleção, mutação, fluxo gênico)",
-    0, 2, 4.6, .9,  "Modelos evolutivos",
-    0, 0, 4.6, .9,  "Dados interespecíficos")
-  setas <- tibble::tribble(~x, ~y, ~xend, ~yend, -.6, 3.3, -.6, 2.5, -.6, 1.5, -.6, .5)
-  dg <- diagrama(caixas, setas, base = 5)
+    0, 4.4, 4.6, 2,  "Mecanismos\nmicroevolutivos\n(deriva, seleção,\nmutação, fluxo gênico)",
+    0, 2,   4.6, .9, "Modelos\nevolutivos",
+    0, 0,   4.6, .9, "Dados\ninterespecíficos")
+  setas <- tibble::tribble(~x, ~y, ~xend, ~yend, -.6, 3.35, -.6, 2.5, -.6, 1.5, -.6, .5)
+  dg <- diagrama(caixas, setas, base = 4.3)
   if (etapa == 2) {
     dg <- dg +
-      annotate("segment", x = 2.75, y = .2, xend = 2.75, yend = 3.6, linewidth = 2.2,
+      annotate("segment", x = 2.75, y = .2, xend = 2.75, yend = 5, linewidth = 2.2,
                colour = cores[["ferrugem"]],
                arrow = arrow(length = unit(.35, "cm"), type = "closed")) +
-      annotate("text", x = 3.25, y = 1.9, label = "?", size = 16, fontface = "bold",
+      annotate("text", x = 3.25, y = 2.6, label = "?", size = 16, fontface = "bold",
                colour = cores[["ferrugem"]])
   }
   traj + dg + plot_layout(widths = c(1.15, 1))

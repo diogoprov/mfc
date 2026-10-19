@@ -68,6 +68,11 @@ $code-block-font-size: 0.70em;
 // .85em dá ~27px projetado. Use {.medio} no título do slide.
 .reveal .slides section.medio { font-size: .85em; }
 
+// Slide só de texto com espaço sobrando (pedido do Diogo, Aula 2): texto
+// maior. Use {.grande} no título; {.muito-grande} para slides de uma ideia.
+.reveal .slides section.grande { font-size: 1.15em; }
+.reveal .slides section.muito-grande { font-size: 1.3em; }
+
 // Tabelas: .72em ficava pequeno demais projetado.
 .reveal table { font-size: .80em; }
 
