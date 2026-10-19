@@ -112,6 +112,9 @@ quando ele decidir.
   Exemplo brasileiro: cantos de anuros da Bocaina (`canto.csv`,
   `filogenia_bocaina.txt`), de Garey et al. (2018)
   `10.1093/biolinnean/bly129`, uso autorizado pelo Diogo.
+- **Livro-texto**: Revell & Harmon (2022), *Phylogenetic Comparative
+  Methods in R* (Princeton; sem DOI, link da editora). Toda aula cita os
+  capítulos/seções nas leituras; mapa capítulos → aulas no plano, seção 7.3.
 - **Leituras prévias**: Rezende & Diniz-Filho (2012), O'Meara (2012) e
   Garland, Bennett & Rezende (2005), lidas antes da disciplina; a Aula 1 as
   supõe lidas (abertura: plano, seção 3.7).

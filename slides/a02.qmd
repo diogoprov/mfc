@@ -857,8 +857,9 @@ O diagnóstico vem de [Garland, Harvey & Ives (1992)](https://doi.org/10.2307/29
 mapa_plot(aula = 2)
 ```
 
-## Leituras {.muito-grande}
+## Leituras {.grande}
 
+- [Revell & Harmon (2022)](https://press.princeton.edu/books/paperback/9780691219035/phylogenetic-comparative-methods-in-r), *Phylogenetic Comparative Methods in R*: cap. 2 (contrastes independentes), seção 3.3 (contrastes = PGLS) e seções 4.2–4.5 (o movimento browniano)
 - [Harmon (2019), cap. 3](https://lukejharmon.github.io/pcm/chapter3_bmintro/) e [cap. 4](https://lukejharmon.github.io/pcm/chapter4_fitbm/): o movimento browniano e o seu ajuste
 - [Felsenstein (1985)](https://doi.org/10.1086/284325): os contrastes independentes
 - [Freckleton, Harvey & Pagel (2002)](https://doi.org/10.1086/343873): a matriz **C**, o λ e o exemplo da árvore-guia

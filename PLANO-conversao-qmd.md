@@ -355,6 +355,25 @@ função própria em ggplot2 (`R/arvore.R`, a partir das coordenadas do `ape`)
 em vez do `ggtree` (Bioconductor): mais controle sobre o estilo da
 árvore-guia e um pacote a menos. Sem `brms` nas figuras.
 
+### 7.3 Livro-texto: Revell & Harmon (2022)
+
+*Phylogenetic Comparative Methods in R* (Princeton University Press, 2022;
+sem DOI no Crossref, link da editora). Sumário conferido na página da
+editora (19/out/2026). Capítulos por aula nova, para as leituras:
+
+| Aula | Capítulos e seções |
+|---:|---|
+| 1 | 1 (filogenética no R, objetos `phylo`, dados comparativos); 13 (desenhar filogenias) |
+| 2 | 2 (contrastes independentes); 3.3 (contrastes = PGLS); 4.2–4.5 (BM) |
+| 3 | 4.6 (sinal filogenético) |
+| 4 | 3 (PGLS, pressupostos, ANOVA e ANCOVA filogenéticas) |
+| 5 | 4.7–4.8 (outros modelos e comparação); 5.1–5.2 e 5.4 (multi-taxas, OU multi-ótimo, heterogeneidade) |
+| 6 | 6 (Mk); 7 (caracteres binários correlacionados, taxas ocultas, threshold) |
+| 7 | 8 (estados ancestrais, mapeamento estocástico); 13 |
+| 8 | 1.10 (PCA filogenética); 5.3 (BM multivariado) |
+
+Os capítulos 9–12 (diversificação, SSE, biogeografia) não entram no curso.
+
 ## 8. Figuras: tratamento
 
 **Regra geral do curso (Diogo, 19/out/2026): usar o máximo possível de
