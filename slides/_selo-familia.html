@@ -1,0 +1,30 @@
+<script>
+// Selo da pergunta do mapa no canto do slide. Cada bloco da aula abre com
+// um slide de seção que traz o selo ([Há sinal?]{.familia
+// .sinal}); os slides seguintes do bloco mostram uma cópia no canto.
+(function () {
+  function selosDoBloco(slide) {
+    var pilha = slide && slide.parentElement;
+    if (!pilha || !pilha.classList.contains("stack")) return null;
+    var abertura = pilha.querySelector(":scope > section");
+    if (!abertura || abertura === slide) return null;
+    var selos = abertura.querySelectorAll(".familia");
+    return selos.length ? selos : null;
+  }
+  function atualiza() {
+    var caixa = document.getElementById("selo-familia");
+    if (!caixa) {
+      caixa = document.createElement("div");
+      caixa.id = "selo-familia";
+      caixa.setAttribute("aria-hidden", "true");
+      document.querySelector(".reveal").appendChild(caixa);
+    }
+    var selos = selosDoBloco(Reveal.getCurrentSlide());
+    caixa.innerHTML = "";
+    caixa.style.display = selos ? "flex" : "none";
+    if (selos) selos.forEach(function (s) { caixa.appendChild(s.cloneNode(true)); });
+  }
+  Reveal.on("slidechanged", atualiza);
+  if (Reveal.isReady()) atualiza(); else Reveal.on("ready", atualiza);
+})();
+</script>

@@ -3,6 +3,14 @@ project:
   output-dir: docs
   resources:
     - slides/*.pdf
+  render:
+    - "*.qmd"
+    - "aula-*/*.qmd"
+    - "slides/*.qmd"
+    - "!README.md"
+    - "!CLAUDE.md"
+    - "!PLANO-conversao-qmd.md"
+    - "!inventarios/"
 
 website:
   title: "Métodos Filogenéticos Comparativos"
@@ -45,5 +53,14 @@ format:
       - text: |
           <link rel="stylesheet"
                 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+lang: pt
+
+# Os slides têm chunks de R que geram as figuras. Com freeze, o resultado
+# fica em _freeze/ (versionado) e o CI renderiza só com o Quarto, sem os
+# pacotes de filogenética. Depois de mudar um .qmd com código ou uma
+# função em R/, rode `quarto render` localmente e commite _freeze/ junto.
+execute:
+  freeze: auto
 
 editor: source

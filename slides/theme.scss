@@ -1,0 +1,182 @@
+/*-- scss:defaults --*/
+// Tema revealjs — Métodos Filogenéticos Comparativos (PPGBA/UFMS)
+// Copiado de ~/GitHub/multidimensionais/slides/theme.scss: mesma paleta do
+// Biodiversity Synthesis Lab, com os selos das perguntas do mapa dos
+// métodos no lugar dos selos das famílias de ordenação.
+
+$accent:       #1c6e8c;
+$accent-dark:  #144f64;
+$body-bg:      #faf7f0;
+$body-color:   #2d3748;
+$link-color:   $accent;
+$border-color: #e3dccd;
+// o reveal herda a cor da citacao de $border-color e ela some no fundo creme
+$blockquote-color: $body-color;
+
+$font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                         "Helvetica Neue", Helvetica, Arial, sans-serif !default;
+$presentation-font-size-root: 32px;
+$presentation-heading-color: $accent-dark;
+$presentation-heading-font-weight: 600;
+// 0.62em dava ~20px projetados.
+$code-block-font-size: 0.70em;
+
+/*-- scss:rules --*/
+.reveal .slide-background { background-color: $body-bg; }
+
+.reveal h1, .reveal h2 { letter-spacing: -.3px; }
+
+.reveal h2 {
+  border-bottom: 2px solid rgba(28, 110, 140, .25);
+  padding-bottom: .18em;
+  margin-bottom: .5em;
+}
+
+.reveal pre code {
+  background-color: #fdfcf8;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  max-height: 520px;
+}
+
+.reveal .slide-number { background-color: transparent; color: #6b7580; }
+
+// Slide de seção
+.reveal section.secao h2 {
+  border: none;
+  color: $accent;
+  font-size: 1.7em;
+}
+
+// Destaque de definição
+.reveal .definicao {
+  background-color: #f3eee3;
+  border-left: 4px solid $accent;
+  padding: .5em .8em;
+  border-radius: 0 4px 4px 0;
+}
+
+// Texto menor para notas laterais. O cinza anterior (#6c757d) dava 4,38:1
+// sobre o creme do fundo; este da 7,03:1, e o corpo subiu de .72 para .76em.
+.reveal .nota { font-size: .76em; color: #4a5568; }
+
+// Referencia no rodape do slide. Era .55em (ilegivel projetado) em #6c757d
+// (4,38:1); passa a .68em em #4a5568, que da 7,03:1.
+.reveal .ref { font-size: .68em; color: #4a5568; font-style: italic; }
+
+// Slide denso, mas sem cair para o .smaller do reveal (.7em, ~22px):
+// .85em dá ~27px projetado. Use {.medio} no título do slide.
+.reveal .slides section.medio { font-size: .85em; }
+
+// Tabelas: .72em ficava pequeno demais projetado.
+.reveal table { font-size: .80em; }
+
+// Slides em que a tabela E o conteudo principal. Num slide .smaller o
+// .80em acima ainda e multiplicado pelo .smaller e a letra cai para ~18px
+// projetado. Esta classe devolve a tabela ao tamanho do corpo do slide.
+.reveal .tabela-grande table { font-size: 1em; }
+.reveal .tabela-grande table th,
+.reveal .tabela-grande table td { padding: .28em .5em; }
+
+// Slides em que a saida de codigo e longa e estoura os 750 px do palco por
+// poucos pixels. Um aperto de 8% na fonte do bloco resolve sem mexer no
+// conteudo. Usar so onde a medicao mostrou estouro.
+.reveal .codigo-compacto pre code { font-size: .92em; }
+
+// Citação de relato (blockquote). O tema do reveal pinta o texto quase
+// na cor do fundo creme; aqui fixamos contraste e damos ao bloco o mesmo
+// visual das caixas .definicao.
+.reveal blockquote,
+.reveal section blockquote {
+  background-color: #f3eee3;
+  border-left: 4px solid $accent;
+  color: $body-color;
+  box-shadow: none;
+  font-style: normal;
+  line-height: 1.35;
+  padding: .6em .9em;
+  margin: .4em 0;
+  width: 100%;
+}
+
+.reveal blockquote p,
+.reveal blockquote code { color: $body-color; }
+
+// Selo da pergunta do mapa no slide de seção. Cada pergunta tem a sua
+// cor, a mesma de `cores_familia` em R/tema.R (mantenha as duas listas
+// iguais): [Há sinal?]{.familia .sinal}. A faixa de base (Aulas 1 e 2)
+// usa .base.
+$familia-base:      #6f5f45;
+$familia-sinal:     #3d7560;
+$familia-modelos:   #a3472e;
+$familia-ancestral: #6b4c8a;
+$familia-relacao:   #1c6e8c;
+
+.reveal .familia {
+  display: inline-block;
+  background-color: $accent;
+  color: white;
+  font-size: .62em;
+  font-weight: 600;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  padding: .15em .6em;
+  border-radius: 3px;
+}
+.reveal .familia.base      { background-color: $familia-base; }
+.reveal .familia.sinal     { background-color: $familia-sinal; }
+.reveal .familia.modelos   { background-color: $familia-modelos; }
+.reveal .familia.ancestral { background-color: $familia-ancestral; }
+.reveal .familia.relacao   { background-color: $familia-relacao; }
+
+// Caixa de atividade em sala.
+.reveal .atividade {
+  background-color: #eef4ec;
+  border-left: 4px solid #527238;
+  padding: .5em .8em;
+  border-radius: 0 4px 4px 0;
+}
+
+// Memes: pintura em domínio público com legenda própria por cima, no
+// estilo clássico (caixa-alta branca com contorno preto).
+//   ::: {.meme}
+//   ![](../assets/memes/grito.jpg){fig-alt="..."}
+//
+//   [texto de cima]{.meme-topo} [texto de baixo]{.meme-base}
+//   :::
+.reveal .meme {
+  position: relative;
+  width: fit-content;
+  margin: 0 auto;
+  p { margin: 0; }
+  img { display: block; max-height: 590px; margin: 0; border-radius: 4px; }
+}
+.reveal .meme-topo, .reveal .meme-base {
+  position: absolute;
+  left: 3%;
+  right: 3%;
+  text-align: center;
+  font-family: Impact, "Anton", "Arial Black", sans-serif;
+  font-weight: 900;
+  font-size: 1.15em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: #fff;
+  -webkit-text-stroke: 1.5px #000;
+  paint-order: stroke fill;
+  text-shadow: 0 0 6px rgba(0, 0, 0, .55);
+}
+.reveal .meme-topo { top: .35em; }
+.reveal .meme-base { bottom: .35em; }
+
+// Selo da pergunta no canto do slide (slides/_selo-familia.html).
+#selo-familia {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  z-index: 30;
+  gap: 4px;
+  pointer-events: none;
+  .familia { font-size: 13px; padding: 2px 8px; margin: 0; opacity: .92; }
+}
+@media print { #selo-familia { display: none !important; } }
