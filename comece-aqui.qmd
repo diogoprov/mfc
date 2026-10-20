@@ -73,9 +73,10 @@ programa de pós-graduação.
 - **Slides**: abrem no navegador. Tecle **F** para tela cheia, **Esc**
   para ver todos os slides de uma vez e use as setas para navegar. Toda
   aula abre e fecha com o [mapa dos métodos](index.qmd#o-mapa-dos-métodos).
-- **Roteiros práticos**: *walkthroughs* comentados com o script `.R`
-  correspondente; os comandos não rodam na página, copie para o seu R.
-  Ver [Roteiros práticos](praticas.qmd).
+- **Roteiros práticos**: um por aula, executado (os resultados da página
+  saíram do código mostrado); copie os blocos para o seu R. Os
+  *walkthroughs* de 2020 continuam disponíveis. Ver
+  [Roteiros práticos](praticas.qmd).
 - **Desafios**: um por aula, resolvido individualmente, com código. As
   respostas comentadas são publicadas depois do prazo.
 - **Avaliação**: um documento em Quarto (ver o [Programa](programa.qmd#avaliação)).

@@ -52,6 +52,14 @@ aulas), `praticas.qmd`, `glossario.qmd`; cronograma em cartões
 ancestral, relacao). Os dados das práticas mudaram de pasta: os caminhos em
 `R/` já apontam para as novas.
 
+**Roteiros executados (20/out/2026)**: um `roteiro.qmd` por pasta de aula,
+com `eval: true` e freeze, alinhado aos slides e ao desafio (as dicas do
+desafio apontam as seções). Os dados são lidos relativos à pasta: os
+arquivos de que as Aulas 6 e 7 precisam foram copiados para as pastas
+delas. `praticas.qmd` lista os oito roteiros e, à parte, os walkthroughs de
+2020. Os roteiros 1 e 3 usam `rotl`, `adephylo` e `phylobase` (fora das
+figuras).
+
 **Formato**: a disciplina é ofertada condensada em uma semana; cada aula
 ocupa um período (manhã ou tarde) com teoria e prática, 8 aulas em 10
 períodos. Decks de ~50–65 slides.

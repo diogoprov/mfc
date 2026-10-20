@@ -1,14 +1,39 @@
 ---
 title: "Roteiros práticos"
-subtitle: "Os walkthroughs comentados e onde cada parte entra nas aulas"
+subtitle: "Um roteiro executado por aula, e os walkthroughs da edição de 2020"
 toc: true
 ---
 
-Os roteiros abaixo são os da edição de 2020, com o script `.R` original e
-os dados. Foram redistribuídos pelas oito aulas novas: cada roteiro fica na
-página da aula em que está a maior parte do seu conteúdo, e as outras aulas
-apontam para as seções que lhes cabem. Os comandos **não rodam** nas
-páginas: copie e cole no seu R.
+## Os roteiros das aulas
+
+Cada aula tem um roteiro novo, alinhado aos slides e ao desafio. Os
+roteiros **rodam de verdade**: os resultados e as figuras da página saíram
+do código mostrado. Copie os blocos para um script e rode em ordem numa
+sessão limpa do R; quando o roteiro usa arquivos, eles estão em *Dados
+utilizados*, na página da aula.
+
+| Aula | Roteiro | O que se faz | Pacotes além de `ape` e `phytools` |
+|---:|---|---|---|
+| 1 | [A árvore e os dados](aula-01-arvore-dados/roteiro.qmd) | o objeto `phylo`; Newick passo a passo; Nexus; enraizamento e politomias; casar árvore e tabela; dois atributos independentes que parecem associados; bootstrap; forma da árvore; árvores da Open Tree | `geiger`, `rotl` |
+| 2 | [O BM e a matriz C](aula-02-bm-matriz-c/roteiro.qmd) | BM no tempo e na árvore; distância patrística e **C**; a covariância das réplicas é σ²**C**; contrastes passo a passo e a regressão dos contrastes | — |
+| 3 | [Sinal filogenético](aula-03-sinal/roteiro.qmd) | K e λ; atributos de referência; I de Moran e C de Abouheif; Mantel; PVR; o D de Fritz & Purvis | `geiger`, `adephylo`, `phylobase`, `caper` |
+| 4 | [PGLS](aula-04-pgls/roteiro.qmd) | o GLS à mão; PGLS; R²; diagnóstico; ANOVA e ANCOVA filogenéticas; GLM filogenético; `evol.vcv`; incerteza filogenética | `nlme`, `phylolm`, `rr2`, `geomorph` |
+| 5 | [Modelos contínuos](aula-05-modelos/roteiro.qmd) | a verossimilhança do BM à mão; OU, EB e tendência; comparação por AICc; adequação; taxas por regime; OU com vários ótimos | `geiger`, `mvMORPH` |
+| 6 | [Atributos discretos](aula-06-discretos/roteiro.qmd) | *P*(*t*) = e^**Q***t*^; ER e ARD nos Squamata; simulação do Mk; multiestado; taxas ocultas; Pagel × `fitCorrelationTest`; limiar | `geiger`, `corHMM` |
+| 7 | [Estados ancestrais](aula-07-ancestrais/roteiro.qmd) | parcimônia × ML; o nó 13 e o re-enraizamento; incerteza; `contMap` e fenograma; tendência com fósseis; marginal × conjunta; mapeamento estocástico; filomorfoespaço | — |
+| 8 | [Multivariados](aula-08-multivariados/roteiro.qmd) | Procrustes à mão e GPA; morfoespaço; K e PGLS multivariados; PCA filogenética; `mvgls`; uma matriz de taxas por regime; modularidade e integração | `geomorph`, `mvMORPH` |
+
+Os pacotes estão na lista do [Comece aqui](comece-aqui.qmd#pacotes), menos
+`rotl`, `adephylo` e `phylobase`, usados só nos roteiros 1 e 3
+(`install.packages(c("rotl", "adephylo", "phylobase"))`).
+
+## Os walkthroughs de 2020
+
+Os walkthroughs da edição de 2020 continuam disponíveis, com o script `.R`
+original e os dados. Foram redistribuídos pelas oito aulas novas: cada um
+fica na página da aula em que está a maior parte do seu conteúdo, e as
+outras aulas apontam para as seções que lhes cabem. Os comandos **não
+rodam** nessas páginas: copie e cole no seu R.
 
 | Roteiro | Seções | Aulas |
 |---|---|---|
@@ -20,14 +45,15 @@ páginas: copie e cole no seu R.
 | [OU multi-regime, Pagel e limiar](aula-05-modelos/walkthrough-aula-quinta.html) | SURFACE (fora do curso); `bayou`; `evol.vcv`; teste de Pagel; modelo de limiar | [5](aula-05-modelos/index.qmd), [4](aula-04-pgls/index.qmd), [6](aula-06-discretos/index.qmd) |
 | [Gráficos, PVR e PCA filogenética](aula-07-ancestrais/walkthrough-aula-5-sexta.html) | gráficos do `phytools` e do `phylosignal`; PCA filogenética; PVR | [7](aula-07-ancestrais/index.qmd), [3](aula-03-sinal/index.qmd), [8](aula-08-multivariados/index.qmd) |
 
-Os slides de cada aula têm, além disso, o código das próprias figuras, na
-pasta [`R/`](https://github.com/diogoprov/mfc/tree/main/R) do repositório,
-com sementes fixas: um segundo roteiro, mais curto, para cada análise
-mostrada em aula.
+O código das figuras dos slides está na pasta
+[`R/`](https://github.com/diogoprov/mfc/tree/main/R) do repositório, com
+sementes fixas.
 
 ## Desafios
 
-Cada aula tem um desafio de código, para resolver individualmente:
+Cada aula tem um desafio de código, para resolver individualmente depois do
+roteiro. As dicas, na página da aula, apontam as seções do roteiro que
+ajudam:
 
 1. [A árvore não bate com os dados](aula-01-arvore-dados/index.qmd#desafio) (`geospiza`)
 2. [A matriz C à mão](aula-02-bm-matriz-c/index.qmd#desafio) (árvore-guia)
