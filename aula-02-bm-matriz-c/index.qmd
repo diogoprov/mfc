@@ -1,0 +1,87 @@
+---
+title: "Aula 02 — O movimento browniano e a matriz C"
+order: 2
+description: "Do processo ao padrão: o movimento browniano no tempo e na árvore, a matriz de covariância filogenética C montada passo a passo e os contrastes independentes de Felsenstein."
+gancho: "Por que espécies aparentadas não são pontos independentes?"
+familias: [base]
+aliases:
+  - "../aula-02-modelos-evolucao-pgls/index.html"
+---
+
+::: {.aula-meta}
+**Aula 2** · [O BM e a matriz C]{.familia .base} · Métodos Filogenéticos Comparativos (PPGBA/UFMS)
+:::
+
+No mapa dos métodos, esta aula é a segunda **faixa de base**: o movimento
+browniano e a matriz **C** sustentam todas as colunas. Os exemplos usam a
+**árvore-guia** do curso, de 7 espécies (Freckleton et al. 2002).
+
+## Slides
+
+[{{< fa solid display >}} Abrir slides](../slides/a02.html){.btn .btn-outline-primary}
+
+As figuras dos slides foram geradas em R; o código está em
+[`R/aula02_*.R`](https://github.com/diogoprov/mfc/tree/main/R).
+
+## Em 3 minutos
+
+::: {.callout-note .em-3-minutos appearance="simple" icon="false"}
+1. Sob o movimento browniano, a variância entre linhagens cresce linearmente com o tempo (σ²*t*), e a média não muda.
+2. Numa árvore, a covariância entre duas espécies é proporcional ao tempo que elas compartilham desde a raiz: é a matriz **C**.
+3. Os contrastes independentes transformam *n* espécies aparentadas em *n* − 1 contrastes independentes; a regressão deles passa pela origem.
+
+**Erro comum:** chamar de θ o valor inicial do BM; θ é o ótimo do OU, o valor inicial é *z*~0~.
+:::
+
+## Conteúdo
+
+1. Do processo ao padrão: processos estocásticos e a lógica dos modelos
+2. O movimento browniano: o processo de Wiener, σ² e o tempo
+3. A matriz **C**, montada passo a passo na árvore-guia
+4. O BM numa árvore: linhagens que se separam, fenograma
+5. Contrastes independentes, nó a nó, e a regressão pela origem
+
+## Código R (aula prática)
+
+- {{< fa solid eye >}} **[Ver walkthrough HTML](walkthrough-aula-2-terca.html)**
+  *BM simulado sem e com filogenia. O mesmo roteiro segue com OU e
+  tendência (Aula 5), o Mk nos Squamata (Aula 6) e PGLS (Aula 4).*
+  [{{< fa solid file-code >}} baixar `aula-2-terca.R`](aula-2-terca.R)
+- A simulação do efeito da correlação filogenética está no
+  [roteiro da Aula 1](../aula-01-arvore-dados/walkthrough-aula-1-segunda.html).
+
+Pacotes: `ape`, `phytools`, `geiger`, `nlme`.
+
+## Dados utilizados
+
+- [`BarbetTree.nex`](BarbetTree.nex) e [`Barbetdata.csv`](Barbetdata.csv)
+- [`anolis.phy`](anolis.phy) e [`anolisDataAppended.csv`](anolisDataAppended.csv)
+- [`squamate.tre`](squamate.tre) e [`brandley_table.csv`](brandley_table.csv) (Brandley et al. 2008)
+- [`filogenia_gabi.txt`](filogenia_gabi.txt) e [`testes_matrix_r.txt`](testes_matrix_r.txt)
+
+## Desafio
+
+Entregue um script `.R` que rode do zero numa sessão limpa, as figuras
+pedidas e até uma página de interpretação. Critério: o script roda (30 %);
+as escolhas estão justificadas (30 %); a interpretação está correta (40 %).
+
+**A matriz C à mão.** Com a árvore-guia
+`(((sp1:0.18,sp2:0.18):1.06,(sp3:0.02,sp4:0.02):1.22):0.20,(sp5:1.37,(sp6:0.23,sp7:0.23):1.14):0.07);`
+(1) monte **C** sem usar `ape::vcv()`, somando os ramos que cada par de
+espécies compartilha, e compare com `ape::vcv()`. (2) Simule 10 000
+conjuntos de dados por BM (σ² = 1) e mostre que a covariância empírica entre
+as pontas se aproxima de **C**. (3) Calcule os contrastes independentes do
+atributo A dos slides (sp1 a sp7: 2,51; 2,80; 2,23; 2,32; 1,64; 1,18; 0,58) com
+`ape::pic()` e a estimativa da raiz.
+*Avaliação:* explica por que sp3 e sp4 têm covariância tão alta e o que isso
+significa para uma análise que as trate como independentes.
+
+As respostas comentadas serão publicadas aqui depois do prazo de entrega.
+
+## Leituras recomendadas
+
+- [Revell & Harmon (2022)](https://press.princeton.edu/books/paperback/9780691219035/phylogenetic-comparative-methods-in-r), *Phylogenetic Comparative Methods in R*: cap. 2, seção 3.3 e seções 4.2–4.5
+- [Harmon (2019), cap. 3](https://lukejharmon.github.io/pcm/chapter3_bmintro/) e [cap. 4](https://lukejharmon.github.io/pcm/chapter4_fitbm/)
+- [Felsenstein (1985)](https://doi.org/10.1086/284325): os contrastes independentes
+- [Freckleton, Harvey & Pagel (2002)](https://doi.org/10.1086/343873): a matriz **C**, o λ e a árvore-guia
+- [Blomberg et al. (2012)](https://doi.org/10.1093/sysbio/syr118): PIC e PGLS são equivalentes

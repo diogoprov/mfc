@@ -40,6 +40,18 @@ arquivo, inventário da aula-modelo e o esboço do mapa
 (infraestrutura) e a aula-modelo. **Não escrever o deck antes das respostas
 às decisões 4–11.**
 
+**Site reorganizado (20/out/2026)**: oito pastas `aula-0N-*` (`arvore-dados`,
+`bm-matriz-c`, `sinal`, `pgls`, `modelos`, `discretos`, `ancestrais`,
+`multivariados`), cada uma com `index.qmd` (slides, em 3 minutos, conteúdo,
+roteiro, dados, desafio, leituras). Os walkthroughs de 2020 ficaram inteiros
+na pasta da aula com mais conteúdo deles e têm `aliases` para as URLs
+antigas; as páginas antigas das 6 aulas redirecionam para as novas. Páginas
+gerais: `comece-aqui.qmd`, `programa.qmd` (ementa literal + distribuição nas
+aulas), `praticas.qmd`, `glossario.qmd`; cronograma em cartões
+(`_cronograma.ejs`, campos `gancho` e `familias`: base, sinal, modelos,
+ancestral, relacao). Os dados das práticas mudaram de pasta: os caminhos em
+`R/` já apontam para as novas.
+
 **Formato**: a disciplina é ofertada condensada em uma semana; cada aula
 ocupa um período (manhã ou tarde) com teoria e prática, 8 aulas em 10
 períodos. Decks de ~50–65 slides.

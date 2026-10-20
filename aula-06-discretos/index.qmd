@@ -1,0 +1,88 @@
+---
+title: "Aula 06 — Atributos discretos"
+order: 6
+description: "Dos modelos de DNA ao Mk; a matriz Q e P(t) = exp(Qt) passo a passo; a perda dos membros nos Squamata; multiestado (ER, SYM, ARD); taxas ocultas; evolução correlacionada de Pagel ao corHMM; o modelo de limiar."
+gancho: "Como evoluem atributos de estados discretos, e dois deles evoluem juntos?"
+familias: [modelos, relacao]
+---
+
+::: {.aula-meta}
+**Aula 6** · [Como evolui?]{.familia .modelos} [Estão associados?]{.familia .relacao} · Métodos Filogenéticos Comparativos (PPGBA/UFMS)
+:::
+
+No mapa dos métodos, esta aula cobre a linha dos **atributos discretos**
+nas colunas **Como evolui?** e **Estão associados?**. O exemplo central é a
+perda dos membros nos Squamata (Brandley et al. 2008).
+
+## Slides
+
+[{{< fa solid display >}} Abrir slides](../slides/a06.html){.btn .btn-outline-primary}
+
+As figuras dos slides foram geradas em R; o código está em
+[`R/aula06_discretos.R`](https://github.com/diogoprov/mfc/tree/main/R).
+
+## Em 3 minutos
+
+::: {.callout-note .em-3-minutos appearance="simple" icon="false"}
+1. O Mk descreve a evolução de estados discretos por uma matriz **Q** de taxas instantâneas; as probabilidades ao longo de um ramo vêm de *P*(*t*) = e^**Q***t*^.
+2. ER, SYM e ARD diferem no número de taxas livres; compare-os por AICc, e considere taxas que mudam na árvore (taxas ocultas).
+3. O teste de Pagel sofre de pseudorreplicação: uma única mudança conjunta pode parecer correlação. Compare com modelos nulos que têm taxas ocultas (`corHMM`).
+
+**Erro comum:** confiar num *p* < 0,001 do teste de Pagel sem olhar quantas vezes os caracteres mudaram na árvore.
+:::
+
+## Conteúdo
+
+1. Do DNA ao Mk: processos de Markov e modelos de substituição
+2. O modelo Mk para um caráter binário, passo a passo
+3. Dados reais: a perda dos membros nos Squamata
+4. Caracteres multiestado
+5. Taxas ocultas
+6. Evolução correlacionada: de Pagel ao `corHMM`
+7. O modelo de limiar
+
+## Código R (aula prática)
+
+Esta aula não tem roteiro próprio da edição de 2020; a prática está em
+partes de outros roteiros:
+
+- Mk nos Squamata (ER, ARD, irreversível): seção `#--- Ajustando modelos
+  de evolução para caracteres discretos` do
+  [roteiro da Aula 2](../aula-02-bm-matriz-c/walkthrough-aula-2-terca.html)
+- Teste de Pagel e modelo de limiar: seções `#---Método do Pagel...` e
+  `#---Threshold model` do
+  [roteiro da Aula 5](../aula-05-modelos/walkthrough-aula-quinta.html)
+
+Pacotes: `geiger`, `phytools`, `corHMM`.
+
+## Dados utilizados
+
+Os Squamata ([`squamate.tre`](../aula-02-bm-matriz-c/squamate.tre) e
+[`brandley_table.csv`](../aula-02-bm-matriz-c/brandley_table.csv)) e os
+dados do teste de Pagel ([`fitPagel-data.csv`](../aula-05-modelos/fitPagel-data.csv),
+[`fitPagel-tree.tre`](../aula-05-modelos/fitPagel-tree.tre)).
+
+## Desafio
+
+Entregue um script `.R` que rode do zero numa sessão limpa, as figuras
+pedidas e até uma página de interpretação. Critério: o script roda (30 %);
+as escolhas estão justificadas (30 %); a interpretação está correta (40 %).
+
+**Correlação ou pseudorreplicação?** Use
+[`fitPagel-challenge.csv`](../aula-05-modelos/fitPagel-challenge.csv) e
+[`fitPagel-challenge.tre`](../aula-05-modelos/fitPagel-challenge.tre).
+(1) Desenhe a árvore com os dois caracteres nas pontas. (2) Rode o teste de
+Pagel (`phytools::fitPagel()`). (3) Rode o teste com taxas ocultas
+(`corHMM::fitCorrelationTest()`) e monte a tabela de AICc e pesos dos
+quatro modelos. (4) Estime quantas vezes cada caráter mudou (mapeamento
+estocástico, Aula 7, ou só pela figura). *Avaliação:* as conclusões dos dois
+testes são comparadas e a de correlação é discutida à luz do número de
+mudanças.
+
+As respostas comentadas serão publicadas aqui depois do prazo de entrega.
+
+## Leituras recomendadas
+
+- [Revell & Harmon (2022)](https://press.princeton.edu/books/paperback/9780691219035/phylogenetic-comparative-methods-in-r), *Phylogenetic Comparative Methods in R*: capítulos 6 e 7
+- [Maddison & FitzJohn (2015)](https://doi.org/10.1093/sysbio/syu070): o problema dos testes de correlação
+- [Boyko & Beaulieu (2023)](https://doi.org/10.1093/sysbio/syac066): taxas ocultas como saída

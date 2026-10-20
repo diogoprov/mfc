@@ -1,0 +1,179 @@
+---
+title: "Glossário"
+subtitle: "Os termos técnicos do curso, com a aula em que aparecem"
+toc: true
+toc-depth: 2
+---
+
+Termos técnicos em inglês ficam em itálico quando não há tradução de uso
+corrente. O número entre parênteses é a aula.
+
+## A árvore e os dados
+
+**Cladograma, filograma, cronograma** (1)
+: Desenhos da mesma árvore em que os comprimentos de ramo não têm
+  significado, representam divergência ou representam tempo.
+
+**Árvore ultramétrica** (1)
+: Árvore em que todas as pontas estão à mesma distância da raiz; um
+  cronograma de espécies atuais é ultramétrico.
+
+**Politomia** (1)
+: Nó com mais de dois descendentes; *soft* quando os dados não resolvem a
+  ordem das divergências, *hard* quando a divergência foi de fato
+  simultânea.
+
+**Newick, Nexus** (1)
+: Formatos de texto para árvores. O Newick guarda só a árvore e os
+  comprimentos; o Nexus é organizado em blocos e guarda também dados.
+
+**Déficit Darwiniano, déficit Raunkiaeriano** (1)
+: Falta de conhecimento sobre as relações entre as espécies e sobre os
+  seus atributos, respectivamente.
+
+**Índice de Colless, γ de Pybus** (1)
+: Medidas da forma da árvore: a simetria (Colless) e a concentração dos
+  nós perto da raiz (γ < 0) ou das pontas (γ > 0).
+
+## Base dos métodos
+
+**Movimento browniano (BM)** (2)
+: Modelo em que o atributo muda ao acaso, com variância σ²*t* proporcional
+  ao tempo e sem tendência; o modelo nulo da maioria dos métodos.
+
+**Matriz de covariância filogenética (C)** (2)
+: Matriz cujos elementos são o tempo compartilhado por cada par de espécies
+  desde a raiz; sob BM, a covariância esperada entre as espécies é σ²**C**.
+
+**Contrastes independentes (PIC)** (2)
+: Diferenças padronizadas entre espécies ou nós irmãos, independentes entre
+  si sob BM (Felsenstein 1985).
+
+**Árvore-guia** (2)
+: A árvore de 7 espécies de Freckleton et al. (2002) usada nos exemplos
+  passo a passo do curso.
+
+## Há sinal?
+
+**Sinal filogenético** (3)
+: Tendência de espécies aparentadas serem mais parecidas do que espécies
+  tiradas ao acaso da árvore. É um padrão, não um processo.
+
+**K de Blomberg** (3, 8)
+: Razão entre a semelhança observada entre parentes e a esperada sob BM;
+  K = 1 sob BM. O K~mult~ é a versão para dados de alta dimensão (8).
+
+**λ de Pagel** (3, 4)
+: Multiplicador das covariâncias de **C**: λ = 0 é a árvore em estrela;
+  λ = 1, o BM.
+
+**PVR** (3)
+: Regressão de um atributo contra os autovetores da matriz de distâncias
+  filogenéticas, que separa um componente filogenético de um específico.
+
+**D de Fritz & Purvis** (3)
+: Medida de sinal para atributos binários: 0 se o atributo evoluir como um BM com limiar, 1 se o
+  atributo estiver distribuído ao acaso na árvore.
+
+## Estão associados?
+
+**PGLS** (4)
+: Regressão por mínimos quadrados generalizados com a covariância dos
+  resíduos dada por σ²**C** (ou por uma transformação dela, como λ).
+
+**GLM filogenético** (4)
+: Regressão logística ou de Poisson que considera a filogenia
+  (`phylolm::phyloglm`, com os métodos logísticos ou `poisson_GEE`).
+
+**Teste de Pagel** (6)
+: Comparação entre um modelo em que dois caracteres binários evoluem de
+  forma independente e outro em que as taxas de um dependem do estado do
+  outro.
+
+**Pseudorreplicação filogenética** (6)
+: Quando uma única mudança evolutiva, herdada por muitas espécies, é
+  contada como várias observações independentes.
+
+## Como evolui?
+
+**Ornstein-Uhlenbeck (OU)** (5)
+: Movimento browniano com uma atração, de força α, para um ótimo θ.
+
+**Meia-vida filogenética** (5)
+: ln 2/α: o tempo para o atributo percorrer metade da distância até o
+  ótimo. Lida em relação à altura da árvore.
+
+***Early burst* (EB), ACDC** (5)
+: Modelo em que a taxa de evolução cai (EB, o caso desacelerado do ACDC de
+  Blomberg et al. 2003) ou sobe com o tempo.
+
+**Tendência** (5)
+: BM com um deslocamento médio μ por unidade de tempo; só identificável com
+  fósseis.
+
+**AICc, pesos de Akaike** (5)
+: Critério para comparar modelos com números diferentes de parâmetros,
+  corrigido para amostras pequenas, e o suporte relativo de cada modelo.
+
+**Modelo Mk** (6)
+: Modelo de Markov para *k* estados discretos, descrito por uma matriz
+  **Q** de taxas instantâneas; as probabilidades ao longo de um ramo são
+  *P*(*t*) = e^**Q***t*^.
+
+**ER, SYM, ARD** (6)
+: Restrições sobre **Q**: todas as taxas iguais, taxas simétricas entre
+  pares de estados, todas as taxas diferentes.
+
+**Taxas ocultas** (6)
+: Categorias de taxa não observadas, que permitem que a velocidade de
+  mudança varie ao longo da árvore (`corHMM`).
+
+**Modelo de limiar** (6)
+: Um estado discreto determinado por um atributo contínuo não observado (a
+  *liability*) que cruza um limiar.
+
+**Matriz de taxas evolutivas** (8)
+: Versão multivariada de σ²: variâncias e covariâncias evolutivas entre
+  vários atributos.
+
+**Verossimilhança penalizada** (8)
+: Ajuste de modelos multivariados quando há mais variáveis do que espécies
+  (`mvMORPH::mvgls`), comparados pelo GIC.
+
+## Como era o ancestral?
+
+**Parcimônia de mudança quadrada** (7)
+: Estimativa dos estados ancestrais que minimiza a soma dos quadrados das
+  mudanças; ponderada pelos comprimentos de ramo, coincide com a máxima
+  verossimilhança sob BM.
+
+**Estimativa marginal × conjunta** (7)
+: A marginal dá a probabilidade de cada estado em cada nó, integrando
+  sobre os demais; a conjunta busca o conjunto de estados mais verossímil
+  em todos os nós ao mesmo tempo.
+
+**Mapeamento estocástico** (7)
+: Simulação de histórias completas do caráter na árvore (estados e
+  mudanças ao longo dos ramos), usada para contar mudanças.
+
+**Filomorfoespaço** (7, 8)
+: A árvore projetada no espaço de dois atributos (ou eixos), com os nós nas
+  estimativas dos estados ancestrais.
+
+## Atributos multivariados
+
+**Superposição de Procrustes (GPA)** (8)
+: Remove das coordenadas dos marcos as diferenças de posição, escala e
+  rotação; o que sobra é forma.
+
+**Tamanho do centroide** (8)
+: Raiz da soma dos quadrados das distâncias dos marcos ao seu centroide; a
+  medida de tamanho da morfometria geométrica.
+
+**Modularidade, integração** (8)
+: Integração é a covariação entre partes do fenótipo; módulos são conjuntos
+  de atributos integrados entre si e relativamente independentes dos outros.
+
+**PCA filogenética** (8)
+: PCA que estima as covariâncias evolutivas entre os atributos usando a
+  matriz **C** (Revell 2009).

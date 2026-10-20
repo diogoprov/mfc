@@ -1,0 +1,86 @@
+---
+title: "Aula 01 — A árvore e os dados"
+order: 1
+description: "Por que espécies não são pontos independentes. Ler e escrever árvores (Newick, Nexus), de onde vem a árvore, bases de árvores e de atributos, desenho de estudos comparativos e a forma da árvore."
+gancho: "De onde vem a árvore que eu uso, e o que fazer quando ela não bate com os meus dados?"
+familias: [base]
+aliases:
+  - "../aula-01-intro-desenho/index.html"
+---
+
+::: {.aula-meta}
+**Aula 1** · [A árvore e os dados]{.familia .base} · Métodos Filogenéticos Comparativos (PPGBA/UFMS)
+:::
+
+No mapa dos métodos, esta aula é a primeira **faixa de base**: tudo o que
+vem depois precisa de uma árvore e de dados que batam com ela. A aula supõe
+lidas as três [leituras prévias](../comece-aqui.qmd#leituras-prévias).
+
+## Slides
+
+[{{< fa solid display >}} Abrir slides](../slides/a01.html){.btn .btn-outline-primary}
+
+As figuras dos slides foram geradas em R; o código está em
+[`R/aula01_arvore.R`](https://github.com/diogoprov/mfc/tree/main/R).
+
+## Em 3 minutos
+
+::: {.callout-note .em-3-minutos appearance="simple" icon="false"}
+1. Espécies aparentadas compartilham história: tratá-las como independentes infla os graus de liberdade e pode criar associações que não existem.
+2. A árvore é uma hipótese, com incerteza na topologia e nos comprimentos de ramo; para os métodos comparativos, o ideal é um cronograma (ramos em tempo).
+3. Antes de qualquer análise, case os nomes da árvore com os da tabela de atributos e decida o que fazer com o que sobra (podar, trocar espécies, imputar).
+
+**Erro comum:** usar uma árvore sem saber de onde ela veio nem o que os comprimentos de ramo representam.
+:::
+
+## Conteúdo
+
+0. Antes de começar: as três leituras, o problema do parentesco comum e uma breve história
+1. O que é uma filogenia: partes, enraizamento, politomias, cladograma, filograma e cronograma, suporte
+2. Como escrever uma árvore: Newick passo a passo, Nexus e NeXML
+3. De onde vem a árvore: critérios, fluxo da inferência, programas
+4. Como obter uma árvore: bases, megafilogenias, *pipelines*, a árvore à mão
+5. Dados de atributos: bases por grupo
+6. Desenho de estudos comparativos: déficits, `phyndr`, imputação, PhyloTargeting
+7. A forma da árvore: Colless, γ e o efeito na matriz **C**
+
+## Código R (aula prática)
+
+- {{< fa solid eye >}} **[Ver walkthrough HTML](walkthrough-aula-1-segunda.html)**
+  *R básico, leitura e manipulação de árvores em Newick e Nexus, o efeito
+  da correlação filogenética (simulado) e o `phyndr`.*
+  [{{< fa solid file-code >}} baixar `aula-1-segunda.R`](aula-1-segunda.R)
+
+Pacotes: `ape`, `phytools`, `geiger`.
+
+## Dados utilizados
+
+- [`BarbetTree.nex`](BarbetTree.nex) e [`Barbetdata.csv`](Barbetdata.csv)
+- [`Centrarchidae.tre`](Centrarchidae.tre) e [`Centrarchidae.csv`](Centrarchidae.csv)
+- [`Example_phylotargeting.nex`](Example_phylotargeting.nex)
+- [`Gomes_phylo.txt`](Gomes_phylo.txt) e [`Gomes_tree_datada.txt`](Gomes_tree_datada.txt)
+- [`anole.data.csv`](anole.data.csv)
+- [`Magallon_etal_PL_ML.nex`](Magallon_etal_PL_ML.nex): filogenia datada de angiospermas (Magallón et al. 2015; [Dryad](https://doi.org/10.5061/dryad.k4227), CC0)
+- [`GlobalWoodinessDatabase.csv`](GlobalWoodinessDatabase.csv): hábito lenhoso × herbáceo (Zanne et al. 2014; [Dryad](https://doi.org/10.5061/dryad.63q27), CC0)
+
+## Desafio
+
+Entregue um script `.R` que rode do zero numa sessão limpa, as figuras
+pedidas e até uma página de interpretação. Critério: o script roda (30 %);
+as escolhas estão justificadas (30 %); a interpretação está correta (40 %).
+
+**A árvore não bate com os dados.** Use `data(geospiza, package = "geiger")`
+(a árvore tem 14 espécies; a tabela, 13). (1) Encontre o descompasso com
+`geiger::name.check()` e resolva com `geiger::treedata()`. (2) Verifique se
+a árvore é enraizada e ultramétrica e salve-a em Newick. (3) Calcule o
+índice de Colless (escreva a função) e o γ de Pybus (`ape::gammaStat()`).
+(4) Desenhe a árvore com o comprimento da asa (`wingL`) ao lado das pontas.
+*Avaliação:* explica o que foi podado e por quê, e interpreta Colless e γ.
+
+As respostas comentadas serão publicadas aqui depois do prazo de entrega.
+
+## Leituras recomendadas
+
+- [Revell & Harmon (2022)](https://press.princeton.edu/books/paperback/9780691219035/phylogenetic-comparative-methods-in-r), *Phylogenetic Comparative Methods in R*: capítulos 1 e 13
+- As três leituras prévias (ver [Comece aqui](../comece-aqui.qmd#leituras-prévias))
+- [Roquet, Thuiller & Lavergne (2013)](https://doi.org/10.1111/j.1600-0587.2012.07773.x): megafilogenias

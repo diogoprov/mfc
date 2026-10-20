@@ -1,0 +1,192 @@
+---
+title: "Programa"
+subtitle: "MÉTODOS FILOGENÉTICOS COMPARATIVOS (201521439, 45 h) · Mestrado em Biologia Animal, UFMS"
+toc: true
+---
+
+## Ementa
+
+Delineamento de estudos comparativos. Modelos de evolução de atributos
+quantitativos e discretos. Evolução correlacionada e estimativa de
+estados ancestrais. PGLS e métodos para estimar taxa de evolução de
+atributos. Métodos para detectar convergência fenotípica. Mensuração e
+teste de sinal filogenético.
+
+## Objetivos
+
+Estudos comparativos têm se tornado cada vez mais factíveis dada a
+facilidade de obtenção de dados comparativos e de plataformas para o
+seu gerenciamento, aliada à crescente disponibilidade de hipóteses
+filogenéticas para diversos grupos. Nesta disciplina teórico-prática
+apresento teorias e métodos para estudar evolução fenotípica ao longo
+de filogenias, e discutimos as principais questões investigadas em
+estudos comparativos e como métodos analíticos podem ser utilizados
+para respondê-las.
+
+## Conteúdo programático
+
+1. **Histórico e desenho de estudos comparativos.** Tree thinking;
+   métodos para reconstruir hipóteses filogenéticas (incluindo
+   supertree, supermatrix, e iniciativas recentes — SUPERSMART, PASTIS,
+   Open Tree of Life, treePL, congruification); perguntas comuns em
+   estudos de adaptação; desenho de estudo comparativo (Arnold & Nunn
+   2010; Pennell et al. 2015); limitações da abordagem (Darwinian e
+   Eltonian shortfall); bases de dados online de atributos e
+   filogenias; distância filogenética e matriz de variância-covariância.
+2. **Modelos de evolução de atributos.** Ornstein-Uhlenbeck,
+   Movimento Browniano, ACDC, mudança direcionada, Early Burst.
+   Evolução correlacionada. PGLS e contrastes independentes
+   filogenéticos (PIC). Estimativa de estado ancestral para atributos
+   contínuos e categóricos (Bayesiano, ML, threshold). ANOVA filogenética.
+3. **Taxa de evolução de atributos** (auteur, Brownie) e suas
+   relações com taxas de especiação. OU multi-regime (ouch). Métodos
+   para detectar convergência, picos adaptativos e mudança de regimes
+   (SURFACE).
+4. **Simulações** de evolução de atributos e filogenias sob modelos
+   alternativos. Medidas de simetria de árvore. Imputação de dados
+   faltantes. Visualização de dados filogenéticos.
+5. **Sinal filogenético** para atributos contínuos e categóricos:
+   K de Blomberg, λ de Pagel, R², Mantel, I de Moran, distograma
+   filogenético, partição da entropia quadrática.
+6. **Não-estacionaridade**: PVR e ajuste de múltiplas matrizes VCV.
+   Partição dos componentes específico e herdado da variação
+   fenotípica. Incerteza filogenética.
+7. **Documento dinâmico em R Markdown** — preparação e publicação
+   online da análise final.
+
+### Como o conteúdo está distribuído nas aulas
+
+O texto acima é o da ementa da disciplina. Na versão atual dos materiais,
+ele está organizado em oito aulas pelo [mapa dos métodos](index.qmd), com
+algumas atualizações:
+
+| Aula | Tema | Itens do conteúdo |
+|---:|---|---|
+| 1 | [A árvore e os dados](aula-01-arvore-dados/index.qmd) | 1, 4 (simetria, imputação) |
+| 2 | [O movimento browniano e a matriz C](aula-02-bm-matriz-c/index.qmd) | 1 (matriz de variância-covariância), 2 (BM, PIC) |
+| 3 | [Sinal filogenético](aula-03-sinal/index.qmd) | 5, 6 (PVR) |
+| 4 | [Regressão filogenética (PGLS)](aula-04-pgls/index.qmd) | 2 (PGLS, ANOVA), 6 (várias matrizes, incerteza) |
+| 5 | [Modelos de evolução contínua](aula-05-modelos/index.qmd) | 2 (OU, ACDC, tendência, EB), 3 |
+| 6 | [Atributos discretos](aula-06-discretos/index.qmd) | 2 (evolução correlacionada, threshold) |
+| 7 | [Estados ancestrais e visualização](aula-07-ancestrais/index.qmd) | 2 (estados ancestrais), 4 (visualização) |
+| 8 | [Atributos multivariados](aula-08-multivariados/index.qmd) | 3 (taxas), 5 e 2 (versões multivariadas) |
+
+Atualizações em relação ao texto da ementa: o SURFACE saiu (no lugar,
+métodos como `bayou`, PhylogeneticEM e `mvMORPH`); a avaliação usa
+**Quarto**, sucessor do R Markdown; o desenho de estudos cita a versão
+publicada do `phyndr` ([Pennell, FitzJohn & Cornwell 2016](https://doi.org/10.1111/2041-210x.12517));
+e os déficits de conhecimento seguem Hortal et al. (2015), que tratam do
+Darwiniano e do Raunkiaeriano, entre outros.
+
+## Formato
+
+A disciplina é ofertada **condensada em uma semana**: cada aula ocupa um
+período (manhã ou tarde), com teoria e prática no mesmo período. O
+cronograma está em [Comece aqui](comece-aqui.qmd#cronograma).
+
+## Avaliação
+
+Um **documento dinâmico em Quarto** com uma análise de dados à escolha do(a)
+aluno(a), contendo:
+
+1. pergunta de pesquisa;
+2. análise;
+3. resultados;
+4. breve discussão baseada em teoria (até ~5 linhas).
+
+O documento deve renderizar do começo ao fim numa sessão limpa do R, com
+sementes fixas, e ser entregue como `.qmd` e `.html`. Para começar: o
+guia [*Get started*](https://quarto.org/docs/get-started/) do Quarto. Além
+disso, cada aula tem um **desafio** de código, resolvido individualmente.
+
+## Bibliografia
+
+### Livros
+
+- Diniz-Filho, J.A.F. 2000. *Métodos filogenéticos comparativos.*
+  São Carlos: Holos.
+- Felsenstein, J. 2004. *Inferring phylogenies.* Sunderland: Sinauer.
+- Garamszegi, L.Z. (Ed.) 2014. [*Modern phylogenetic comparative methods
+  and their application in evolutionary biology.*](https://doi.org/10.1007/978-3-662-43550-2) Berlin: Springer.
+- Harvey, P.H. & Pagel, M.D. 1991. *The comparative method in
+  evolutionary biology.* Oxford University Press.
+- Nunn, C.L. 2011. *The comparative approach in evolutionary
+  anthropology and biology.* Chicago: University of Chicago Press.
+- Paradis, E. 2012. *Analysis of phylogenetics and evolution with R.*
+  2ª ed. Berlin: Springer.
+- Revell, L.J. & Harmon, L.J. 2022. [*Phylogenetic comparative methods
+  in R.*](https://press.princeton.edu/books/paperback/9780691219035/phylogenetic-comparative-methods-in-r)
+  Princeton University Press. **Livro-texto do curso.**
+
+### Artigos-chave
+
+- Arnold, S.J. 2014. [Phenotypic evolution: the ongoing synthesis.](https://doi.org/10.1086/675304)
+  *American Naturalist* 183:729–746.
+- Baldauf, S.L. 2003. [Phylogeny for the faint of heart: a tutorial.](https://doi.org/10.1016/s0168-9525(03)00112-4)
+  *Trends in Genetics* 19:345–351.
+- Freckleton, R.P. 2009. [The seven deadly sins of comparative analysis.](https://doi.org/10.1111/j.1420-9101.2009.01757.x)
+  *Journal of Evolutionary Biology* 22:1367–1375.
+- Freckleton, R.P. & Pagel, M. 2010. Recent advances in comparative
+  methods. In: Székely, T., Moore, A.J. & Komdeur, J. (Eds.)
+  *Social behaviour: genes, ecology and evolution.* Cambridge
+  University Press, pp. 110–126.
+- Garland, T., Bennett, A.F. & Rezende, E.L. 2005. [Phylogenetic
+  approaches in comparative physiology.](https://doi.org/10.1242/jeb.01745)
+  *Journal of Experimental Biology* 208:3015–3035.
+- Harvey, P.H. & Purvis, A. 1991. [Comparative methods for explaining
+  adaptations.](https://doi.org/10.1038/351619a0) *Nature* 351:619–624.
+- Hunt, G. & Rabosky, D.L. 2014. [Phenotypic evolution in fossil
+  species: pattern and process.](https://doi.org/10.1146/annurev-earth-040809-152524)
+  *Annual Review of Earth and Planetary Sciences* 42:421–441.
+- Martins, E.P. 2000. [Adaptation and the comparative method.](https://doi.org/10.1016/s0169-5347(00)01880-2)
+  *Trends in Ecology & Evolution* 15:296–299.
+- Martins, E.P. & Hansen, T.F. 1996. The statistical analysis of
+  interspecific data: a review and evaluation of phylogenetic
+  comparative methods. In: Martins, E. (Ed.) *Phylogenies and the
+  comparative method in animal behavior.* Oxford University Press,
+  pp. 22–75.
+- O'Meara, B.C. 2012. [Evolutionary inferences from phylogenies: a
+  review of methods.](https://doi.org/10.1146/annurev-ecolsys-110411-160331)
+  *Annual Review of Ecology, Evolution, and Systematics* 43:267–285.
+- Pagel, M. 1999. [Inferring the historical patterns of biological
+  evolution.](https://doi.org/10.1038/44766) *Nature* 401:877–884.
+- Pennell, M.W. & Harmon, L.J. 2013. [An integrative view of
+  phylogenetic comparative methods: connections to population
+  genetics, community ecology, and paleobiology.](https://doi.org/10.1111/nyas.12157)
+  *Annals of the New York Academy of Sciences* 1289:90–105.
+- Rezende, E.L. & Diniz-Filho, J.A.F. 2012. [Phylogenetic analyses:
+  comparing species to infer adaptations and physiological mechanisms.](https://doi.org/10.1002/cphy.c100079)
+  *Comprehensive Physiology* 2:639–674.
+
+### Introdução ao R
+
+- [Wickham, H., Çetinkaya-Rundel, M. & Grolemund, G. *R para Ciência de Dados* (2ª ed., tradução)](https://pt.r4ds.hadley.nz/).
+- Adler, J. 2010. *R in a nutshell: a desktop quick reference.*
+  O'Reilly Media.
+- Beckerman, A.P. & Petchey, O.L. 2012. *Getting started with R: an
+  introduction for biologists.* Oxford University Press.
+- Zuur, A.F., Ieno, E.N. & Meesters, E. 2009. *A beginner's guide to R.*
+  Springer.
+
+### Recursos online
+
+- [Harmon, L.J. 2019. *Phylogenetic Comparative Methods* (acesso aberto)](https://lukejharmon.github.io/pcm/)
+- [Site do livro *Modern PCM* (Garamszegi 2014)](http://www.mpcm-evolution.com/)
+- [Blog do Liam Revell (`phytools`)](http://blog.phytools.org/)
+- [Treethinkers: materiais de workshop](http://treethinkers.org/)
+- [AnthroTree: site de Charles Nunn (arquivado)](https://web.archive.org/web/20160127032940/http://www.anthrotree.info/wiki/projects/pica/The_AnthroTree_Website.html)
+- [Mapa mental do curso (Coggle)](https://coggle.it/diagram/WhbkkxE2BAAB0R0m)
+
+## Edições anteriores
+
+- **2021/2**: UFMS, modalidade semestral regular (45 h).
+- **2020**: UFMS, modalidade intensiva (uma semana, 40 h). Os slides em
+  PDF dessa edição continuam disponíveis:
+  [Aula 1](slides/aula-01.pdf) ·
+  [Aula 2](slides/aula-02.pdf) ·
+  [Aula 3](slides/aula-03.pdf) ·
+  [Aula 4](slides/aula-04.pdf) ·
+  [Aula 5](slides/aula-05.pdf) ·
+  [Aula 6](slides/aula-06.pdf).
+  Os roteiros práticos dessa edição foram redistribuídos pelas aulas novas
+  (ver [Roteiros práticos](praticas.qmd)).

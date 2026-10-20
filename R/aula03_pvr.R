@@ -109,8 +109,8 @@ fig_particao <- function() {
 
 #' Bocaina (Garey et al. 2018): PVR da frequência dominante (log)
 pvr_bocaina <- function(k = 3) {
-  tb <- ape::read.tree(here::here("aula-03-estado-ancestral/filogenia_bocaina.txt"))
-  cn <- read.csv(here::here("aula-03-estado-ancestral/canto.csv"), sep = ";", row.names = 1)
+  tb <- ape::read.tree(here::here("aula-03-sinal/filogenia_bocaina.txt"))
+  cn <- read.csv(here::here("aula-03-sinal/canto.csv"), sep = ";", row.names = 1)
   x <- setNames(log(cn$F_dom), rownames(cn))[tb$tip.label]
   list(arvore = tb, x = x, pvr = pvr_passos(tb, x, k = k))
 }

@@ -1,0 +1,84 @@
+---
+title: "Aula 04 — Regressão filogenética (PGLS)"
+order: 4
+description: "Do OLS ao GLS com a matriz C. PGLS na prática, diagnóstico e sinal nos resíduos, R² com rr2, ANOVA e ANCOVA filogenéticas, GLM filogenético (phylolm), matrizes de taxas que mudam na árvore e incerteza filogenética."
+gancho: "Como fazer uma regressão entre atributos quando as espécies são aparentadas?"
+familias: [relacao]
+---
+
+::: {.aula-meta}
+**Aula 4** · [Estão associados?]{.familia .relacao} · Métodos Filogenéticos Comparativos (PPGBA/UFMS)
+:::
+
+No mapa dos métodos, esta aula cobre a coluna **Estão associados?** para
+atributos contínuos: a regressão que a maioria vai usar na dissertação. Os
+exemplos usam os *Anolis* (`phytools`).
+
+## Slides
+
+[{{< fa solid display >}} Abrir slides](../slides/a04.html){.btn .btn-outline-primary}
+
+As figuras dos slides foram geradas em R; o código está em
+[`R/aula04_pgls.R`](https://github.com/diogoprov/mfc/tree/main/R).
+
+## Em 3 minutos
+
+::: {.callout-note .em-3-minutos appearance="simple" icon="false"}
+1. O PGLS é um GLS em que a covariância dos resíduos é σ²**C**; sob BM, dá a mesma inclinação que os contrastes independentes.
+2. O pressuposto é sobre os **resíduos**: estime o λ junto com a regressão e confira o sinal nos resíduos.
+3. Para respostas binárias ou contagens, use o GLM filogenético (`phylolm::phyloglm`); o R² do OLS não serve, use o `rr2`.
+
+**Erro comum:** testar o sinal na resposta ou na preditora para decidir se usa o PGLS.
+:::
+
+## Conteúdo
+
+1. Do OLS ao GLS: pressupostos e a matriz **C**
+2. PGLS na prática: `nlme::gls` com `corBrownian` e `corPagel`, R² com `rr2`
+3. Diagnóstico: resíduos e o erro comum
+4. ANOVA e ANCOVA filogenéticas
+5. Além do PGLS: GLM filogenético (logística e Poisson)
+6. Quando a correlação muda na árvore (`evol.vcv`)
+7. Incerteza filogenética
+
+## Código R (aula prática)
+
+Esta aula não tem roteiro próprio da edição de 2020; a prática está em
+partes de outros roteiros:
+
+- PGLS e ANOVA filogenética: seções `#---PGLS` e `#---ANOVA filogenética`
+  do [roteiro da Aula 2](../aula-02-bm-matriz-c/walkthrough-aula-2-terca.html)
+- Matrizes de taxas por regime (`evol.vcv`): seção `#---evol.vcv` do
+  [roteiro da Aula 5](../aula-05-modelos/walkthrough-aula-quinta.html)
+
+Pacotes: `ape`, `nlme`, `phytools`, `phylolm`, `rr2`.
+
+## Dados utilizados
+
+Os *Anolis* do pacote `phytools` (`data(anoletree, anole.data)`), os mesmos
+dos slides; os dados dos roteiros estão nas páginas das Aulas
+[2](../aula-02-bm-matriz-c/index.qmd) e [5](../aula-05-modelos/index.qmd).
+
+## Desafio
+
+Entregue um script `.R` que rode do zero numa sessão limpa, as figuras
+pedidas e até uma página de interpretação. Critério: o script roda (30 %);
+as escolhas estão justificadas (30 %); a interpretação está correta (40 %).
+
+**OLS, PIC e PGLS.** Com `data(anoletree, anole.data, package = "phytools")`,
+modele o log do comprimento da cabeça (HL) contra o log de SVL: (1) por
+OLS; (2) por PGLS com `corBrownian` e com `corPagel` (`nlme::gls`,
+`form = ~sp`); (3) pela regressão dos contrastes pela origem. (4) Compare
+as inclinações e os erros-padrão numa tabela, calcule o R² do PGLS com
+`rr2::R2()` e estime o sinal nos resíduos do OLS. *Avaliação:* mostra que
+PIC e PGLS-BM dão a mesma inclinação e justifica a escolha do modelo pelos
+resíduos, não pelos atributos.
+
+As respostas comentadas serão publicadas aqui depois do prazo de entrega.
+
+## Leituras recomendadas
+
+- [Revell & Harmon (2022)](https://press.princeton.edu/books/paperback/9780691219035/phylogenetic-comparative-methods-in-r), *Phylogenetic Comparative Methods in R*: cap. 3
+- [Symonds & Blomberg (2014)](https://doi.org/10.1007/978-3-662-43550-2_5): um guia do PGLS
+- [Revell (2010)](https://doi.org/10.1111/j.2041-210x.2010.00044.x): sinal nos resíduos
+- [Ives (2019)](https://doi.org/10.1093/sysbio/syy060): R² para dados correlacionados

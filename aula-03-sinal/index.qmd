@@ -1,0 +1,90 @@
+---
+title: "Aula 03 — Sinal filogenético"
+order: 3
+description: "O que é (e o que não é) sinal filogenético. K de Blomberg, λ de Pagel, I de Moran, C de Abouheif, Mantel, distogramas, PVR e as medidas para atributos categóricos (D, decomposição de Rao, δ)."
+gancho: "Espécies próximas são mais parecidas do que o esperado?"
+familias: [sinal]
+aliases:
+  - "../aula-03-estado-ancestral/index.html"
+---
+
+::: {.aula-meta}
+**Aula 3** · [Há sinal?]{.familia .sinal} · Métodos Filogenéticos Comparativos (PPGBA/UFMS)
+:::
+
+No mapa dos métodos, esta aula cobre a coluna **Há sinal?** para atributos
+contínuos e discretos. O exemplo brasileiro são os cantos de anuros da
+Bocaina (Garey et al. 2018).
+
+## Slides
+
+[{{< fa solid display >}} Abrir slides](../slides/a03.html){.btn .btn-outline-primary}
+
+As figuras dos slides foram geradas em R; o código está em
+[`R/aula03_*.R`](https://github.com/diogoprov/mfc/tree/main/R).
+
+## Em 3 minutos
+
+::: {.callout-note .em-3-minutos appearance="simple" icon="false"}
+1. Sinal filogenético é um **padrão** (parentes parecidos), não um processo: modelos diferentes geram sinal parecido.
+2. K compara a semelhança observada com a esperada sob BM (K = 1); λ multiplica as covariâncias de **C** (λ = 0 é a estrela, λ = 1 é o BM).
+3. Para atributos categóricos, use medidas próprias: D de Fritz & Purvis, decomposição de Rao, δ.
+
+**Erro comum:** concluir "restrição filogenética" a partir de um K ou λ alto.
+:::
+
+## Conteúdo
+
+1. O que é "sinal" filogenético
+2. Medidas para atributos contínuos: um mapa
+3. K de Blomberg, passo a passo
+4. λ de Pagel e o guia de Pearse et al. (2025)
+5. Autocorrelação: I de Moran e C de Abouheif
+6. Mantel e distogramas
+7. PVR: componentes filogenético e específico
+8. Atributos categóricos: D, decomposição de Rao e δ
+
+## Código R (aula prática)
+
+- {{< fa solid eye >}} **[Ver walkthrough HTML](walkthrough-aula-3-quarta-modificada.html)**
+  *A segunda metade (K, λ, D de Fritz, PVR, correlograma de Moran,
+  Mantel) é desta aula; a primeira (estados ancestrais) é da Aula 7.*
+  [{{< fa solid file-code >}} baixar `aula-3-quarta-modificada.R`](aula-3-quarta-modificada.R)
+- {{< fa solid eye >}} **[Distograma filogenético](walkthrough-phylogenetic-distogram.html)** ·
+  [{{< fa solid file-code >}} `phylogenetic-distogram.R`](phylogenetic-distogram.R)
+- {{< fa solid eye >}} **[Decomposição da diversidade pelos nós](walkthrough-supfileac.html)** ·
+  [{{< fa solid file-code >}} `SUPFILEAc.R`](SUPFILEAc.R)
+- PVR também no [roteiro da Aula 7](../aula-07-ancestrais/walkthrough-aula-5-sexta.html).
+
+Pacotes: `ape`, `phytools`, `caper`, `adephylo`.
+
+## Dados utilizados
+
+- [`canto.csv`](canto.csv) e [`filogenia_bocaina.txt`](filogenia_bocaina.txt): cantos de anuros da Bocaina ([Garey et al. 2018](https://doi.org/10.1093/biolinnean/bly129))
+- [`Anolis.tre`](Anolis.tre) e [`svl.csv`](svl.csv)
+- [`elopomorph.tre`](elopomorph.tre), [`elopomorph.csv`](elopomorph.csv) e [`anguila.nex`](anguila.nex)
+- [`arvore.txt`](arvore.txt), [`traits selecionados.txt`](traits%20selecionados.txt) e [`testes_matrix_r.txt`](testes_matrix_r.txt)
+
+## Desafio
+
+Entregue um script `.R` que rode do zero numa sessão limpa, as figuras
+pedidas e até uma página de interpretação. Critério: o script roda (30 %);
+as escolhas estão justificadas (30 %); a interpretação está correta (40 %).
+
+**Quanto sinal há em cada atributo?** Com `data(anoletree, anole.data, package = "phytools")`:
+(1) estime K e λ, com os testes (`phytools::phylosig(..., test = TRUE)`),
+para o log de SVL, do comprimento da cabeça (HL) e do número de lamelas
+(LAM). (2) Simule um atributo por BM na mesma árvore (`phytools::fastBM()`)
+e outro sem relação com ela (`rnorm()`) e estime K e λ para os dois.
+(3) Faça uma tabela com tudo. *Avaliação:* compara os atributos reais com
+as duas referências simuladas e não interpreta sinal alto como restrição.
+
+As respostas comentadas serão publicadas aqui depois do prazo de entrega.
+
+## Leituras recomendadas
+
+- [Revell & Harmon (2022)](https://press.princeton.edu/books/paperback/9780691219035/phylogenetic-comparative-methods-in-r), *Phylogenetic Comparative Methods in R*: seção 4.6
+- [Pearse, Davies & Wolkovich (2025)](https://doi.org/10.1111/geb.70012): como definir, usar e interpretar o λ
+- [Münkemüller et al. (2012)](https://doi.org/10.1111/j.2041-210x.2012.00196.x): como medir e testar o sinal
+- [Blomberg et al. (2003)](https://doi.org/10.1554/0014-3820(2003)057[0717:tfpsic]2.0.co;2): o K
+- [Revell et al. (2008)](https://doi.org/10.1080/10635150802302427): sinal, processo e taxa

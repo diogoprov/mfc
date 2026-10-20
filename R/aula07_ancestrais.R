@@ -19,8 +19,8 @@ guia_ancestrais <- function() {
 
 #' Enguias (Collar et al. 2014, dados da prática): modo de alimentação
 enguias <- function() {
-  X <- read.csv(here::here("aula-03-estado-ancestral/elopomorph.csv"), row.names = 1)
-  tr <- ape::read.tree(here::here("aula-03-estado-ancestral/elopomorph.tre"))
+  X <- read.csv(here::here("aula-03-sinal/elopomorph.csv"), row.names = 1)
+  tr <- ape::read.tree(here::here("aula-03-sinal/elopomorph.tre"))
   x <- setNames(factor(X$feed_mode, levels = c("bite", "suction"),
                        labels = c("mordida", "sucção")), rownames(X))[tr$tip.label]
   list(arvore = tr, x = x)

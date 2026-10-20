@@ -8,8 +8,8 @@ source(here::here("R/bm.R"))            # sim_bm_tempo (modelo de limiar)
 
 #' Squamata (Brandley et al. 2008, dados da prática): árvore e estados
 squamata <- function() {
-  d <- read.csv(here::here("aula-02-modelos-evolucao-pgls/brandley_table.csv"))
-  tr <- ape::read.nexus(here::here("aula-02-modelos-evolucao-pgls/squamate.tre"))
+  d <- read.csv(here::here("aula-02-bm-matriz-c/brandley_table.csv"))
+  tr <- ape::read.nexus(here::here("aula-02-bm-matriz-c/squamate.tre"))
   sp <- sub(" ", "_", d$Species)
   hind <- d$HLL != 0; fore <- d$FLL != 0
   bin <- setNames(ifelse(!hind & !fore, "sem", "com"), sp)
@@ -31,8 +31,8 @@ ajustes_squamata <- function() {
 }
 
 pagel_pratica <- function() {
-  X <- read.csv(here::here("aula-04-ou-multi-regime/fitPagel-data.csv"), row.names = 1)
-  tr <- ape::read.tree(here::here("aula-04-ou-multi-regime/fitPagel-tree.tre"))
+  X <- read.csv(here::here("aula-05-modelos/fitPagel-data.csv"), row.names = 1)
+  tr <- ape::read.tree(here::here("aula-05-modelos/fitPagel-tree.tre"))
   phytools::fitPagel(tr, setNames(X$x, rownames(X)), setNames(X$y, rownames(X)))
 }
 
@@ -305,8 +305,8 @@ fig_limiar <- function(n = 6, passos = 400, seed = 603) {
 #' da prática: modelos independente e correlacionado, com e sem uma segunda
 #' classe de taxas (corHMM::fitCorrelationTest; ~3 min)
 correlacao_corhmm <- function() {
-  X <- read.csv(here::here("aula-04-ou-multi-regime/fitPagel-data.csv"), row.names = 1)
-  tr <- ape::read.tree(here::here("aula-04-ou-multi-regime/fitPagel-tree.tre"))
+  X <- read.csv(here::here("aula-05-modelos/fitPagel-data.csv"), row.names = 1)
+  tr <- ape::read.tree(here::here("aula-05-modelos/fitPagel-tree.tre"))
   r <- corHMM::fitCorrelationTest(tr, data.frame(sp = rownames(X), x = X$x, y = X$y))
   nomes <- c(independent_model_fit = "independente",
              hidden_Markov_independent_model_fit = "independente + taxas ocultas",

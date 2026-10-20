@@ -1,0 +1,81 @@
+---
+title: "Aula 08 — Atributos multivariados"
+order: 8
+description: "Morfometria geométrica e superposição de Procrustes; K, taxa e PGLS multivariados (geomorph); modelos multivariados com verossimilhança penalizada e matrizes de taxas por regime (mvMORPH); modularidade e integração; PCA filogenética."
+gancho: "Como estudar a evolução da forma e de muitos atributos ao mesmo tempo?"
+familias: [sinal, modelos, relacao]
+aliases:
+  - "../aula-06-atributos-multivariados/index.html"
+---
+
+::: {.aula-meta}
+**Aula 8** · [Há sinal?]{.familia .sinal} [Como evolui?]{.familia .modelos} [Estão associados?]{.familia .relacao} · Métodos Filogenéticos Comparativos (PPGBA/UFMS)
+:::
+
+No mapa dos métodos, esta aula cobre a linha dos **atributos
+multivariados** nas quatro colunas. Os exemplos usam as salamandras
+*Plethodon* (`geomorph`) e os *Anolis*.
+
+## Slides
+
+[{{< fa solid display >}} Abrir slides](../slides/a08.html){.btn .btn-outline-primary}
+
+As figuras dos slides foram geradas em R; o código está em
+[`R/aula08_multivariados.R`](https://github.com/diogoprov/mfc/tree/main/R).
+
+## Em 3 minutos
+
+::: {.callout-note .em-3-minutos appearance="simple" icon="false"}
+1. A superposição de Procrustes remove posição, escala e rotação; o que sobra é forma, e o tamanho do centroide guarda o tamanho.
+2. K, σ² e PGLS têm versões multivariadas baseadas em distâncias e permutação, que funcionam com mais variáveis do que espécies.
+3. Com muitas variáveis, ajuste modelos com verossimilhança penalizada; matrizes de taxas por regime mostram taxas e correlações evolutivas diferentes.
+
+**Erro comum:** ajustar modelos multivariados por verossimilhança comum quando há mais variáveis do que espécies.
+:::
+
+## Conteúdo
+
+1. Morfometria geométrica: a definição de forma, Procrustes passo a passo, GPA, morfoespaço
+2. Sinal, taxa e PGLS multivariados; filomorfoespaço da forma
+3. Modelos multivariados: `mvgls`, matrizes de taxas por regime, restrições, PhylogeneticEM
+4. Modularidade e integração
+5. Ordenação filogenética: PCA filogenética
+
+## Código R (aula prática)
+
+Esta aula não tem roteiro próprio da edição de 2020. A PCA filogenética
+está no [roteiro da Aula 7](../aula-07-ancestrais/walkthrough-aula-5-sexta.html)
+(seção `#---phylo PCA e PVR`); as demais análises estão nos slides, com os
+dados do `geomorph` (`plethodon`, `plethspecies`) e do `phytools`.
+
+Pacotes: `geomorph`, `mvMORPH`, `phytools`.
+
+## Dados utilizados
+
+Os dados vêm dos pacotes: `data(plethodon, plethspecies, package = "geomorph")`
+e `data(anoletree, anole.data, package = "phytools")`. Não é preciso baixar
+nenhum arquivo.
+
+## Desafio
+
+Entregue um script `.R` que rode do zero numa sessão limpa, as figuras
+pedidas e até uma página de interpretação. Critério: o script roda (30 %);
+as escolhas estão justificadas (30 %); a interpretação está correta (40 %).
+
+**Uma matriz de taxas ou várias?** Com os *Anolis* (`anoletree` traz os
+ecomorfos mapeados): (1) faça a PCA comum e a filogenética
+(`phytools::phyl.pca()`) do log dos seis atributos e compare as cargas dos
+dois primeiros eixos; (2) com o log dos membros anterior (FLL) e posterior
+(HLL), ajuste BM com uma matriz de taxas e com uma por ecomorfo
+(`mvMORPH::mvBM(model = "BM1")` e `"BMM"`), compare por AICc e desenhe as
+elipses das matrizes. *Avaliação:* interpreta as diferenças entre as
+matrizes em termos de taxas e de correlação evolutiva, e comenta os ecomorfos
+com poucas espécies.
+
+As respostas comentadas serão publicadas aqui depois do prazo de entrega.
+
+## Leituras recomendadas
+
+- [Revell & Harmon (2022)](https://press.princeton.edu/books/paperback/9780691219035/phylogenetic-comparative-methods-in-r), *Phylogenetic Comparative Methods in R*: seções 1.10 e 5.3
+- [Adams & Collyer (2019)](https://doi.org/10.1146/annurev-ecolsys-110218-024555): MFC multivariados
+- [Adams, Rohlf & Slice (2013)](https://doi.org/10.4404/hystrix-24.1-6283): morfometria geométrica

@@ -1,0 +1,80 @@
+---
+title: "Aula 07 — Estados ancestrais e visualização"
+order: 7
+description: "Parcimônia de mudança quadrada e máxima verossimilhança; o nó e a raiz passo a passo; incerteza; contMap e fenograma; tendência com fósseis; marginal × conjunta e mapeamento estocástico; gráficos do phytools e filomorfoespaço."
+gancho: "Como era o ancestral, e com quanta certeza dá para dizer?"
+familias: [ancestral]
+aliases:
+  - "../aula-05-autovetores-visualizacao/index.html"
+---
+
+::: {.aula-meta}
+**Aula 7** · [Como era o ancestral?]{.familia .ancestral} · Métodos Filogenéticos Comparativos (PPGBA/UFMS)
+:::
+
+No mapa dos métodos, esta aula cobre a coluna **Como era o ancestral?**
+para atributos contínuos e discretos. Os exemplos usam a árvore-guia, os
+*Anolis* e o modo de alimentação das enguias (Collar et al. 2014).
+
+## Slides
+
+[{{< fa solid display >}} Abrir slides](../slides/a07.html){.btn .btn-outline-primary}
+
+As figuras dos slides foram geradas em R; o código está em
+[`R/aula07_ancestrais.R`](https://github.com/diogoprov/mfc/tree/main/R).
+
+## Em 3 minutos
+
+::: {.callout-note .em-3-minutos appearance="simple" icon="false"}
+1. Sob BM, a estimativa por máxima verossimilhança coincide com a parcimônia de mudança quadrada ponderada; sempre traz um intervalo de confiança, em geral largo.
+2. A estimativa depende do modelo: uma tendência ignorada enviesa os ancestrais, e só fósseis permitem detectá-la.
+3. Em caracteres discretos, a estimativa marginal dá probabilidades por nó; o mapeamento estocástico simula histórias e conta as mudanças.
+
+**Erro comum:** apresentar estados ancestrais sem incerteza, ou estimá-los quando a pergunta não precisa deles.
+:::
+
+## Conteúdo
+
+1. Por que estimar estados ancestrais
+2. Atributos contínuos: parcimônia, verossimilhança, o nó 13 e a raiz passo a passo, incerteza, `contMap`, fenograma com IC, tendência com fósseis
+3. Atributos discretos: marginal, conjunta e mapeamento estocástico; os Squamata da Aula 6
+4. Visualização: os gráficos do `phytools` e o filomorfoespaço
+
+## Código R (aula prática)
+
+- {{< fa solid eye >}} **[Ver walkthrough HTML](walkthrough-aula-5-sexta.html)**
+  *Gráficos do `phytools` (e do `phylosignal`), PCA filogenética e PVR.*
+  [{{< fa solid file-code >}} baixar `aula-5-sexta.R`](aula-5-sexta.R)
+- Estados ancestrais contínuos e discretos e mapeamento estocástico: a
+  primeira metade do [roteiro da Aula 3](../aula-03-sinal/walkthrough-aula-3-quarta-modificada.html)
+  (dados na [página da Aula 3](../aula-03-sinal/index.qmd)).
+
+Pacotes: `ape`, `phytools`.
+
+## Dados utilizados
+
+- [`canto.csv`](canto.csv) e [`filogenia_bocaina.txt`](filogenia_bocaina.txt): cantos de anuros da Bocaina
+- Enguias e *Anolis*: na [página da Aula 3](../aula-03-sinal/index.qmd)
+
+## Desafio
+
+Entregue um script `.R` que rode do zero numa sessão limpa, as figuras
+pedidas e até uma página de interpretação. Critério: o script roda (30 %);
+as escolhas estão justificadas (30 %); a interpretação está correta (40 %).
+
+**O ancestral dos Centrarchidae.** Com `data(sunfish.tree, sunfish.data, package = "phytools")`:
+(1) para o modo de alimentação (`feeding.mode`), ajuste ER e ARD
+(`phytools::fitMk()`), estime as probabilidades marginais nos nós
+(`phytools::ancr()`) e desenhe-as; (2) faça 200 mapas estocásticos e
+resuma o número de mudanças em cada sentido; (3) para a abertura da boca
+(`gape.width`), estime os estados ancestrais com IC 95% (`phytools::fastAnc()`)
+e faça um `contMap`. *Avaliação:* diz quão incerta é a raiz nos dois
+atributos e não apresenta as estimativas como valores conhecidos.
+
+As respostas comentadas serão publicadas aqui depois do prazo de entrega.
+
+## Leituras recomendadas
+
+- [Revell & Harmon (2022)](https://press.princeton.edu/books/paperback/9780691219035/phylogenetic-comparative-methods-in-r), *Phylogenetic Comparative Methods in R*: capítulos 8 e 13
+- [Huelsenbeck, Nielsen & Bollback (2003)](https://doi.org/10.1080/10635150390192780): mapeamento estocástico
+- [Webster & Purvis (2002)](https://doi.org/10.1098/rspb.2001.1873): quão precisas são as estimativas

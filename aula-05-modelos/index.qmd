@@ -1,0 +1,89 @@
+---
+title: "Aula 05 — Modelos de evolução contínua"
+order: 5
+description: "Verossimilhança do BM, Ornstein-Uhlenbeck, early burst e tendência; comparação e adequação de modelos; BBM, FPK e evolução pulsada; paisagens adaptativas; várias taxas e vários regimes (mvMORPH); cautelas com o OU."
+gancho: "O atributo evoluiu ao acaso, rumo a um ótimo ou em explosão inicial?"
+familias: [modelos]
+aliases:
+  - "../aula-04-ou-multi-regime/index.html"
+---
+
+::: {.aula-meta}
+**Aula 5** · [Como evolui?]{.familia .modelos} · Métodos Filogenéticos Comparativos (PPGBA/UFMS)
+:::
+
+No mapa dos métodos, esta aula cobre a coluna **Como evolui?** para
+atributos contínuos, de um regime a vários. Os exemplos usam o tamanho do
+corpo dos *Anolis* e os Centrarchidae.
+
+## Slides
+
+[{{< fa solid display >}} Abrir slides](../slides/a05.html){.btn .btn-outline-primary}
+
+As figuras dos slides foram geradas em R; o código está em
+[`R/aula05_modelos.R`](https://github.com/diogoprov/mfc/tree/main/R).
+
+## Em 3 minutos
+
+::: {.callout-note .em-3-minutos appearance="simple" icon="false"}
+1. BM, OU, EB e tendência são hipóteses diferentes sobre o processo; compare-as por AICc e pesos de Akaike, e cheque a adequação do modelo escolhido.
+2. No OU, α é a força de atração para o ótimo θ; leia α pela meia-vida (ln 2/α) em relação à altura da árvore.
+3. Taxas ou ótimos diferentes em partes da árvore pedem modelos com vários regimes (BMM, OUM) e regimes definidos com cuidado.
+
+**Erro comum:** concluir "seleção estabilizadora" só porque o OU teve menor AICc.
+:::
+
+## Conteúdo
+
+1. Verossimilhança: estimando σ² e a raiz
+2. O modelo Ornstein-Uhlenbeck
+3. *Early burst* (ACDC) e tendência, e por que a tendência precisa de fósseis
+4. Comparando modelos
+5. Adequação do modelo
+6. Além dos quatro: BBM, FPK e evolução pulsada
+7. Paisagens adaptativas e radiação
+8. Várias taxas e vários regimes
+9. Cautelas com o OU, e a resposta de Grabowski et al. (2023)
+
+## Código R (aula prática)
+
+- {{< fa solid eye >}} **[Ver walkthrough HTML](walkthrough-aula-quinta.html)**
+  *OU com vários regimes (`bayou`). O SURFACE, que abre o roteiro, saiu do
+  curso. O mesmo roteiro tem o `evol.vcv` (Aula 4), o teste de Pagel e o
+  modelo de limiar (Aula 6).*
+  [{{< fa solid file-code >}} baixar `aula-quinta.R`](aula-quinta.R)
+- Simulação de OU e tendência, comparação e adequação de modelos: seções
+  `#--- Comparando ajuste de modelos evolutivos` e `#---Testando model
+  adequacy` do [roteiro da Aula 2](../aula-02-bm-matriz-c/walkthrough-aula-2-terca.html).
+
+Pacotes: `geiger`, `phytools`, `mvMORPH`.
+
+## Dados utilizados
+
+- [`Centrarchidae.tre`](Centrarchidae.tre) e [`Centrarchidae.csv`](Centrarchidae.csv)
+- [`uca_matrix.txt`](uca_matrix.txt), [`filogenia_quinta.txt`](filogenia_quinta.txt), [`filogenia_gabi.txt`](filogenia_gabi.txt) e [`testes_matrix_r.txt`](testes_matrix_r.txt)
+- [`fitPagel-data.csv`](fitPagel-data.csv), [`fitPagel-tree.tre`](fitPagel-tree.tre), [`fitPagel-challenge.csv`](fitPagel-challenge.csv) e [`fitPagel-challenge.tre`](fitPagel-challenge.tre) (Aula 6)
+
+## Desafio
+
+Entregue um script `.R` que rode do zero numa sessão limpa, as figuras
+pedidas e até uma página de interpretação. Critério: o script roda (30 %);
+as escolhas estão justificadas (30 %); a interpretação está correta (40 %).
+
+**Que modelo para a massa corporal?** Com `data(mammal.tree, mammal.data, package = "phytools")`,
+use o log da massa corporal (`bodyMass`). (1) Ajuste BM, OU e EB com
+`geiger::fitContinuous()` (fixe a semente). (2) Monte a tabela com log L,
+número de parâmetros, AICc, ΔAICc e pesos. (3) Se o OU for competitivo,
+calcule a meia-vida e compare-a com a altura da árvore. (4) Explique por
+que o modelo de tendência não entra nesta comparação. *Avaliação:*
+interpreta os pesos como suporte relativo, lê α pela meia-vida e não
+confunde OU com seleção estabilizadora.
+
+As respostas comentadas serão publicadas aqui depois do prazo de entrega.
+
+## Leituras recomendadas
+
+- [Revell & Harmon (2022)](https://press.princeton.edu/books/paperback/9780691219035/phylogenetic-comparative-methods-in-r), *Phylogenetic Comparative Methods in R*: seções 4.7–4.8, 5.1–5.2 e 5.4
+- [Butler & King (2004)](https://doi.org/10.1086/426002): o OU com vários regimes
+- [Ho & Ané (2014)](https://doi.org/10.1111/2041-210x.12285) e [Cooper et al. (2016)](https://doi.org/10.1111/bij.12701): as cautelas
+- [Grabowski et al. (2023)](https://doi.org/10.1093/sysbio/syad012): a resposta às cautelas

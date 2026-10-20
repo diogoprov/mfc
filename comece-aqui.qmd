@@ -1,0 +1,86 @@
+---
+title: "Comece aqui"
+subtitle: "O que ler, instalar e saber antes da primeira aula"
+toc: true
+---
+
+## Antes da disciplina
+
+A disciplina é **condensada em uma semana**, com uma aula por período. Por
+isso, três coisas precisam estar feitas antes da segunda-feira de manhã:
+
+1. ler os três artigos das [leituras prévias](#leituras-prévias);
+2. instalar o R, o RStudio (ou outro editor), o Quarto e os
+   [pacotes](#pacotes);
+3. ter o básico de R: ler uma tabela, criar e indexar objetos, chamar
+   funções. Se estiver inseguro, comece por
+   [*R para Ciência de Dados*](https://pt.r4ds.hadley.nz/).
+
+Também ajuda saber o básico de inferência filogenética: a árvore vem de
+algum lugar, e a Aula 1 retoma de onde.
+
+## Leituras prévias
+
+A Aula 1 supõe que estes três artigos foram lidos. Ela abre com uma
+pergunta sobre cada um.
+
+1. [Garland, Bennett & Rezende (2005)](https://doi.org/10.1242/jeb.01745).
+   Phylogenetic approaches in comparative physiology. *Journal of
+   Experimental Biology* 208: 3015–3035. *Pergunta: por que espécies não
+   são pontos independentes numa análise?*
+2. [O'Meara (2012)](https://doi.org/10.1146/annurev-ecolsys-110411-160331).
+   Evolutionary inferences from phylogenies: a review of methods. *Annual
+   Review of Ecology, Evolution, and Systematics* 43: 267–285. *Pergunta:
+   que tipos de pergunta os métodos comparativos respondem?*
+3. [Rezende & Diniz-Filho (2012)](https://doi.org/10.1002/cphy.c100079).
+   Phylogenetic analyses: comparing species to infer adaptations and
+   physiological mechanisms. *Comprehensive Physiology* 2: 639–674.
+   *Pergunta: como os métodos ajudam a inferir adaptação e mecanismo?*
+
+## Pacotes
+
+Os slides e os desafios usam estes pacotes, todos no CRAN:
+
+```r
+install.packages(c("ape", "phytools", "geiger", "nlme", "caper", "phylolm",
+                   "mvMORPH", "corHMM", "geomorph", "rr2", "tidyverse"))
+```
+
+Os roteiros da edição de 2020 usam também alguns pacotes que não estão
+nesta lista (por exemplo, `phylosignal` e `bayou`); cada roteiro diz quais
+são.
+
+## Cronograma
+
+Proposta para a semana intensiva: oito aulas em dez períodos, com dois
+períodos livres para prática, dúvidas e projetos.
+
+| Dia | Manhã | Tarde |
+|---|---|---|
+| Segunda | [Aula 1 · A árvore e os dados](aula-01-arvore-dados/index.qmd) | [Aula 2 · O BM e a matriz C](aula-02-bm-matriz-c/index.qmd) |
+| Terça | [Aula 3 · Sinal filogenético](aula-03-sinal/index.qmd) | [Aula 4 · PGLS](aula-04-pgls/index.qmd) |
+| Quarta | [Aula 5 · Modelos contínuos](aula-05-modelos/index.qmd) | prática livre e dúvidas |
+| Quinta | [Aula 6 · Atributos discretos](aula-06-discretos/index.qmd) | [Aula 7 · Estados ancestrais](aula-07-ancestrais/index.qmd) |
+| Sexta | [Aula 8 · Multivariados](aula-08-multivariados/index.qmd) | projetos dos alunos |
+
+Cada período tem teoria (os slides) e prática (o roteiro e o começo do
+desafio). As datas e os horários de cada oferta são divulgados pelo
+programa de pós-graduação.
+
+## Como usar os materiais
+
+- **Slides**: abrem no navegador. Tecle **F** para tela cheia, **Esc**
+  para ver todos os slides de uma vez e use as setas para navegar. Toda
+  aula abre e fecha com o [mapa dos métodos](index.qmd#o-mapa-dos-métodos).
+- **Roteiros práticos**: *walkthroughs* comentados com o script `.R`
+  correspondente; os comandos não rodam na página, copie para o seu R.
+  Ver [Roteiros práticos](praticas.qmd).
+- **Desafios**: um por aula, resolvido individualmente, com código. As
+  respostas comentadas são publicadas depois do prazo.
+- **Avaliação**: um documento em Quarto (ver o [Programa](programa.qmd#avaliação)).
+- **Glossário**: os termos técnicos em um lugar só ([Glossário](glossario.qmd)).
+
+## Contato
+
+Prof. Diogo B. Provete — [diogo.provete@ufms.br](mailto:diogo.provete@ufms.br)
+· [Biodiversity Synthesis Lab](https://provetelab.org)
