@@ -27,7 +27,7 @@ simulações ou da árvore-guia.
 | 2 | O movimento browniano e a matriz C | A2 1–49 | **`inventarios/a02.md`** | **`slides/a02.qmd` ✔** (65 slides; aula-modelo, aguarda revisão do Diogo) |
 | 3 | Sinal filogenético | A3 24–61, A5 7–10 | **`inventarios/a03.md`** | **`slides/a03.qmd` ✔** (60 slides; aguarda revisão do Diogo) |
 | 4 | Regressão filogenética (PGLS) | A2 126–141, A4 50–58 | **`inventarios/a04.md`** | **`slides/a04.qmd` ✔** (37 slides; aguarda revisão do Diogo) |
-| 5 | Modelos de evolução contínua | A2 50–88, A4 18–49 | — | — |
+| 5 | Modelos de evolução contínua | A2 50–88, A4 18–49 | **`inventarios/a05.md`** | **`slides/a05.qmd` ✔** (51 slides; aguarda revisão do Diogo) |
 | 6 | Atributos discretos | A2 89–126, A4 1–17 | — | — |
 | 7 | Estados ancestrais e visualização | A3 1–23, A5 11 | — | — |
 | 8 | Atributos multivariados | A6 | — | — |
@@ -134,7 +134,8 @@ quando ele decidir.
 - **Pacotes das figuras**: `ggplot2`, `dplyr`, `tidyr`,
   `purrr`, `tibble`, `patchwork`, `here`, `knitr`, `ape`, `phytools`,
   `geiger`, `nlme` (**aprovados**); `caper` (aprovado para o D de Fritz &
-  Purvis, Aula 3). Sem `ggtree` (árvores por função
+  Purvis, Aula 3); `phylolm` (Aula 4); `mvMORPH` (OU multi-regime, Aula 5;
+  previsto no plano para a Aula 8). Sem `ggtree` (árvores por função
   própria) e sem `brms`. `rphylopic` só para baixar silhuetas, fora do render.
 - **Não entram** (como na multidimensionais): Kahoot, webR, "Teste-se",
   atividades extras nos slides.
@@ -186,6 +187,9 @@ quando ele decidir.
   `vcv_ou_arvore()`, `sim_mvn()`, `k_passos()`, `moran_I()`, `correlograma()`,
   `pvr_passos()`, `psr_curva()` (todas conferidas com ape/phytools);
   `R/aula03_*.R`: figuras da Aula 3.
+- `R/aula05_modelos.R`: verossimilhança do BM, simulações de OU/EB/tendência,
+  `ajustes_anolis()` (`fitContinuous`, com semente), BBM/FPK/Lévy,
+  `ajustes_regimes()` (`mvMORPH`, OUM com os ecomorfos), `brownie_sunfish()`.
 - `R/aula04_pgls.R`: `anolis_dados()`, `modelos_anolis()`, `gls_passos()`,
   `anova_filo()`, `glm_filo()`, `evol_vcv_sunfish()`, `incerteza()` e as
   figuras da Aula 4.
@@ -220,6 +224,10 @@ fechamento → leituras com o aviso do Coggle → meme e prática.
   unidades de slide (ver o CLAUDE.md da multidimensionais).
 
 ## Armadilhas (previstas e encontradas)
+
+- `geiger::fitContinuous` sorteia pontos de partida: fixe a semente, ou o log L
+  muda entre renderizações. `mvMORPH::mvOU` não converge na árvore dos
+  *Anolis* com altura 6: reescale para altura 1 (ramos e `maps`).
 
 - Com `options(OutDec = ",")`, `paste0()` de números escreve vírgula: um
   Newick montado assim quebra (comprimentos negativos). Use `sprintf("%g")`.
