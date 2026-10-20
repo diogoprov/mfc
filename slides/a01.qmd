@@ -152,7 +152,7 @@ fig_estrela(dc)
 ## Uma breve história
 
 ```{r}
-#| fig-height: 4.1
+#| fig-height: 4.3
 #| fig-alt: "Linha do tempo: Cheverud, Dow e Leutenegger e Felsenstein em 1985, Grafen em 1989, Harvey e Pagel em 1991, Nunn em 2011, Garamszegi em 2014 e Revell e Harmon em 2022."
 fig_linha_tempo()
 ```

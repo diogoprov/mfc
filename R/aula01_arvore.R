@@ -56,27 +56,26 @@ fig_estrela <- function(dc = dois_clados()) {
   (t1 + tt) + (t2 + tt)
 }
 
-#' Linha do tempo das obras que fundaram e consolidaram os MFC
+#' Linha do tempo das obras que fundaram e consolidaram os MFC: vertical,
+#' uma obra por linha (fora de escala), para os rótulos não se sobreporem
 fig_linha_tempo <- function() {
   d <- tibble::tribble(
-    ~ano, ~rot, ~lado,
-    1985, "Cheverud, Dow & Leutenegger\nautocorrelação filogenética", 1,
-    1985, "Felsenstein\ncontrastes independentes", -1,
-    1989, "Grafen\nregressão filogenética", 1,
-    1991, "Harvey & Pagel\nThe Comparative Method\nin Evolutionary Biology", -1,
-    2011, "Nunn\nThe Comparative Approach in\nEvolutionary Anthropology and Biology", 1,
-    2014, "Garamszegi (org.)\nModern Phylogenetic\nComparative Methods", -1,
-    2022, "Revell & Harmon\nPhylogenetic Comparative\nMethods in R", 1)
-  d$x <- c(1984, 1984, 1995, 1996, 2009, 2014.5, 2022)
+    ~ano, ~autor, ~obra,
+    1985, "Cheverud, Dow & Leutenegger", "autocorrelação filogenética",
+    1985, "Felsenstein", "contrastes independentes",
+    1989, "Grafen", "regressão filogenética",
+    1991, "Harvey & Pagel", "The Comparative Method in Evolutionary Biology",
+    2011, "Nunn", "The Comparative Approach in Evolutionary Anthropology and Biology",
+    2014, "Garamszegi (org.)", "Modern Phylogenetic Comparative Methods",
+    2022, "Revell & Harmon", "Phylogenetic Comparative Methods in R")
+  d$y <- rev(seq_len(nrow(d)))
   ggplot(d) +
-    annotate("segment", x = 1982, xend = 2025, y = 0, yend = 0, linewidth = 1.2, colour = cores[["texto"]],
-             arrow = arrow(length = unit(.3, "cm"), type = "closed")) +
-    geom_segment(aes(x = ano, xend = x, y = 0, yend = lado * .45), colour = cores[["neutro"]]) +
-    geom_point(aes(ano, 0), size = 4, colour = cores[["ferrugem"]]) +
-    geom_text(aes(x, lado * .5, label = rot, vjust = ifelse(lado > 0, 0, 1)), size = 4.6, lineheight = .9) +
-    geom_text(data = dplyr::distinct(d, ano), aes(ano, .1, label = ano), size = 4.6, colour = cores[["ferrugem"]],
-              fontface = "bold", angle = 90, hjust = 0) +
-    scale_x_continuous(limits = c(1977, 2028)) + scale_y_continuous(limits = c(-1.3, 1.3)) +
+    annotate("segment", x = 0, xend = 0, y = .5, yend = nrow(d) + .5, linewidth = 1.2, colour = cores[["texto"]]) +
+    geom_point(aes(0, y), size = 4, colour = cores[["ferrugem"]]) +
+    geom_text(aes(-.15, y, label = ano), hjust = 1, size = 6, fontface = "bold", colour = cores[["ferrugem"]]) +
+    geom_text(aes(.15, y + .1, label = autor), hjust = 0, size = 6, fontface = "bold", colour = cores[["texto"]]) +
+    geom_text(aes(.15, y - .3, label = obra), hjust = 0, size = 4.8, colour = "#4a5568") +
+    scale_x_continuous(limits = c(-1.2, 8)) + scale_y_continuous(limits = c(0.3, nrow(d) + .6)) +
     theme_void() + theme(plot.background = element_rect(fill = cores[["papel"]], colour = NA))
 }
 
