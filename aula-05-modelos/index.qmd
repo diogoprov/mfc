@@ -47,14 +47,15 @@ As figuras dos slides foram geradas em R; o código está em
 
 ## Código R (aula prática)
 
-- {{< fa solid eye >}} **[Ver walkthrough HTML](walkthrough-aula-quinta.html)**
-  *OU com vários regimes (`bayou`). O SURFACE, que abre o roteiro, saiu do
-  curso. O mesmo roteiro tem o `evol.vcv` (Aula 4), o teste de Pagel e o
-  modelo de limiar (Aula 6).*
-  [{{< fa solid file-code >}} baixar `aula-quinta.R`](aula-quinta.R)
-- Simulação de OU e tendência, comparação e adequação de modelos: seções
-  `#--- Comparando ajuste de modelos evolutivos` e `#---Testando model
-  adequacy` do [roteiro da Aula 2](../aula-02-bm-matriz-c/walkthrough-aula-2-terca.html).
+- {{< fa solid play >}} **[Roteiro prático (executado)](roteiro.html)**\
+  *A verossimilhança do BM à mão, OU e tendência simulados, BM × OU × EB nos
+  *Anolis* com pesos de Akaike e meia-vida, adequação do modelo, Brownie e
+  OU com vários regimes (`mvMORPH`). O código roda na página.*
+- {{< fa solid eye >}} [Roteiro da edição de 2020](walkthrough-aula-quinta.html)
+  · [{{< fa solid file-code >}} `aula-quinta.R`](aula-quinta.R)\
+  *OU multi-regime bayesiano (`bayou`); o mesmo roteiro tem o `evol.vcv`
+  (Aula 4), o teste de Pagel e o modelo de limiar (Aula 6). O SURFACE, que
+  abre o roteiro, saiu do curso.*
 
 Pacotes: `geiger`, `phytools`, `mvMORPH`.
 
@@ -78,6 +79,27 @@ calcule a meia-vida e compare-a com a altura da árvore. (4) Explique por
 que o modelo de tendência não entra nesta comparação. *Avaliação:*
 interpreta os pesos como suporte relativo, lê α pela meia-vida e não
 confunde OU com seleção estabilizadora.
+
+::: {.callout-tip collapse="true" appearance="simple"}
+## Dicas
+
+- A seção 3 do [roteiro](roteiro.html) faz a mesma tabela com o SVL dos
+  *Anolis*; a seção 2 e os slides explicam por que a tendência não se
+  identifica numa árvore só de espécies atuais.
+- Aqui, sim, aplique `log()`: `mammal.data$bodyMass` está em quilogramas.
+- Fixe a semente antes do `fitContinuous()`, que sorteia pontos de partida.
+- A altura da árvore: `max(nodeHeights(mammal.tree))`.
+
+```r
+library(ape); library(phytools); library(geiger)
+data(mammal.tree, mammal.data, package = "phytools")
+massa <- setNames(log(mammal.data$bodyMass), rownames(mammal.data))
+set.seed(1)
+# ajustes <- lapply(c(BM = "BM", OU = "OU", EB = "EB"), \(m) fitContinuous(mammal.tree, massa, model = m))
+# tabela: logL, k, AICc, dAICc, pesos
+# meia-vida = log(2) / alfa do OU
+```
+:::
 
 As respostas comentadas serão publicadas aqui depois do prazo de entrega.
 

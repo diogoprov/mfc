@@ -1,0 +1,200 @@
+---
+title: "Roteiro prático — Modelos de evolução contínua"
+subtitle: "Aula 5 · Métodos Filogenéticos Comparativos"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-tools: true
+    code-overflow: wrap
+execute:
+  echo: true
+  warning: false
+  message: false
+  fig-width: 7
+  fig-height: 4.5
+---
+
+::: {.callout-note appearance="minimal"}
+Este roteiro **roda de verdade**: os resultados abaixo saíram do código
+mostrado. Copie os blocos para um script e rode em ordem numa sessão limpa do
+R. No fim, o [desafio](index.qmd#desafio) pede o mesmo raciocínio com a
+massa corporal de mamíferos.
+:::
+
+## 0. Pacotes
+
+```{r}
+library(ape)
+library(phytools)
+library(geiger)
+library(mvMORPH)
+```
+
+## 1. A verossimilhança do BM, à mão
+
+Sob BM, os valores das pontas seguem uma normal multivariada com média *z*~0~
+(a raiz) e covariância σ²**C**. Com o atributo A da árvore-guia:
+
+```{r}
+guia <- read.tree(text = "(((sp1:0.18,sp2:0.18):1.06,(sp3:0.02,sp4:0.02):1.22):0.20,(sp5:1.37,(sp6:0.23,sp7:0.23):1.14):0.07);")
+A <- setNames(c(2.51, 2.80, 2.23, 2.32, 1.64, 1.18, 0.58), paste0("sp", 1:7))
+C <- vcv(guia)[names(A), names(A)]
+Ci <- solve(C); n <- length(A); um <- rep(1, n)
+z0 <- as.numeric((um %*% Ci %*% A) / (um %*% Ci %*% um))   # a raiz (GLS)
+logL <- function(sig2) -0.5 * (n * log(2 * pi) + n * log(sig2) + log(det(C)) +
+                               as.numeric(t(A - z0) %*% Ci %*% (A - z0)) / sig2)
+s2 <- seq(0.05, 1.2, length.out = 200)
+plot(s2, sapply(s2, logL), type = "l", xlab = expression(sigma^2), ylab = "log L")
+s2_mv <- as.numeric(t(A - z0) %*% Ci %*% (A - z0)) / n     # o máximo, analítico
+abline(v = s2_mv, lty = 2)
+c(z0 = z0, sigma2 = s2_mv, logL = logL(s2_mv))
+```
+
+O `fitContinuous()` chega aos mesmos valores:
+
+```{r}
+bm_A <- fitContinuous(guia, A, model = "BM")
+c(z0 = bm_A$opt$z0, sigma2 = bm_A$opt$sigsq, logL = bm_A$opt$lnL)
+```
+
+## 2. Simulando os outros modelos
+
+O mesmo `fastBM()` simula um OU (atração α para o ótimo θ) e uma tendência
+(deslocamento μ por unidade de tempo). Os fenogramas mostram a diferença.
+
+```{r}
+#| fig-height: 8
+set.seed(505)
+arv26 <- pbtree(n = 26, scale = 10)
+par(mfrow = c(2, 2))
+phenogram(arv26, fastBM(arv26, sig2 = 0.1, internal = TRUE), ftype = "off", main = "BM")
+phenogram(arv26, fastBM(arv26, a = 0, theta = 3, alpha = 0.2, sig2 = 0.1, internal = TRUE),
+          ftype = "off", main = "OU, α = 0,2")
+phenogram(arv26, fastBM(arv26, a = 0, theta = 3, alpha = 0.8, sig2 = 0.1, internal = TRUE),
+          ftype = "off", main = "OU, α = 0,8")
+phenogram(arv26, fastBM(arv26, a = 0, mu = 0.3, sig2 = 0.1, internal = TRUE),
+          ftype = "off", main = "tendência, μ = 0,3")
+```
+
+Com α maior, as linhagens ficam mais presas ao redor de θ. A tendência
+desloca a média, mas numa árvore só de espécies atuais isso não se distingue
+do BM (os slides mostram por quê): é preciso fósseis.
+
+## 3. Comparando modelos nos *Anolis*
+
+O tamanho do corpo (SVL, já em log natural no `anole.data`):
+
+```{r}
+data(anoletree, anole.data)
+arv <- as.phylo(anoletree)
+svl <- setNames(anole.data$SVL, rownames(anole.data))
+set.seed(509)   # o fitContinuous sorteia pontos de partida
+ajustes <- lapply(c(BM = "BM", OU = "OU", EB = "EB"), \(m) fitContinuous(arv, svl, model = m))
+tab <- data.frame(modelo = names(ajustes),
+                  k = sapply(ajustes, \(f) f$opt$k),
+                  logL = sapply(ajustes, \(f) f$opt$lnL),
+                  AICc = sapply(ajustes, \(f) f$opt$aicc))
+tab$dAICc <- tab$AICc - min(tab$AICc)
+tab$peso <- exp(-0.5 * tab$dAICc) / sum(exp(-0.5 * tab$dAICc))
+tab
+```
+
+Nenhum modelo se destaca: os pesos dizem quanto cada modelo é apoiado em
+relação aos outros, não se ele é bom. O α do OU deve ser lido pela
+**meia-vida**, comparada com a altura da árvore:
+
+```{r}
+alfa <- ajustes$OU$opt$alpha
+c(alfa = alfa, meia_vida = log(2) / alfa, altura = max(nodeHeights(arv)))
+```
+
+Aqui α ficou praticamente zero e a meia-vida, muito maior que a árvore: o
+OU "colapsou" no BM, e por isso tem o mesmo log L com um parâmetro a mais.
+
+## 4. O modelo escolhido é adequado?
+
+O menor AICc não garante que o modelo descreva bem os dados. Uma checagem
+simples, no espírito do Arbutus: escolher uma estatística, calculá-la nos
+dados e em muitos conjuntos simulados pelo modelo ajustado, e comparar.
+A estatística aqui é a inclinação entre o tamanho dos contrastes e a idade
+do nó: sob BM, ela deve ser próxima de zero.
+
+```{r}
+inclinacao_idade <- function(x, arvore) {
+  ct <- pic(x, arvore)
+  idade <- branching.times(arvore)[names(ct)]
+  coef(lm(abs(ct) ~ idade))[2]
+}
+obs <- inclinacao_idade(svl, arv)
+set.seed(510)
+sim <- replicate(500, inclinacao_idade(fastBM(arv, a = ajustes$BM$opt$z0,
+                                              sig2 = ajustes$BM$opt$sigsq), arv))
+hist(sim, main = "", xlab = "inclinação |contraste| × idade do nó (simulado sob BM)")
+abline(v = obs, col = "firebrick", lwd = 2)
+obs
+mean(abs(sim) >= abs(obs))   # valor-p aproximado
+```
+
+A inclinação observada fica fora do que o BM ajustado produz: contrastes
+maiores nos nós antigos, o padrão de um *early burst*, de acordo com o peso
+do EB na tabela. O BM, sozinho, não descreve bem estes dados.
+
+## 5. Taxas diferentes em partes da árvore
+
+O Brownie (`brownie.lite()`) compara um BM com uma taxa só e um com uma
+taxa por regime mapeado. Nos Centrarchidae, o regime é o modo de
+alimentação:
+
+```{r}
+data(sunfish.tree, sunfish.data)
+abertura <- setNames(sunfish.data$gape.width, rownames(sunfish.data))
+brownie.lite(sunfish.tree, abertura)
+```
+
+## 6. Ótimos diferentes: o OU com vários regimes
+
+Nos *Anolis*, os ecomorfos estão mapeados na árvore. O `mvMORPH` ajusta um
+OU com um ótimo por ecomorfo (OUM). Reescalar a árvore para altura 1 ajuda
+a otimização (e não muda a comparação entre modelos).
+
+```{r}
+arv_eco <- anoletree
+h <- max(nodeHeights(arv_eco))
+arv_eco$edge.length <- arv_eco$edge.length / h
+arv_eco$maps <- lapply(arv_eco$maps, \(m) m / h)
+arv_eco$mapped.edge <- arv_eco$mapped.edge / h
+svl_eco <- svl[arv_eco$tip.label]
+r <- list(BM1 = mvBM(arv_eco, svl_eco, model = "BM1", echo = FALSE, diagnostic = FALSE),
+          BMM = mvBM(arv_eco, svl_eco, model = "BMM", echo = FALSE, diagnostic = FALSE),
+          OU1 = mvOU(arv_eco, svl_eco, model = "OU1", echo = FALSE, diagnostic = FALSE,
+                     param = list(root = FALSE)),
+          OUM = mvOU(arv_eco, svl_eco, model = "OUM", echo = FALSE, diagnostic = FALSE,
+                     param = list(root = FALSE)))
+sapply(r, \(f) c(logL = f$LogLik, AICc = f$AICc))
+```
+
+Os ótimos estimados (θ) de cada ecomorfo e a meia-vida, em unidades da
+altura da árvore:
+
+```{r}
+r$OUM$theta
+log(2) / r$OUM$alpha
+```
+
+Uma meia-vida curta quer dizer atração forte: cuidado ao interpretar α
+(Ho & Ané 2014; Cooper et al. 2016; e a resposta de Grabowski et al. 2023,
+nos slides).
+
+## Resumo
+
+- A verossimilhança do BM sai de σ²**C**; `fitContinuous()` estima σ² e a
+  raiz.
+- BM, OU e EB se comparam por AICc e pesos; leia α pela meia-vida.
+- O modelo escolhido precisa ser checado (adequação).
+- `brownie.lite()` testa taxas por regime; `mvMORPH` ajusta ótimos por
+  regime.
+
+O [roteiro da edição de 2020](walkthrough-aula-quinta.html) tem o `bayou`
+(OU multi-regime bayesiano), e o [roteiro da Aula 2](../aula-02-bm-matriz-c/walkthrough-aula-2-terca.html)
+traz outra comparação de modelos e a adequação com o pacote `arbutus`.
