@@ -1,0 +1,221 @@
+---
+title: "Roteiro prático — Atributos discretos"
+subtitle: "Aula 6 · Métodos Filogenéticos Comparativos"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-tools: true
+    code-overflow: wrap
+execute:
+  echo: true
+  warning: false
+  message: false
+  fig-width: 7
+  fig-height: 4.5
+---
+
+::: {.callout-note appearance="minimal"}
+Este roteiro **roda de verdade**: os resultados abaixo saíram do código
+mostrado. Copie os blocos para um script, na pasta com os
+[dados da aula](index.qmd#dados-utilizados), e rode em ordem numa sessão
+limpa do R. No fim, o [desafio](index.qmd#desafio) pede o mesmo raciocínio
+com outro par de caracteres.
+:::
+
+## 0. Pacotes
+
+```{r}
+library(ape)
+library(phytools)
+library(geiger)
+library(corHMM)
+```
+
+## 1. Da taxa à probabilidade: *P*(*t*) = e^**Q***t*^
+
+A matriz **Q** guarda as taxas instantâneas; cada linha soma zero. A
+exponencial de matriz dá as probabilidades de transição ao longo de um ramo
+de comprimento *t*. Com q~01~ = q~10~ = 0,1 e *t* = 5 (o exemplo dos
+slides):
+
+```{r}
+Q <- matrix(c(-0.1, 0.1,
+               0.1, -0.1), 2, byrow = TRUE, dimnames = list(c("0", "1"), c("0", "1")))
+rowSums(Q)
+Pt <- matexpo(Q * 5)
+dimnames(Pt) <- dimnames(Q)
+round(Pt, 3)
+```
+
+Cada linha de **P**(*t*) soma 1. Ao longo do tempo, as probabilidades
+convergem para as frequências de equilíbrio:
+
+```{r}
+tt <- seq(0, 30, by = 0.5)
+p11 <- sapply(tt, \(t) matexpo(Q * t)[2, 2])
+plot(tt, p11, type = "l", ylim = c(0, 1), xlab = "tempo", ylab = "P(continuar no estado 1)")
+abline(h = 0.5, lty = 2); abline(v = 5, lty = 3)
+```
+
+## 2. Dados reais: a perda dos membros nos Squamata
+
+Os dados de Brandley, Huelsenbeck & Wiens (2008). Uma espécie é "sem
+membros" se não tem nem os anteriores (FLL = 0) nem os posteriores
+(HLL = 0).
+
+```{r}
+d <- read.csv("brandley_table.csv")
+arv <- read.nexus("squamate.tre")
+sp <- sub(" ", "_", d$Species)
+membros <- setNames(ifelse(d$FLL == 0 & d$HLL == 0, "sem", "com"), sp)
+casado <- treedata(arv, membros, warnings = FALSE)
+arv <- casado$phy
+membros <- membros[arv$tip.label]
+table(membros)
+```
+
+Taxas iguais (ER) e taxas diferentes nos dois sentidos (ARD), com o
+`fitDiscrete()`:
+
+```{r}
+er  <- fitDiscrete(arv, membros, model = "ER")
+ard <- fitDiscrete(arv, membros, model = "ARD")
+er$opt[c("lnL", "q12", "aicc")]
+ard$opt[c("lnL", "q12", "q21", "aicc")]
+```
+
+As taxas seguem a ordem alfabética dos estados (com, sem): `q12` é com →
+sem (perda) e `q21` é sem → com (reganho). A diferença de AICc é
+pequena: os dados não distinguem os dois modelos.
+
+O `phytools::fitMk()` ajusta o mesmo modelo, mas com outra suposição sobre
+o estado da raiz, e por isso dá log L um pouco diferente:
+
+```{r}
+fitMk(arv, membros, model = "ER")$logLik
+```
+
+## 3. Simulando o Mk
+
+O mesmo modelo, simulado na árvore dos Squamata com taxas lentas, rápidas
+e desiguais (como nos slides):
+
+```{r}
+#| fig-height: 5.5
+h <- max(nodeHeights(arv))
+Qm <- function(a, b) matrix(c(-a, a, b, -b), 2, byrow = TRUE,
+                            dimnames = list(c("com", "sem"), c("com", "sem")))
+set.seed(601)
+sims <- list("ER lento" = Qm(0.2 / h, 0.2 / h), "ER rápido" = Qm(5 / h, 5 / h),
+             "desiguais" = Qm(1 / h, 4 / h))
+par(mfrow = c(1, 3))
+for (nm in names(sims)) {
+  x <- sim.Mk(arv, sims[[nm]], anc = "com")
+  plotTree(arv, ftype = "off", lwd = 0.6, mar = c(0, 0, 2, 0))
+  title(nm)
+  tiplabels(pch = 15, cex = 0.5, col = ifelse(x[arv$tip.label] == "sem", "firebrick", "steelblue"))
+}
+```
+
+## 4. Caracteres multiestado
+
+Quatro estados: sem membros, só anteriores, só posteriores e os quatro.
+
+```{r}
+q4 <- setNames(ifelse(d$FLL == 0 & d$HLL == 0, "sem membros",
+               ifelse(d$FLL > 0 & d$HLL == 0, "só anteriores",
+               ifelse(d$FLL == 0 & d$HLL > 0, "só posteriores", "os quatro"))), sp)[arv$tip.label]
+table(q4)
+m4 <- lapply(c(ER = "ER", SYM = "SYM", ARD = "ARD"), \(m) fitDiscrete(arv, q4, model = m))
+tab4 <- data.frame(modelo = names(m4), k = sapply(m4, \(f) f$opt$k),
+                   logL = sapply(m4, \(f) f$opt$lnL), AICc = sapply(m4, \(f) f$opt$aicc))
+tab4$peso <- exp(-0.5 * (tab4$AICc - min(tab4$AICc))); tab4$peso <- tab4$peso / sum(tab4$peso)
+tab4
+```
+
+## 5. Taxas ocultas
+
+E se a taxa de perda dos membros variar entre clados? O `corHMM()` divide
+cada estado observado em categorias de taxa não observadas (`rate.cat`).
+
+```{r}
+dados_hmm <- data.frame(sp = names(membros), membros = membros)
+set.seed(604)   # o corHMM sorteia pontos de partida
+invisible(capture.output({   # o corHMM imprime mensagens de progresso
+  hmm1 <- corHMM(arv, dados_hmm, rate.cat = 1, model = "ARD", node.states = "none")
+  hmm2 <- corHMM(arv, dados_hmm, rate.cat = 2, model = "ARD", node.states = "none")
+}))
+c(uma_categoria = hmm1$AICc, duas_categorias = hmm2$AICc)
+```
+
+## 6. Evolução correlacionada: Pagel e as taxas ocultas
+
+Dois caracteres binários da prática (x com estados a/b; y com 0/1). Primeiro
+o teste de Pagel: um modelo independente contra um dependente.
+
+```{r}
+X <- read.csv("fitPagel-data.csv", row.names = 1)
+arv_p <- read.tree("fitPagel-tree.tre")
+x <- setNames(X$x, rownames(X)); y <- setNames(as.character(X$y), rownames(X))
+pg <- fitPagel(arv_p, x, y)
+pg
+```
+
+O problema (slides): uma mudança única e não replicada pode bastar para o
+modelo dependente vencer. A saída de Boyko & Beaulieu (2023) é pôr taxas
+ocultas também no modelo **independente** e comparar os quatro modelos.
+(Leva alguns minutos.)
+
+```{r}
+set.seed(1)   # com as sementes 1 a 4, o mesmo resultado dos slides
+invisible(capture.output(
+  teste <- fitCorrelationTest(arv_p, data.frame(sp = rownames(X), x = X$x, y = X$y))
+))
+aicc <- sapply(teste, \(f) f$AICc)
+peso <- exp(-0.5 * (aicc - min(aicc))); peso <- peso / sum(peso)
+round(data.frame(AICc = aicc, peso = peso), 3)
+```
+
+O modelo independente com taxas ocultas fica perto do correlacionado: o
+apoio à correlação é bem mais modesto do que o valor-*p* do teste de Pagel
+sugeria.
+
+## 7. O modelo de limiar
+
+Um estado discreto como o lado de um limiar de um atributo contínuo não
+observado (a *liability*), que evolui por BM:
+
+```{r}
+set.seed(603)
+arv20 <- pbtree(n = 40, scale = 1)
+liab <- fastBM(arv20, internal = TRUE)
+estado <- ifelse(liab[1:40] > 0, "1", "0")
+phenogram(arv20, liab, ftype = "off", ylab = "liability", xlab = "tempo")
+abline(h = 0, lwd = 2, lty = 2)
+table(estado)
+```
+
+A correlação entre caracteres pelo limiar se estima com
+`phytools::threshBayes()` (MCMC, demorado); o código fica de referência:
+
+```{r}
+#| eval: false
+threshBayes(arvore, cbind(x_discreto, y_continuo), types = c("discrete", "continuous"),
+            ngen = 1e6)
+```
+
+## Resumo
+
+- **Q** guarda as taxas; *P*(*t*) = e^**Q***t*^ dá as probabilidades num
+  ramo (`matexpo()`).
+- ER, SYM e ARD se comparam por AICc (`fitDiscrete()`, `fitMk()`); taxas
+  ocultas com `corHMM()`.
+- O teste de Pagel (`fitPagel()`) sofre de pseudorreplicação: compare com
+  `fitCorrelationTest()`.
+- O modelo de limiar trata o estado discreto como um atributo contínuo
+  escondido.
+
+O Mk e o teste de Pagel da edição de 2020 estão nos roteiros das
+[Aulas 2](../aula-02-bm-matriz-c/walkthrough-aula-2-terca.html) e
+[5](../aula-05-modelos/walkthrough-aula-quinta.html).

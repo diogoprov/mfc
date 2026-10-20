@@ -43,24 +43,22 @@ As figuras dos slides foram geradas em R; o código está em
 
 ## Código R (aula prática)
 
-Esta aula não tem roteiro próprio da edição de 2020; a prática está em
-partes de outros roteiros:
-
-- Mk nos Squamata (ER, ARD, irreversível): seção `#--- Ajustando modelos
-  de evolução para caracteres discretos` do
+- {{< fa solid play >}} **[Roteiro prático (executado)](roteiro.html)**\
+  ***Q*** e *P*(*t*) passo a passo, Mk nos Squamata (ER e ARD), simulações,
+  multiestado, taxas ocultas (`corHMM`), teste de Pagel e o teste com taxas
+  ocultas, e o modelo de limiar. O código roda na página.*
+- Na edição de 2020: o Mk nos Squamata no
   [roteiro da Aula 2](../aula-02-bm-matriz-c/walkthrough-aula-2-terca.html)
-- Teste de Pagel e modelo de limiar: seções `#---Método do Pagel...` e
-  `#---Threshold model` do
-  [roteiro da Aula 5](../aula-05-modelos/walkthrough-aula-quinta.html)
+  e o teste de Pagel e o limiar no
+  [roteiro da Aula 5](../aula-05-modelos/walkthrough-aula-quinta.html).
 
-Pacotes: `geiger`, `phytools`, `corHMM`.
+Pacotes: `ape`, `phytools`, `geiger`, `corHMM`.
 
 ## Dados utilizados
 
-Os Squamata ([`squamate.tre`](../aula-02-bm-matriz-c/squamate.tre) e
-[`brandley_table.csv`](../aula-02-bm-matriz-c/brandley_table.csv)) e os
-dados do teste de Pagel ([`fitPagel-data.csv`](../aula-05-modelos/fitPagel-data.csv),
-[`fitPagel-tree.tre`](../aula-05-modelos/fitPagel-tree.tre)).
+- [`squamate.tre`](squamate.tre) e [`brandley_table.csv`](brandley_table.csv): Squamata (Brandley et al. 2008)
+- [`fitPagel-data.csv`](fitPagel-data.csv) e [`fitPagel-tree.tre`](fitPagel-tree.tre): o teste de Pagel no roteiro
+- [`fitPagel-challenge.csv`](fitPagel-challenge.csv) e [`fitPagel-challenge.tre`](fitPagel-challenge.tre): o desafio
 
 ## Desafio
 
@@ -69,8 +67,8 @@ pedidas e até uma página de interpretação. Critério: o script roda (30 %);
 as escolhas estão justificadas (30 %); a interpretação está correta (40 %).
 
 **Correlação ou pseudorreplicação?** Use
-[`fitPagel-challenge.csv`](../aula-05-modelos/fitPagel-challenge.csv) e
-[`fitPagel-challenge.tre`](../aula-05-modelos/fitPagel-challenge.tre).
+[`fitPagel-challenge.csv`](fitPagel-challenge.csv) e
+[`fitPagel-challenge.tre`](fitPagel-challenge.tre).
 (1) Desenhe a árvore com os dois caracteres nas pontas. (2) Rode o teste de
 Pagel (`phytools::fitPagel()`). (3) Rode o teste com taxas ocultas
 (`corHMM::fitCorrelationTest()`) e monte a tabela de AICc e pesos dos
@@ -78,6 +76,29 @@ quatro modelos. (4) Estime quantas vezes cada caráter mudou (mapeamento
 estocástico, Aula 7, ou só pela figura). *Avaliação:* as conclusões dos dois
 testes são comparadas e a de correlação é discutida à luz do número de
 mudanças.
+
+::: {.callout-tip collapse="true" appearance="simple"}
+## Dicas
+
+- A seção 6 do [roteiro](roteiro.html) faz os dois testes com os dados da
+  prática; compare as suas conclusões com as de lá.
+- O `fitPagel()` quer dois vetores com nomes; o `fitCorrelationTest()`, um
+  `data.frame` com a espécie na primeira coluna. Ele leva alguns minutos.
+- Para desenhar os dois caracteres: `plotTree()` e `tiplabels(pch = ...)`,
+  ou `phytools::dotTree()`.
+- Para contar as mudanças, `make.simmap()` em cada caráter e
+  `summary()` dos mapas (Aula 7).
+
+```r
+library(ape); library(phytools); library(corHMM)
+X <- read.csv("fitPagel-challenge.csv", row.names = 1)
+arv <- read.tree("fitPagel-challenge.tre")
+x <- setNames(X$x, rownames(X)); y <- setNames(as.character(X$y), rownames(X))
+# 1. figura; 2. fitPagel(arv, x, y)
+# 3. fitCorrelationTest(arv, data.frame(sp = rownames(X), x = X$x, y = X$y))
+# 4. make.simmap(arv, x, nsim = 100) e o mesmo para y
+```
+:::
 
 As respostas comentadas serão publicadas aqui depois do prazo de entrega.
 

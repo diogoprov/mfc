@@ -307,6 +307,7 @@ fig_limiar <- function(n = 6, passos = 400, seed = 603) {
 correlacao_corhmm <- function() {
   X <- read.csv(here::here("aula-05-modelos/fitPagel-data.csv"), row.names = 1)
   tr <- ape::read.tree(here::here("aula-05-modelos/fitPagel-tree.tre"))
+  set.seed(1)   # o corHMM sorteia pontos de partida; sementes 1 a 4 dão o mesmo resultado
   r <- corHMM::fitCorrelationTest(tr, data.frame(sp = rownames(X), x = X$x, y = X$y))
   nomes <- c(independent_model_fit = "independente",
              hidden_Markov_independent_model_fit = "independente + taxas ocultas",
