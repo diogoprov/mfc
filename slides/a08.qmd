@@ -130,7 +130,7 @@ fig_procrustes_passos(pin, 1)
 ```
 
 ::: {.ref}
-Dados: `geomorph::plethodon` (cabeça de *Plethodon*, 12 marcos). Para a demonstração, o segundo exemplar foi girado 40° e ampliado 1,5 vez. Ideia de uma figura do tutorial de morfometria de E. Sherratt (link do original fora do ar).
+Dados: `geomorph::plethodon` (cabeça de *Plethodon*, 12 marcos). Para a demonstração, o segundo exemplar foi girado 40° e ampliado 1,5 vez. Ideia de uma figura do tutorial de morfometria de E. Sherratt.
 :::
 
 ## Superposição de Procrustes: translação
@@ -257,7 +257,7 @@ Procrustes corrigidas pela filogenia (*N* espécies):
 $$\sigma^2_{\text{mult}} = \frac{\mathbf{PD}'_{U,0}\,\mathbf{PD}_{U,0}}{N}$$
 
 - Compara taxas entre clados ou grupos (`geomorph::compare.evol.rates`)
-- Ex. do original: espécies do grupo *P. cinereus* com distribuição restrita
+- Ex.: espécies do grupo *P. cinereus* com distribuição restrita
   teriam taxas maiores de evolução da forma
 
 ::: {.ref}
@@ -370,7 +370,6 @@ Redesenho da Fig. 2 de [Clavel, Escarguel & Merceron (2015)](https://doi.org/10.
 - **PhylogeneticEM**: detecta, sem hipótese prévia, onde os ótimos de um OU
   multivariado mudam na árvore, levando em conta a correlação entre os
   atributos; nos *Anolis*, os grupos encontrados foram comparados aos ecomorfos de Mahler et al. (2013)
-- O SURFACE, usado no original, saiu (Aula 5)
 
 ::: {.ref}
 [Aristide et al. (2016)](https://doi.org/10.1073/pnas.1514473113), *PNAS* 113: 2158–2163; [Bastide et al. (2018)](https://doi.org/10.1093/sysbio/syy005), *Syst. Biol.* 67: 662–680.
@@ -422,6 +421,33 @@ Fortemente integradas, sem sinal de modularidade, em ritmos parecidos.
 | [Arnold et al. (2017)](https://doi.org/10.1186/s12862-017-1101-1), *BMC Evol. Biol.* | redes musculoesqueléticas e disparidade do pescoço dos mamíferos |
 | [Vidal-García & Keogh (2017)](https://doi.org/10.1186/s12862-017-0993-0), *BMC Evol. Biol.* | crânio conservado e membros lábeis numa radiação de sapos (dieta, locomoção, escavação) |
 
+## Módulos no pescoço dos mamíferos
+
+![](../assets/terceiros/arnold-2017-fig4.png){fig-alt="Figura 4 de Arnold et al. (2017): redes anatômicas do pescoço de quatro mamíferos (gambá-de-cauda-escovada, morcego, camelo-bactriano e preguiça-de-três-dedos), com os músculos e ossos como nós e os módulos de conectividade em cores diferentes." height="540px" fig-align="center"}
+
+::: {.ref}
+Fig. 4 de [Arnold et al. (2017)](https://doi.org/10.1186/s12862-017-1101-1), *BMC Evol. Biol.* 17: 251 ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)).
+:::
+
+## Crânio conservado, membros lábeis
+
+:::: {.columns}
+::: {.column width="50%"}
+![](../assets/terceiros/vidal-garcia-2017-fig3.png){fig-alt="Figura 3 de Vidal-García e Keogh (2017): filomorfoespaço da forma do crânio dos sapos miobatraquídeos; os quatro clados formam grupos separados, com formas diferentes para cada clado e cores para o hábito escavador." width="100%"}
+
+Crânio: os clados ficam separados
+:::
+::: {.column width="50%"}
+![](../assets/terceiros/vidal-garcia-2017-fig4.png){fig-alt="Figura 4 de Vidal-García e Keogh (2017): filomorfoespaço da forma dos membros; os clados se misturam e as espécies se agrupam pelo modo de locomoção (andador, saltador, escavador)." width="100%"}
+
+Membros: agrupam pela locomoção
+:::
+::::
+
+::: {.ref}
+Figs. 3 e 4 de [Vidal-García & Keogh (2017)](https://doi.org/10.1186/s12862-017-0993-0), *BMC Evol. Biol.* 17: 165 ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)).
+:::
+
 # 5. Ordenação filogenética {.secao}
 
 [Estão associados?]{.familia .relacao}
@@ -454,6 +480,43 @@ fig_cargas(pf)
 Aqui as duas dão quase o mesmo PC1, o tamanho (`r num(100 * pf$ve_f[1], 0)`%
 da variância na filogenética, `r num(100 * pf$ve_c[1], 0)`% na comum). A
 diferença aparece quando há sinal forte e clados com médias muito distintas.
+:::
+
+## PACA: alinhar os eixos à filogenia {.grande}
+
+- A PCA acha as direções de **máxima variância**; a PACA
+  (*phylogenetically aligned component analysis*), as de **máxima
+  covariância** entre os dados e a filogenia
+- O primeiro eixo mostra a direção em que o sinal filogenético é mais
+  forte; a PCA filogenética, ao contrário, procura a variação **depois** de
+  descontar a filogenia
+- Serve para ver o sinal: se o PAC 1 concentra pouca covariância, a
+  filogenia explica pouco da forma
+
+```{r}
+#| echo: true
+#| eval: false
+geomorph::gm.prcomp(coords, phy = arvore, align.to.phy = TRUE)
+```
+
+::: {.ref}
+[Collyer & Adams (2021)](https://doi.org/10.1111/2041-210X.13515), *Methods Ecol. Evol.* 12: 359–372.
+:::
+
+## PCA × PACA nos *Plethodon*
+
+```{r}
+#| fig-width: 12
+#| fig-height: 5.2
+#| fig-alt: "Dois filomorfoespaços da forma da cabeça de nove espécies de Plethodon. À esquerda, a PCA comum, com P. nettingi isolada no PC1. À direita, a PACA, com P. serratus e P. nettingi nos extremos do PAC 1 e as espécies reorganizadas no espaço."
+pc_paca <- paca_pleth(ps)
+fig_paca(pc_paca)
+```
+
+::: {.medio}
+O PAC 1 concentra `r num(100 * pc_paca$cov_pa1, 0)`% da covariância com a
+filogenia; K de Blomberg no eixo 1: `r num(pc_paca$k_pc1, 2)` na PCA,
+`r num(pc_paca$k_pa1, 2)` na PACA.
 :::
 
 # Para fechar {.secao}

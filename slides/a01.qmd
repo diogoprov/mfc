@@ -517,7 +517,7 @@ muitos marcadores ao mesmo tempo: aumentou exponencialmente os dados das
 filogenias (filogenômica) e da filogeografia.
 
 ::: {.ref}
-[Mardis (2008)](https://doi.org/10.1146/annurev.genom.9.081307.164359), *Annu. Rev. Genomics Hum. Genet.* 9: 387–402. As plataformas citadas no original (Roche 454, SOLiD) já foram descontinuadas.
+[Mardis (2008)](https://doi.org/10.1146/annurev.genom.9.081307.164359), *Annu. Rev. Genomics Hum. Genet.* 9: 387–402. Roche 454 e SOLiD já foram descontinuadas.
 :::
 
 ## *Pipelines* e árvores prontas
@@ -564,7 +564,7 @@ cautela.
 | Ecological Archives · *Scientific Data* · *Biodiversity Data Journal* | vários | [ESA](https://esapubs.org/archive/) · [Sci. Data](https://www.nature.com/sdata/) · [BDJ](https://bdj.pensoft.net) |
 
 ::: {.ref}
-Do original saíram o Ecological Data Wiki e o Arbor ([Harmon et al. 2013](https://doi.org/10.1371/currents.tol.099161de5eabdee073fd3d21a44518dc)), análises comparativas na nuvem: ambos fora do ar (out/2026). Hoje, o mais próximo é o próprio R com Quarto.
+O Ecological Data Wiki e o Arbor ([Harmon et al. 2013](https://doi.org/10.1371/currents.tol.099161de5eabdee073fd3d21a44518dc)), análises comparativas na nuvem: ambos fora do ar (out/2026). Hoje, o mais próximo é o próprio R com Quarto.
 :::
 
 # 6. Desenho de estudos comparativos {.secao}

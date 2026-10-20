@@ -204,3 +204,41 @@ fig_cargas <- function(p = pca_filo_anolis()) {
     scale_fill_manual(values = c(cores[["neutro"]], cores[["accent"]]), name = NULL) +
     labs(x = NULL, y = "|correlação com o PC1|") + tema_aula(16) + theme(legend.position = "top")
 }
+
+# ---- PACA (Collyer & Adams 2021) --------------------------------------------------
+
+#' PCA comum × PACA na forma da cabeça das 9 espécies de Plethodon
+paca_pleth <- function(ps = pleth_sp()) {
+  tr <- ps$arvore
+  pc <- geomorph::gm.prcomp(ps$gpa$coords, phy = tr)
+  pa <- geomorph::gm.prcomp(ps$gpa$coords, phy = tr, align.to.phy = TRUE)
+  k1 <- function(x) phytools::phylosig(tr, setNames(x[, 1], rownames(x)), method = "K")
+  invisible(capture.output(s_pa <- summary(pa)))   # o summary() imprime a tabela
+  list(arvore = tr, pc = pc, pa = pa,
+       var_pc1 = pc$d[1] / sum(pc$d),                      # variância no PC1 da PCA
+       cov_pa1 = s_pa$PC.summary[2, 1],              # covariância com a filogenia no eixo 1
+       var_pa1 = var(pa$x[, 1]) / sum(apply(pa$x, 2, var)), # variância no eixo 1 da PACA
+       k_pc1 = k1(pc$x), k_pa1 = k1(pa$x))
+}
+
+#' Filomorfoespaços lado a lado: PCA comum e PACA
+fig_paca <- function(p = paca_pleth()) {
+  tr <- p$arvore; n <- ape::Ntip(tr)
+  um <- function(obj, titulo, eixo) {
+    xy <- rbind(obj$x[tr$tip.label, 1:2], obj$anc.x[, 1:2])
+    ed <- tibble(x0 = xy[tr$edge[, 1], 1], y0 = xy[tr$edge[, 1], 2],
+                 x1 = xy[tr$edge[, 2], 1], y1 = xy[tr$edge[, 2], 2])
+    pt <- tibble(x = xy[1:n, 1], y = xy[1:n, 2], l = sub("^P_", "P. ", tr$tip.label))
+    ggplot() +
+      geom_segment(data = ed, aes(x0, y0, xend = x1, yend = y1), colour = "#b9b2a5", linewidth = .8) +
+      geom_point(aes(xy[-(1:n), 1], xy[-(1:n), 2]), colour = cores[["neutro"]], size = 2) +
+      geom_point(data = pt, aes(x, y), colour = cores[["accent"]], size = 3.2) +
+      geom_text(data = pt, aes(x, y, label = l), size = 4, vjust = -.8, fontface = "italic", colour = cores[["texto"]]) +
+      scale_x_continuous(expand = expansion(mult = .15)) + scale_y_continuous(expand = expansion(mult = .15)) +
+      labs(title = titulo, x = eixo[1], y = eixo[2]) + tema_aula(15)
+  }
+  patchwork::wrap_plots(
+    um(p$pc, "PCA comum: máxima variância", c("PC 1", "PC 2")),
+    um(p$pa, "PACA: máxima covariância com a filogenia", c("PAC 1", "PAC 2")), ncol = 2) &
+    theme(plot.background = element_rect(fill = cores[["papel"]], colour = NA))
+}

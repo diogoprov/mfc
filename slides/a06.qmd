@@ -368,11 +368,6 @@ phytools::mcmcMk(arvore, membros, model = "ARD")   # discretos
 geiger::fitContinuousMCMC(arvore, x)               # contínuos
 ```
 
-::: {.nota}
-O original citava `geiger::fitDiscreteMCMC`, que não existe mais no
-`geiger`; hoje, `phytools::mcmcMk` faz o mesmo papel.
-:::
-
 # 4. Caracteres multiestado {.secao}
 
 [Como evolui?]{.familia .modelos}
@@ -427,11 +422,11 @@ fig_Q4("ARD")
 
 ## Os membros dos Squamata {.muito-grande .tabela-grande}
 
-| Modelo | k | log L | AICc | peso |
-|---|---:|---:|---:|---:|
-| `r t4$modelo[1]` | `r t4$k[1]` | `r num(t4$logL[1], 1)` | `r num(t4$AICc[1], 1)` | `r num(t4$peso[1], 3)` |
-| `r t4$modelo[2]` | `r t4$k[2]` | `r num(t4$logL[2], 1)` | `r num(t4$AICc[2], 1)` | `r num(t4$peso[2], 3)` |
-| `r t4$modelo[3]` | `r t4$k[3]` | `r num(t4$logL[3], 1)` | `r num(t4$AICc[3], 1)` | `r num(t4$peso[3], 3)` |
+| Modelo | k | log L | AICc | ΔAICc | *w*~i~ |
+|---|---:|---:|---:|---:|---:|
+| `r t4$modelo[1]` | `r t4$k[1]` | `r num(t4$logL[1], 1)` | `r num(t4$AICc[1], 1)` | `r num(t4$AICc[1] - min(t4$AICc), 1)` | `r num(t4$peso[1], 3)` |
+| `r t4$modelo[2]` | `r t4$k[2]` | `r num(t4$logL[2], 1)` | `r num(t4$AICc[2], 1)` | `r num(t4$AICc[2] - min(t4$AICc), 1)` | `r num(t4$peso[2], 3)` |
+| `r t4$modelo[3]` | `r t4$k[3]` | `r num(t4$logL[3], 1)` | `r num(t4$AICc[3], 1)` | `r num(t4$AICc[3] - min(t4$AICc), 1)` | `r num(t4$peso[3], 3)` |
 
 O modelo simétrico vence: as taxas variam entre pares de estados, mas os
 dados não sustentam taxas diferentes nos dois sentidos.
@@ -443,7 +438,7 @@ dados não sustentam taxas diferentes nos dois sentidos.
 ## E se a taxa mudar ao longo da árvore? {.grande}
 
 ```{r}
-#| fig-height: 3.4
+#| fig-height: 3.8
 #| fig-alt: "Quatro caixas: 0A e 1A na categoria A, de taxas lentas, e 0B e 1B na categoria B, de taxas rápidas; setas horizontais mudam o estado observado e setas verticais trocam de categoria."
 fig_ocultas()
 ```
@@ -582,12 +577,12 @@ corHMM::fitCorrelationTest(arvore, dados)   # dados: espécie, x, y
 
 ## Os dados da prática, de novo {.grande .tabela-grande}
 
-| Modelo | log L | AICc | peso |
-|---|---:|---:|---:|
-| `r ch$modelo[1]` | `r num(ch$logL[1], 1)` | `r num(ch$AICc[1], 1)` | `r ifelse(ch$peso[1] < .001, "< 0,001", num(ch$peso[1], 3))` |
-| `r ch$modelo[2]` | `r num(ch$logL[2], 1)` | `r num(ch$AICc[2], 1)` | `r ifelse(ch$peso[2] < .001, "< 0,001", num(ch$peso[2], 3))` |
-| `r ch$modelo[3]` | `r num(ch$logL[3], 1)` | `r num(ch$AICc[3], 1)` | `r ifelse(ch$peso[3] < .001, "< 0,001", num(ch$peso[3], 3))` |
-| `r ch$modelo[4]` | `r num(ch$logL[4], 1)` | `r num(ch$AICc[4], 1)` | `r ifelse(ch$peso[4] < .001, "< 0,001", num(ch$peso[4], 3))` |
+| Modelo | log L | AICc | ΔAICc | *w*~i~ |
+|---|---:|---:|---:|---:|
+| `r ch$modelo[1]` | `r num(ch$logL[1], 1)` | `r num(ch$AICc[1], 1)` | `r num(ch$AICc[1] - min(ch$AICc), 1)` | `r ifelse(ch$peso[1] < .001, "< 0,001", num(ch$peso[1], 3))` |
+| `r ch$modelo[2]` | `r num(ch$logL[2], 1)` | `r num(ch$AICc[2], 1)` | `r num(ch$AICc[2] - min(ch$AICc), 1)` | `r ifelse(ch$peso[2] < .001, "< 0,001", num(ch$peso[2], 3))` |
+| `r ch$modelo[3]` | `r num(ch$logL[3], 1)` | `r num(ch$AICc[3], 1)` | `r num(ch$AICc[3] - min(ch$AICc), 1)` | `r ifelse(ch$peso[3] < .001, "< 0,001", num(ch$peso[3], 3))` |
+| `r ch$modelo[4]` | `r num(ch$logL[4], 1)` | `r num(ch$AICc[4], 1)` | `r num(ch$AICc[4] - min(ch$AICc), 1)` | `r ifelse(ch$peso[4] < .001, "< 0,001", num(ch$peso[4], 3))` |
 
 ::: {.fragment}
 O modelo independente com taxas ocultas ajusta quase tão bem quanto o
@@ -601,8 +596,8 @@ o teste de Pagel sugeria (*p* < 0,001).
   das taxas, fator de Bayes para comparar os modelos e *reversible-jump*
   MCMC para escolher quais taxas são iguais
 - Programa à parte; no R, o pacote [`btw`](https://github.com/rgriff23/btw)
-  chama o BayesTraits (exige o executável instalado e não é atualizado desde
-  2021)
+  chama o BayesTraits (exige o executável instalado e não é atualizado
+  desde 2021)
 - As taxas ocultas também entram nos modelos do BayesTraits, mas o
   `corHMM` faz o teste completo dentro do R
 

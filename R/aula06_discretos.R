@@ -83,8 +83,8 @@ fig_tres_Q <- function() {
 fig_estados <- function(etapa = 3) {
   cx <- tibble::tribble(
     ~x, ~y, ~w, ~h, ~rotulo, ~fill, ~cor, ~txt,
-    0, 0, 1.6, 1.4, "0\nsem membros", cores[["texto"]], cores[["texto"]], "white",
-    5, 0, 1.6, 1.4, "1\ncom membros", cores[["papel"]], cores[["texto"]], cores[["texto"]])
+    0, 0, 2.8, 1.4, "0\nsem membros", cores[["texto"]], cores[["texto"]], "white",
+    5.6, 0, 2.8, 1.4, "1\ncom membros", cores[["papel"]], cores[["texto"]], cores[["texto"]])
   st <- if (etapa >= 2) tibble::tribble(~x, ~y, ~xend, ~yend, 1, .25, 4, .25, 4, -.25, 1, -.25) else NULL
   g <- diagrama(cx, st, base = 7.5)
   if (etapa >= 3) g <- g + annotate("text", x = 2.5, y = .7, label = 'q["01"]', parse = TRUE, size = 9, colour = cores[["accent"]]) +
@@ -120,17 +120,17 @@ fig_ramo <- function(mudancas = FALSE) {
 fig_er_ard <- function(modelo = "ER") {
   cx <- tibble::tribble(
     ~x, ~y, ~w, ~h, ~rotulo, ~fill, ~cor, ~txt,
-    0, 0, 1.6, 1.4, "0\nsem membros", cores[["texto"]], cores[["texto"]], "white",
-    5, 0, 1.6, 1.4, "1\ncom membros", cores[["papel"]], cores[["texto"]], cores[["texto"]])
+    0, 0, 2.8, 1.4, "0\nsem membros", cores[["texto"]], cores[["texto"]], "white",
+    5.6, 0, 2.8, 1.4, "1\ncom membros", cores[["papel"]], cores[["texto"]], cores[["texto"]])
   lw <- if (modelo == "ER") c(1.6, 1.6) else c(2.8, .8)
   rot <- if (modelo == "ER") c("q", "q") else c('q["01"]', 'q["10"]')
   seta <- arrow(length = unit(.3, "cm"), type = "closed")
   diagrama(cx, NULL, base = 7.5) +
-    annotate("segment", x = 1, xend = 4, y = .25, yend = .25, linewidth = lw[1], colour = cores[["accent"]], arrow = seta) +
-    annotate("segment", x = 4, xend = 1, y = -.25, yend = -.25, linewidth = lw[2], colour = cores[["ferrugem"]], arrow = seta) +
-    annotate("text", x = 2.5, y = c(.7, -.7), label = rot, parse = TRUE, size = 9,
+    annotate("segment", x = 1.5, xend = 4.1, y = .25, yend = .25, linewidth = lw[1], colour = cores[["accent"]], arrow = seta) +
+    annotate("segment", x = 4.1, xend = 1.5, y = -.25, yend = -.25, linewidth = lw[2], colour = cores[["ferrugem"]], arrow = seta) +
+    annotate("text", x = 2.8, y = c(.7, -.7), label = rot, parse = TRUE, size = 9,
              colour = c(cores[["accent"]], cores[["ferrugem"]])) +
-    annotate("text", x = 2.5, y = 1.25, size = 8, fontface = "bold", colour = cores[["texto"]],
+    annotate("text", x = 2.8, y = 1.25, size = 8, fontface = "bold", colour = cores[["texto"]],
              label = if (modelo == "ER") "taxas iguais (ER)" else "taxas desiguais (ARD)")
 }
 
@@ -229,9 +229,9 @@ fig_ocultas <- function() {
                         1, 2.15, 3, 2.15, 3, 1.85, 1, 1.85, 1, .15, 3, .15, 3, -.15, 1, -.15,
                         -.15, 1.45, -.15, .55, .15, .55, .15, 1.45, 3.85, 1.45, 3.85, .55, 4.15, .55, 4.15, 1.45)
   diagrama(cx, st, base = 7) +
-    annotate("text", x = 2, y = 2.55, label = "categoria A: taxas lentas", size = 5.5, colour = cores[["accent"]]) +
-    annotate("text", x = 2, y = -.6, label = "categoria B: taxas rápidas", size = 5.5, colour = cores[["ferrugem"]]) +
-    annotate("text", x = -1.4, y = 1, label = "troca de\ncategoria", size = 5, colour = cores[["neutro"]])
+    annotate("text", x = 2, y = 2.95, label = "categoria A: taxas lentas", size = 7, colour = cores[["accent"]]) +
+    annotate("text", x = 2, y = -.95, label = "categoria B: taxas rápidas", size = 7, colour = cores[["ferrugem"]]) +
+    annotate("text", x = -.3, y = 1, hjust = 1, label = "troca de\ncategoria", size = 6.5, colour = cores[["neutro"]])
 }
 
 # ---- Bloco 6: Pagel ---------------------------------------------------------------
@@ -308,7 +308,8 @@ correlacao_corhmm <- function() {
   X <- read.csv(here::here("aula-05-modelos/fitPagel-data.csv"), row.names = 1)
   tr <- ape::read.tree(here::here("aula-05-modelos/fitPagel-tree.tre"))
   set.seed(1)   # o corHMM sorteia pontos de partida; sementes 1 a 4 dão o mesmo resultado
-  r <- corHMM::fitCorrelationTest(tr, data.frame(sp = rownames(X), x = X$x, y = X$y))
+  invisible(capture.output(   # o corHMM imprime mensagens de progresso
+    r <- corHMM::fitCorrelationTest(tr, data.frame(sp = rownames(X), x = X$x, y = X$y))))
   nomes <- c(independent_model_fit = "independente",
              hidden_Markov_independent_model_fit = "independente + taxas ocultas",
              correlated_model_fit = "correlacionado",

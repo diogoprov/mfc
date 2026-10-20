@@ -110,10 +110,6 @@ biológica; α limita o BM; θ pode representar regimes, ótimos ou zonas
 adaptativas.
 :::
 
-::: {.nota}
-No original, θ aparecia como "valor inicial": no OU, θ é o **ótimo**.
-:::
-
 ## O processo de Ornstein-Uhlenbeck {.grande}
 
 - Modelo para a velocidade de uma partícula browniana sob atrito, proposto
@@ -357,7 +353,7 @@ Burnham & Anderson, [*Model selection and multimodel inference*](https://doi.org
 geiger::fitContinuous(arvore, svl, model = "BM")   # e "OU", "EB"
 ```
 
-| Modelo | k | log L | AICc | ΔAICc | peso |
+| Modelo | k | log L | AICc | ΔAICc | *w*~i~ |
 |---|---:|---:|---:|---:|---:|
 | `r ta$modelo[1]` | `r ta$k[1]` | `r num(ta$logL[1])` | `r num(ta$AICc[1])` | `r num(ta$dAICc[1])` | `r num(ta$peso[1])` |
 | `r ta$modelo[2]` | `r ta$k[2]` | `r num(ta$logL[2])` | `r num(ta$AICc[2])` | `r num(ta$dAICc[2])` | `r num(ta$peso[2])` |
@@ -538,12 +534,12 @@ Sem definir os clados: uma abordagem bayesiana (rjMCMC) procura onde a taxa muda
 
 OU com vários regimes (θ, σ² e α por regime): `ouch` ([Butler & King 2004](https://doi.org/10.1086/426002)), `OUwie` ([Beaulieu et al. 2012](https://doi.org/10.1111/j.1558-5646.2012.01619.x)). Aqui, o SVL com os ecomorfos mapeados (árvore com altura 1), no `mvMORPH`:
 
-| Modelo | O que muda entre ecomorfos | log L | AICc | peso |
-|---|---|---:|---:|---:|
-| BM1 | nada | `r num(tr_$logL[1], 1)` | `r num(tr_$AICc[1], 1)` | `r num(tr_$peso[1], 3)` |
-| BMM | a taxa σ² | `r num(tr_$logL[2], 1)` | `r num(tr_$AICc[2], 1)` | `r num(tr_$peso[2], 3)` |
-| OU1 | nada (um ótimo) | `r num(tr_$logL[3], 1)` | `r num(tr_$AICc[3], 1)` | `r num(tr_$peso[3], 3)` |
-| OUM | o ótimo θ | `r num(tr_$logL[4], 1)` | `r num(tr_$AICc[4], 1)` | `r num(tr_$peso[4], 3)` |
+| Modelo | O que muda entre ecomorfos | log L | AICc | ΔAICc | *w*~i~ |
+|---|---|---:|---:|---:|---:|
+| BM1 | nada | `r num(tr_$logL[1], 1)` | `r num(tr_$AICc[1], 1)` | `r num(tr_$AICc[1] - min(tr_$AICc), 1)` | `r num(tr_$peso[1], 3)` |
+| BMM | a taxa σ² | `r num(tr_$logL[2], 1)` | `r num(tr_$AICc[2], 1)` | `r num(tr_$AICc[2] - min(tr_$AICc), 1)` | `r num(tr_$peso[2], 3)` |
+| OU1 | nada (um ótimo) | `r num(tr_$logL[3], 1)` | `r num(tr_$AICc[3], 1)` | `r num(tr_$AICc[3] - min(tr_$AICc), 1)` | `r num(tr_$peso[3], 3)` |
+| OUM | o ótimo θ | `r num(tr_$logL[4], 1)` | `r num(tr_$AICc[4], 1)` | `r num(tr_$AICc[4] - min(tr_$AICc), 1)` | `r num(tr_$peso[4], 3)` |
 
 ## Um ótimo por ecomorfo
 

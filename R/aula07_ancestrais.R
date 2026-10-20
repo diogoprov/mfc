@@ -81,8 +81,8 @@ fig_equivalencias <- function(etapa = 2) {
     0, 3, 3.6, 1.1, "parcimônia de mudança\nquadrada não ponderada", cores[["accent"]], cores[["accent"]], "white",
     0, 0, 3.6, 1.1, "parcimônia de mudança\nquadrada ponderada", cores[["texto"]], cores[["texto"]], "white",
     5.5, 1.5, 3.4, 1.1, "máxima verossimilhança\n(BM)", cores[["ferrugem"]], cores[["ferrugem"]], "white")
-  st <- tibble::tribble(~x, ~y, ~xend, ~yend, 0, 2.4, 0, .6, 1.85, 2.6, 4.2, 1.95)
-  if (etapa >= 2) st <- bind_rows(st, tibble(x = 1.85, y = .4, xend = 4.2, yend = 1.05))
+  st <- tibble::tribble(~x, ~y, ~xend, ~yend, 0, 2.4, 0, .6, 1.85, 2.6, 3.75, 1.95)
+  if (etapa >= 2) st <- bind_rows(st, tibble(x = 1.85, y = .4, xend = 3.75, yend = 1.05))
   g <- diagrama(cx, st, base = 5.8) +
     annotate("text", x = -.2, y = 1.5, hjust = 1, size = 5.2, label = "comprimentos\nde ramo iguais") +
     annotate("text", x = 3.3, y = 2.65, hjust = 0, size = 5.2, label = "comprimentos\nde ramo iguais")
@@ -115,10 +115,12 @@ fig_ic_guia <- function(g = guia_ancestrais()) {
     geom_segment(data = ed, aes(x0, y0, xend = x1, yend = y1), colour = cores[["neutro"]], linewidth = .9) +
     geom_errorbar(data = nd, aes(x, ymin = lo, ymax = hi), width = .04, colour = cores[["ferrugem"]], linewidth = 1.1) +
     geom_point(data = nd, aes(x, y), size = 3.5, colour = cores[["ferrugem"]]) +
-    geom_text(data = nd, aes(x, hi, label = no), vjust = -.6, size = 5, colour = cores[["ferrugem"]]) +
+    geom_text(data = dplyr::filter(nd, no != "11"), aes(x, hi, label = no), vjust = -.6, size = 5, colour = cores[["ferrugem"]]) +
+    geom_text(data = dplyr::filter(nd, no == "11"), aes(x - .03, y, label = no), hjust = 1, size = 5, colour = cores[["ferrugem"]]) +
     geom_point(data = pt, aes(x, y), size = 3, colour = cores[["texto"]]) +
     geom_text(data = pt, aes(x + .04, y, label = l), hjust = 0, size = 5) +
     scale_x_continuous(expand = expansion(mult = c(.03, .1))) +
+    scale_y_continuous(expand = expansion(mult = c(.05, .12))) +
     labs(x = "distância da raiz", y = "atributo A") + tema_aula(16)
 }
 
@@ -137,15 +139,16 @@ fig_contmap <- function() {
   an <- anolis(); x <- an$svl   # anole.data já está em log natural
   obj <- phytools::contMap(an$arvore, x, plot = FALSE)
   obj <- phytools::setMap(obj, c("#1c6e8c", "#e9dfc9", "#a3472e"))
-  fundo(); plot(obj, fsize = c(.45, .9), lwd = c(3, 5), outline = FALSE, legend = FALSE)
+  fundo(); par(mar = c(3, 0, 0, 0), xpd = NA)   # a barra fica abaixo da árvore
+  plot(obj, fsize = c(.45, .9), lwd = c(3, 5), outline = FALSE, legend = FALSE, mar = c(3, 0, 0, 0))
   phytools::add.color.bar(.4, obj$cols, title = "log SVL", lims = obj$lims, digits = 2, prompt = FALSE,
-                          x = 0, y = 3, subtitle = "", fsize = 1)
+                          x = 0, y = -4, subtitle = "", fsize = 1)
 }
 
 fig_fenograma95 <- function() {
   an <- anolis(); x <- an$svl   # anole.data já está em log natural
   fundo(); phytools::fancyTree(an$arvore, type = "phenogram95", x = x, spread.labels = FALSE,
-                               fsize = .01, ylab = "log SVL", xlab = "tempo (altura = 1)")
+                               ftype = "off", ylab = "log SVL", xlab = "tempo (altura = 1)")
 }
 
 fig_tendencia_fosseis <- function(d = tendencia_fosseis()) {
@@ -184,12 +187,27 @@ fig_um_mapa <- function(aj, i = 1) {
   fundo(); phytools::plotSimmap(aj$mapas[[i]], colors = cores_eng, type = "fan", ftype = "off", lwd = 3.5)
 }
 
+#' Prancha com os primeiros mapas estocásticos e o número de mudanças de cada um
+fig_prancha_mapas <- function(aj, n = 8) {
+  fundo(); par(mfrow = c(2, n / 2))
+  for (i in seq_len(n)) {
+    m <- aj$mapas[[i]]
+    phytools::plotSimmap(m, colors = cores_eng, type = "fan", ftype = "off", lwd = 1.6,
+                         mar = c(0, 0, 1.6, 0))
+    title(sprintf("mapa %d: %d mudanças", i, phytools::countSimmap(m)$N),
+          cex.main = 1.3, font.main = 1, col.main = cores[["texto"]])
+  }
+}
+
 fig_densitymap <- function(aj) {
   dm <- phytools::densityMap(aj$mapas, plot = FALSE, states = levels(aj$e$x))
   dm <- phytools::setMap(dm, c(cores[["ferrugem"]], "#e9dfc9", cores[["accent"]]))
-  fundo(); plot(dm, type = "fan", fsize = c(.55, .9), lwd = c(4, 5), outline = FALSE, ftype = "off", legend = FALSE)
-  phytools::add.color.bar(.35 * diff(par()$usr[1:2]), dm$cols, title = "P(sucção)", lims = c(0, 1), digits = 1, prompt = FALSE,
-                          x = .85 * par()$usr[1], y = .9 * par()$usr[3], subtitle = "", fsize = 1)
+  fundo(); par(xpd = NA)   # a barra fica abaixo da árvore
+  plot(dm, type = "fan", fsize = c(.55, .9), lwd = c(4, 5), outline = FALSE, ftype = "off", legend = FALSE,
+       mar = c(4, 0, 0, 0))
+  u <- par()$usr
+  phytools::add.color.bar(.35 * diff(u[1:2]), dm$cols, title = "P(sucção)", lims = c(0, 1), digits = 1, prompt = FALSE,
+                          x = u[1] + .325 * diff(u[1:2]), y = u[3] - .04 * diff(u[3:4]), subtitle = "", fsize = 1)
 }
 
 fig_contagens <- function(cont, rotulos) {
@@ -217,4 +235,65 @@ fig_filomorfo <- function() {
                                         c(rep(cores[["accent"]], ape::Ntip(an$arvore)), rep(cores[["ferrugem"]], an$arvore$Nnode)),
                                         1:(ape::Ntip(an$arvore) + an$arvore$Nnode))),
                                       xlab = "log SVL", ylab = "log cauda")
+}
+
+# ---- Padrões no filomorfoespaço (ideia da Fig. 2 de Adams & Collyer 2019) ----------
+
+#' Dois clados de 16 espécies e quatro cenários simulados em dois atributos:
+#' sobreposição, divergência, disparidade diferente e tendência no clado 2
+padroes_filomorfo <- function(semente = 707) {
+  set.seed(semente)
+  c1 <- phytools::pbtree(n = 16, scale = .7, tip.label = paste0("a", 1:16))
+  c2 <- phytools::pbtree(n = 16, scale = .7, tip.label = paste0("b", 1:16))
+  nw <- function(t) sub(";$", "", ape::write.tree(t))
+  tr <- ape::read.tree(text = sprintf("(%s:0.3,%s:0.3);", nw(c1), nw(c2)))
+  # clado: valor inicial (raiz do clado), taxa e tendência por atributo
+  sim <- function(t, a, s2 = 1, mu = c(0, 0))
+    sapply(1:2, \(k) a[k] + phytools::fastBM(t, sig2 = s2, mu = mu[k]))
+  X1 <- sim(c1, c(0, 0))                    # o clado 1 é o mesmo nos quatro painéis
+  c2_esp <- ape::compute.brlen(c2, 1)       # tendência por evento de especiação
+  X2 <- list(
+    "Sobreposição" = sim(c2, c(0, 0)),
+    "Divergência"  = sim(c2, c(3, 0)),
+    "Disparidade diferente" = sim(c2, c(2, 0), .02),
+    "Tendência"    = sim(c2_esp, c(.3, -.3), .004, c(.4, .25)))
+  purrr::imap(X2, \(x2, nome) {
+    X <- rbind(X1, x2)
+    X <- X[tr$tip.label, ]
+    anc <- apply(X, 2, \(x) phytools::fastAnc(tr, x))
+    list(arvore = tr, X = X, anc = anc, nome = nome)
+  })
+}
+
+fig_padrao_filomorfo <- function(p) {
+  tr <- p$arvore; n <- ape::Ntip(tr)
+  xy <- rbind(p$X, p$anc)
+  ed <- tibble(x0 = xy[tr$edge[, 1], 1], y0 = xy[tr$edge[, 1], 2],
+               x1 = xy[tr$edge[, 2], 1], y1 = xy[tr$edge[, 2], 2])
+  pt <- tibble(x = p$X[, 1], y = p$X[, 2],
+               clado = ifelse(startsWith(rownames(p$X), "a"), "clado 1", "clado 2"))
+  ggplot() +
+    geom_segment(data = ed, aes(x0, y0, xend = x1, yend = y1), colour = "#b9b2a5", linewidth = .7) +
+    geom_point(aes(p$anc[, 1], p$anc[, 2]), colour = cores[["neutro"]], size = 1.6) +
+    geom_point(data = pt, aes(x, y, colour = clado), size = 2.6) +
+    scale_colour_manual(values = c("clado 1" = cores[["accent"]], "clado 2" = cores[["verde"]]), name = NULL) +
+    labs(title = p$nome, x = "PC 1", y = "PC 2") +
+    tema_aula(15) + theme(legend.position = "none", plot.title = element_text(size = 17))
+}
+
+#' A árvore dos dois clados, com as cores dos painéis
+fig_arvore_padroes <- function(p) {
+  tr <- p$arvore
+  cl <- ifelse(startsWith(tr$tip.label, "a"), cores[["accent"]], cores[["verde"]])
+  cor_ramo <- rep(cores[["neutro"]], nrow(tr$edge))
+  fundo(); par(mar = c(1, 1, 1, 1))
+  ape::plot.phylo(tr, show.tip.label = FALSE, edge.color = cor_ramo, edge.width = 1.6)
+  ape::tiplabels(pch = 19, col = cl, cex = 1.1)
+  legend("topleft", legend = c("clado 1", "clado 2", "estados ancestrais"), pch = 19,
+         col = c(cores[["accent"]], cores[["verde"]], cores[["neutro"]]), bty = "n", cex = 1.3)
+}
+
+fig_padroes_filomorfo <- function(pp = padroes_filomorfo()) {
+  patchwork::wrap_plots(lapply(pp, fig_padrao_filomorfo), ncol = 2) &
+    theme(plot.background = element_rect(fill = cores[["papel"]], colour = NA))
 }

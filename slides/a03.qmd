@@ -476,11 +476,6 @@ O C de Abouheif é um **I de Moran** com uma matriz de proximidade
 filogenética particular ([Pavoine et al. 2008](https://doi.org/10.1016/j.tpb.2007.10.001)).
 :::
 
-::: {.nota}
-No slide original aparecia "Σy² = 3006,3": é a soma dos quadrados
-**centrada**, Σ(y − ȳ)².
-:::
-
 # 6. Mantel e distogramas {.secao}
 
 [Há sinal?]{.familia .sinal}
@@ -637,7 +632,7 @@ fig_psr()
 mais devagar.
 
 ::: {.ref}
-[Diniz-Filho, Rangel, Santos & Bini (2012)](https://doi.org/10.1111/j.1558-5646.2011.01499.x), *Evolution* 66: 1079–1090. (No original, atribuída por engano a 2001.)
+[Diniz-Filho, Rangel, Santos & Bini (2012)](https://doi.org/10.1111/j.1558-5646.2011.01499.x), *Evolution* 66: 1079–1090.
 :::
 
 ## Quantos autovetores? {.muito-grande}
@@ -741,7 +736,7 @@ Sinal filogenético: diversidade enviesada para a raiz (A).
 ::::
 
 ::: {.ref}
-[Pavoine, Baguette & Bonsall (2010)](https://doi.org/10.1890/09-1290), *Ecol. Monogr.* 80: 485–507. No original, os testes SN, FN e Ro.
+[Pavoine, Baguette & Bonsall (2010)](https://doi.org/10.1890/09-1290), *Ecol. Monogr.* 80: 485–507.
 :::
 
 ## Um exemplo: a coloração interna dos anuros {.medio}

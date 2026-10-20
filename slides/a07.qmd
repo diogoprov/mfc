@@ -83,6 +83,9 @@ mapa_plot(aula = 7)
 fig_guia_nos(g, 1)
 ```
 
+O atributo A é contínuo: pense nele como o tamanho do corpo (em log) de
+cada espécie.
+
 ## E nos nós?
 
 ```{r}
@@ -310,7 +313,7 @@ fig_fenograma95()
 ```
 
 ::: {.ref}
-`phytools::fancyTree(type = "phenogram95")`. O original chamava esta figura de `densityMap`, que é outra coisa (bloco 3).
+`phytools::fancyTree(type = "phenogram95")`.
 :::
 
 ## Especificação do modelo {.muito-grande}
@@ -440,6 +443,20 @@ fig_um_mapa(aj)
 Uma história possível, com as mudanças no meio dos ramos.
 :::
 
+## Cada mapa é uma história diferente
+
+```{r}
+#| fig-width: 12
+#| fig-height: 5
+#| fig-alt: "Prancha com oito mapas estocásticos da mesma árvore de enguias, simulados do mesmo modelo: as cores dos ramos e o número de mudanças variam de um mapa para outro."
+fig_prancha_mapas(aj)
+```
+
+::: {.medio}
+Mesmos dados, mesmo modelo: o método sorteia muitas histórias, e o resumo
+vem do conjunto.
+:::
+
 ## Cem mapas
 
 ```{r}
@@ -514,6 +531,36 @@ fig_filomorfo()
 
 ::: {.ref}
 Os nós ficam nas estimativas por ML dos dois atributos; volta na Aula 8.
+:::
+
+## Como ler um filomorfoespaço
+
+```{r}
+#| fig-width: 12
+#| fig-height: 5.1
+#| fig-alt: "Quatro filomorfoespaços simulados com dois clados de 16 espécies, azul e verde. Sobreposição: os dois clados ocupam a mesma região. Divergência: cada clado numa região. Disparidade diferente: o clado verde fica concentrado, o azul espalhado. Tendência: as espécies do clado verde se alinham numa mesma direção."
+pp <- padroes_filomorfo()
+fig_padroes_filomorfo(pp)
+```
+
+::: {.ref}
+Dados simulados: dois clados de 16 espécies (azul e verde); nós cinza nas estimativas por ML. Ideia da Fig. 2 de [Adams & Collyer (2019)](https://doi.org/10.1146/annurev-ecolsys-110218-024555), *Annu. Rev. Ecol. Evol. Syst.* 50: 405–425.
+:::
+
+## O que cada padrão sugere {.medio}
+
+| Padrão | Sugere | Como testar |
+|---|---|---|
+| **Sobreposição** | os clados exploram o mesmo espaço de fenótipos | — |
+| **Divergência** | regiões próprias por clado ou ecótipo: radiação adaptativa, convergência de ecótipos | ANOVA filogenética (Aula 4); testes de convergência |
+| **Disparidade diferente** | liberação seletiva, taxas diferentes, ou um clado que repete os mesmos fenótipos | comparação de disparidade; de taxas (Aula 8) |
+| **Tendência** | fenótipos acentuados numa mesma direção ao longo do tempo | modelos com tendência (Aula 5) |
+
+O gráfico sugere; o teste decide. E é uma projeção em 2 dimensões: os
+testes usam todos os atributos.
+
+::: {.ref}
+[Adams & Collyer (2019)](https://doi.org/10.1146/annurev-ecolsys-110218-024555), *Annu. Rev. Ecol. Evol. Syst.* 50: 405–425.
 :::
 
 # Para fechar {.secao}

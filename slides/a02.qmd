@@ -257,7 +257,7 @@ Dois parâmetros:
 - a **taxa de mudança**, $\sigma^2$.
 
 ::: {.definicao .fragment}
-Cuidado com a notação: em muitos textos (e no original desta aula) o valor
+Cuidado com a notação: em muitos textos o valor
 inicial aparece como $\theta$. Neste curso, $\theta$ fica reservado para o
 **ótimo** do modelo Ornstein-Uhlenbeck (Aula 5).
 :::
@@ -409,7 +409,7 @@ a variância entre linhagens cresce **linearmente** com o tempo.
 fig_quando_bm()
 ```
 
-Os quatro processos do original (deriva; mudança pontuada aleatória;
+Quatro processos (deriva; mudança pontuada aleatória;
 seleção fraca em relação à escala de tempo considerada; seleção que muda de
 direção aleatoriamente ao longo do tempo) produzem leques como o do BM.
 
