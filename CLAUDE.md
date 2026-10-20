@@ -136,7 +136,8 @@ quando ele decidir.
   Methods in R* (Princeton; sem DOI, link da editora). Toda aula cita os
   capítulos/seções nas leituras; mapa capítulos → aulas no plano, seção 7.3.
 - **Leituras prévias**: Rezende & Diniz-Filho (2012), O'Meara (2012) e
-  Garland, Bennett & Rezende (2005), lidas antes da disciplina; a Aula 1 as
+  Cornwallis & Griffin (2024) (no lugar de Garland, Bennett & Rezende 2005,
+  troca do Diogo em 20/out/2026), lidas antes da disciplina; a Aula 1 as
   supõe lidas (abertura: plano, seção 3.7).
 - **Aula 1**: bases, megafilogenias, pipelines e softwares resumidos em
   tabelas com links; NGS em um slide (aprovado).

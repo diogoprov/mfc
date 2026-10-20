@@ -105,3 +105,5 @@ As respostas comentadas serão publicadas aqui depois do prazo de entrega.
 - [Symonds & Blomberg (2014)](https://doi.org/10.1007/978-3-662-43550-2_5): um guia do PGLS
 - [Revell (2010)](https://doi.org/10.1111/j.2041-210x.2010.00044.x): sinal nos resíduos
 - [Ives (2019)](https://doi.org/10.1093/sysbio/syy060): R² para dados correlacionados
+- [Adams & Collyer (2018)](https://doi.org/10.1111/evo.13492): ANOVA filogenética e grupos agregados na árvore
+- [Fuentes-G. et al. (2016)](https://doi.org/10.1086/688917): ANCOVA filogenética com mudanças de taxa

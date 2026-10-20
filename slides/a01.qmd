@@ -70,7 +70,7 @@ mapa_plot(aula = 1)
 
 ::: {.fragment .nota}
 Porque compartilham ancestrais: parte da semelhança entre elas é herança,
-não resposta independente ao ambiente (Garland, Bennett & Rezende 2005).
+não resposta independente ao ambiente (Cornwallis & Griffin 2024).
 :::
 
 2. Que tipos de pergunta os métodos comparativos respondem?
@@ -87,7 +87,7 @@ outro atributo (Rezende & Diniz-Filho 2012).
 :::
 
 ::: {.ref}
-[Garland, Bennett & Rezende (2005)](https://doi.org/10.1242/jeb.01745), *J. Exp. Biol.* 208: 3015–3035; [O'Meara (2012)](https://doi.org/10.1146/annurev-ecolsys-110411-160331), *Annu. Rev. Ecol. Evol. Syst.* 43: 267–285; [Rezende & Diniz-Filho (2012)](https://doi.org/10.1002/cphy.c100079), *Compr. Physiol.* 2: 639–674.
+[Cornwallis & Griffin (2024)](https://doi.org/10.1146/annurev-ecolsys-102221-050754), *Annu. Rev. Ecol. Evol. Syst.* 55: 181–204; [O'Meara (2012)](https://doi.org/10.1146/annurev-ecolsys-110411-160331), *Annu. Rev. Ecol. Evol. Syst.* 43: 267–285; [Rezende & Diniz-Filho (2012)](https://doi.org/10.1002/cphy.c100079), *Compr. Physiol.* 2: 639–674.
 :::
 
 ## Métodos filogenéticos comparativos {.grande}
@@ -711,7 +711,7 @@ mapa_plot(aula = 1)
 ## Leituras {.muito-grande}
 
 - [Revell & Harmon (2022)](https://press.princeton.edu/books/paperback/9780691219035/phylogenetic-comparative-methods-in-r), *Phylogenetic Comparative Methods in R*: capítulos 1 e 13
-- As três leituras prévias: [Garland, Bennett & Rezende (2005)](https://doi.org/10.1242/jeb.01745), [O'Meara (2012)](https://doi.org/10.1146/annurev-ecolsys-110411-160331) e [Rezende & Diniz-Filho (2012)](https://doi.org/10.1002/cphy.c100079)
+- As três leituras prévias: [Cornwallis & Griffin (2024)](https://doi.org/10.1146/annurev-ecolsys-102221-050754), [O'Meara (2012)](https://doi.org/10.1146/annurev-ecolsys-110411-160331) e [Rezende & Diniz-Filho (2012)](https://doi.org/10.1002/cphy.c100079)
 - [Roquet, Thuiller & Lavergne (2013)](https://doi.org/10.1111/j.1600-0587.2012.07773.x): megafilogenias
 
 ::: {.definicao}

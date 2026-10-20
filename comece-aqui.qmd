@@ -24,10 +24,11 @@ algum lugar, e a Aula 1 retoma de onde.
 A Aula 1 supõe que estes três artigos foram lidos. Ela abre com uma
 pergunta sobre cada um.
 
-1. [Garland, Bennett & Rezende (2005)](https://doi.org/10.1242/jeb.01745).
-   Phylogenetic approaches in comparative physiology. *Journal of
-   Experimental Biology* 208: 3015–3035. *Pergunta: por que espécies não
-   são pontos independentes numa análise?*
+1. [Cornwallis & Griffin (2024)](https://doi.org/10.1146/annurev-ecolsys-102221-050754).
+   A guided tour of phylogenetic comparative methods for studying trait
+   evolution. *Annual Review of Ecology, Evolution, and Systematics* 55:
+   181–204. *Pergunta: por que espécies não são pontos independentes numa
+   análise?*
 2. [O'Meara (2012)](https://doi.org/10.1146/annurev-ecolsys-110411-160331).
    Evolutionary inferences from phylogenies: a review of methods. *Annual
    Review of Ecology, Evolution, and Systematics* 43: 267–285. *Pergunta:

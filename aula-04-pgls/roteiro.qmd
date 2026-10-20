@@ -164,6 +164,24 @@ Os ecomorfos diferem no membro posterior relativo mesmo considerando a
 filogenia; o `anova()` do `gls()` testa os termos em sequência (primeiro o
 SVL, depois o ecomorfo).
 
+Adams & Collyer (2018) mostram que permutar os **resíduos** (RRPP) tem mais
+poder que simular dados sob BM, e alertam para grupos agregados na árvore
+(aqui, cada ecomorfo surgiu várias vezes, nas várias ilhas). O
+`procD.pgls()` do `geomorph` faz a ANCOVA com RRPP:
+
+```{r}
+library(geomorph)
+gdf <- geomorph.data.frame(hll = setNames(dados$hll, dados$sp),
+                           svl = setNames(dados$svl, dados$sp),
+                           eco = setNames(dados$eco, dados$sp), phy = arv)
+set.seed(45)
+summary(procD.pgls(hll ~ svl + eco, phy = phy, data = gdf, iter = 999, print.progress = FALSE))$table
+```
+
+Se os grupos também diferirem na **taxa** de evolução, a ANCOVA
+filogenética de Fuentes-G. et al. (2016) estima isso junto com as
+diferenças de intercepto e inclinação.
+
 ## 6. Respostas binárias e contagens: o GLM filogenético
 
 Ser *trunk-ground* (0 ou 1) depende do membro posterior relativo? E o

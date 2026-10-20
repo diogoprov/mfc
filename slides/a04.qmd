@@ -353,6 +353,19 @@ F: F = `r num(av$F, 1)`, *p* `r pval(av$p)`.
 [Garland, Dickerman, Janis & Jones (1993)](https://doi.org/10.2307/2992464), *Syst. Biol.* 42: 265. Em R: `phytools::phylANOVA`.
 :::
 
+## Cuidados com a ANOVA filogenética {.grande}
+
+- Permutar os **resíduos** (RRPP) tem mais poder que simular dados sob BM
+  na árvore, e serve para ANOVA e regressão, uni e multivariadas
+- Grupos **agregados** na árvore (cada grupo é um clado) se confundem com a
+  filogenia: o poder cai, e poucas transições entre grupos lembram a
+  pseudorreplicação da Aula 6
+- Em R: `RRPP::lm.rrpp` ou `geomorph::procD.pgls`
+
+::: {.ref}
+[Adams & Collyer (2018)](https://doi.org/10.1111/evo.13492), *Evolution* 72: 1204–1215.
+:::
+
 ## ANCOVA filogenética {.muito-grande}
 
 ```{r}
@@ -371,8 +384,12 @@ nlme::gls(hll ~ svl + eco, data = dados,
 
 :::
 
+Os grupos podem diferir também na **taxa** de evolução, e não só no
+intercepto e na inclinação: a ANCOVA filogenética de Fuentes-G. et al.
+(2016) estima as duas coisas.
+
 ::: {.ref}
-[Revell & Harmon (2022)](https://press.princeton.edu/books/paperback/9780691219035/phylogenetic-comparative-methods-in-r), seção 3.5.
+[Revell & Harmon (2022)](https://press.princeton.edu/books/paperback/9780691219035/phylogenetic-comparative-methods-in-r), seção 3.5; [Fuentes-G., Housworth, Weber & Martins (2016)](https://doi.org/10.1086/688917), *Am. Nat.* 188: 615–627.
 :::
 
 # 5. Além do PGLS: GLM filogenético {.secao}
