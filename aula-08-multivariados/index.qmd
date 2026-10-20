@@ -43,10 +43,14 @@ As figuras dos slides foram geradas em R; o código está em
 
 ## Código R (aula prática)
 
-Esta aula não tem roteiro próprio da edição de 2020. A PCA filogenética
-está no [roteiro da Aula 7](../aula-07-ancestrais/walkthrough-aula-5-sexta.html)
-(seção `#---phylo PCA e PVR`); as demais análises estão nos slides, com os
-dados do `geomorph` (`plethodon`, `plethspecies`) e do `phytools`.
+- {{< fa solid play >}} **[Roteiro prático (executado)](roteiro.html)**\
+  *Procrustes à mão e com o `gpagen()`, morfoespaço, K e PGLS
+  multivariados, PCA filogenética, `mvgls` com verossimilhança penalizada,
+  `mvBM` com uma matriz de taxas por ecomorfo, modularidade e integração. O
+  código roda na página.*
+- A PCA filogenética da edição de 2020 está no
+  [roteiro da Aula 7](../aula-07-ancestrais/walkthrough-aula-5-sexta.html)
+  (seção `#---phylo PCA e PVR`).
 
 Pacotes: `geomorph`, `mvMORPH`, `phytools`.
 
@@ -71,6 +75,33 @@ membros anterior (FLL) e posterior (HLL), ajuste BM com uma matriz de taxas e co
 elipses das matrizes. *Avaliação:* interpreta as diferenças entre as
 matrizes em termos de taxas e de correlação evolutiva, e comenta os ecomorfos
 com poucas espécies.
+
+::: {.callout-tip collapse="true" appearance="simple"}
+## Dicas
+
+- As seções 3 e 5 do [roteiro](roteiro.html) fazem a PCA filogenética e o
+  `mvBM()` com outros atributos.
+- Ordene os dados pela árvore: `anole.data[anoletree$tip.label, ]`.
+- Compare objetos equivalentes: os autovetores estão em `$Evec` no
+  `phyl.pca()` e em `$rotation` no `prcomp()`; o `$L` do `phyl.pca()` traz
+  as correlações entre atributos e eixos. Um eixo com os sinais invertidos é
+  o mesmo eixo.
+- Os ecomorfos têm de 6 (Tr) a 25 (TG) espécies: matrizes de taxas de
+  grupos pequenos são estimadas com pouca precisão.
+- `mvBM()` guarda as matrizes em `$sigma` (uma por regime, `$sigma[, , "TG"]`).
+  Uma elipse de uma matriz 2 × 2 **S**: os pontos de um círculo
+  multiplicados por `chol(S)`.
+
+```r
+library(phytools); library(mvMORPH)
+data(anoletree, anole.data)
+X <- anole.data[anoletree$tip.label, ]
+# 1. prcomp(X)$rotation[, 1:2]; phyl.pca(as.phylo(anoletree), X)$Evec[, 1:2]
+# 2. Y <- as.matrix(X[, c("FLL", "HLL")])
+#    mvBM(anoletree, Y, model = "BM1"); mvBM(anoletree, Y, model = "BMM")
+#    elipse: circ <- cbind(cos(t), sin(t)); circ %*% chol(S)
+```
+:::
 
 As respostas comentadas serão publicadas aqui depois do prazo de entrega.
 

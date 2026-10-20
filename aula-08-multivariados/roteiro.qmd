@@ -1,0 +1,191 @@
+---
+title: "Roteiro prático — Atributos multivariados"
+subtitle: "Aula 8 · Métodos Filogenéticos Comparativos"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-tools: true
+    code-overflow: wrap
+execute:
+  echo: true
+  warning: false
+  message: false
+  fig-width: 7
+  fig-height: 5
+---
+
+::: {.callout-note appearance="minimal"}
+Este roteiro **roda de verdade**: os resultados abaixo saíram do código
+mostrado. Copie os blocos para um script e rode em ordem numa sessão limpa do
+R; todos os dados vêm dos pacotes. No fim, o [desafio](index.qmd#desafio)
+pede o mesmo raciocínio com os *Anolis*.
+:::
+
+## 0. Pacotes e dados
+
+```{r}
+library(ape)
+library(phytools)
+library(geomorph)
+library(mvMORPH)
+```
+
+Duas fontes do `geomorph`: 40 exemplares de duas espécies de *Plethodon*
+(12 marcos na cabeça) e as médias de 9 espécies, com a árvore.
+
+```{r}
+data(plethodon, plethspecies)
+dim(plethodon$land)       # marcos × coordenadas × exemplares
+plethspecies$phy
+```
+
+## 1. Superposição de Procrustes, passo a passo
+
+Translação, escala e rotação, à mão, para dois exemplares:
+
+```{r}
+#| fig-height: 4
+A <- plethodon$land[, , 1]; B <- plethodon$land[, , 30]
+centrar <- function(M) sweep(M, 2, colMeans(M))
+tamanho <- function(M) sqrt(sum(centrar(M)^2))     # tamanho do centroide
+A1 <- centrar(A) / tamanho(A); B1 <- centrar(B) / tamanho(B)
+s <- svd(t(A1) %*% B1); R <- s$v %*% t(s$u)         # rotação de mínimos quadrados
+B2 <- B1 %*% R
+c(tamanho_A = tamanho(A), tamanho_B = tamanho(B), distancia_procrustes = sqrt(sum((A1 - B2)^2)))
+par(mfrow = c(1, 2))
+plot(rbind(A, B), type = "n", asp = 1, main = "brutos", xlab = "", ylab = "")
+points(A, pch = 19, col = "steelblue"); points(B, pch = 19, col = "firebrick")
+plot(rbind(A1, B2), type = "n", asp = 1, main = "superpostos", xlab = "", ylab = "")
+points(A1, pch = 19, col = "steelblue"); points(B2, pch = 19, col = "firebrick")
+```
+
+O `gpagen()` faz a superposição generalizada (GPA) de todos os exemplares de
+uma vez, em relação ao consenso:
+
+```{r}
+gpa <- gpagen(plethodon$land, print.progress = FALSE)
+plotAllSpecimens(gpa$coords, links = plethodon$links)
+```
+
+## 2. O morfoespaço
+
+```{r}
+pca <- gm.prcomp(gpa$coords)
+round(pca$d / sum(pca$d), 3)[1:4]   # proporção da variância nos 4 primeiros eixos
+grupo <- interaction(plethodon$species, plethodon$site)
+plot(pca$x[, 1:2], pch = 19, col = as.integer(grupo), asp = 1)
+legend("topright", legend = levels(grupo), pch = 19, col = seq_along(levels(grupo)), bty = "n")
+```
+
+## 3. Sinal e PGLS multivariados
+
+Agora as 9 espécies, com a árvore. O K multivariado (Adams 2014) e o PGLS
+da forma contra o tamanho (alometria), ambos com permutação:
+
+```{r}
+gpa_sp <- gpagen(plethspecies$land, print.progress = FALSE)
+arv <- plethspecies$phy
+set.seed(801)
+k <- physignal(gpa_sp$coords, arv, iter = 999, print.progress = FALSE)
+c(K_mult = k$phy.signal, p = k$pvalue)
+```
+
+```{r}
+gdf <- geomorph.data.frame(gpa_sp, phy = arv)
+set.seed(804)
+alo <- procD.pgls(coords ~ log(Csize), phy = phy, data = gdf, iter = 999, print.progress = FALSE)
+summary(alo)$table
+```
+
+Com 9 espécies, nenhuma relação detectável entre forma e tamanho.
+
+O filomorfoespaço da forma, e a PCA **filogenética** (os eixos estimados
+com a matriz **C**, opção `GLS = TRUE`):
+
+```{r}
+#| fig-height: 4.5
+pca_comum <- gm.prcomp(gpa_sp$coords, phy = arv)
+pca_filo  <- gm.prcomp(gpa_sp$coords, phy = arv, GLS = TRUE)
+par(mfrow = c(1, 2))
+plot(pca_comum, phylo = TRUE, main = "PCA comum + árvore")
+plot(pca_filo, phylo = TRUE, main = "PCA filogenética")
+```
+
+## 4. Modelos multivariados com verossimilhança penalizada
+
+São 22 coordenadas para 9 espécies: mais variáveis que espécies. A
+verossimilhança comum não funciona; a penalizada (`mvgls`) sim, e os modelos
+se comparam pelo GIC.
+
+```{r}
+Y <- two.d.array(gpa_sp$coords)[arv$tip.label, ]
+dim(Y)
+ajustes <- lapply(c(BM = "BM", OU = "OU", EB = "EB"), \(m)
+  mvgls(Y ~ 1, tree = arv, model = m, method = "PL-LOOCV"))
+sapply(ajustes, \(f) GIC(f)$GIC)
+```
+
+Os três ficam praticamente empatados: com 9 espécies, não há base para ir
+além do BM.
+
+## 5. Uma matriz de taxas por regime
+
+Com poucos atributos, o `mvBM()` compara uma matriz de taxas com uma por
+regime mapeado na árvore. Nos *Anolis*, SVL e cauda (já em log natural),
+com os ecomorfos:
+
+```{r}
+data(anoletree, anole.data)
+X <- as.matrix(anole.data[anoletree$tip.label, c("SVL", "TL")])
+um   <- mvBM(anoletree, X, model = "BM1", echo = FALSE, diagnostic = FALSE)
+cada <- mvBM(anoletree, X, model = "BMM", echo = FALSE, diagnostic = FALSE)
+c(BM1 = um$AICc, BMM = cada$AICc)
+round(cada$sigma[, , "TG"], 4)   # a matriz de taxas dos trunk-ground
+```
+
+As restrições do slide (proporcional, autovetores compartilhados...) entram
+pelo argumento `param`:
+
+```{r}
+prop <- mvBM(anoletree, X, model = "BMM", param = list(constraint = "proportional"),
+             echo = FALSE, diagnostic = FALSE)
+c(livre = cada$AICc, proporcional = prop$AICc)
+```
+
+## 6. Modularidade e integração
+
+Uma hipótese de dois módulos na cabeça das salamandras (marcos 1–5 × 6–12,
+a partição de exemplo do `geomorph`):
+
+```{r}
+modulos <- rep(c("A", "B"), c(5, 7))
+set.seed(802)
+mt <- modularity.test(gpa$coords, modulos, CI = FALSE, iter = 999, print.progress = FALSE)
+c(CR = mt$CR, p = mt$P.value)
+set.seed(805)
+it <- integration.test(gpa$coords, partition.gp = modulos, iter = 999, print.progress = FALSE)
+c(r_PLS = it$r.pls, p = it$P.value)
+```
+
+CR perto de 1 e *p* alto: sem sinal de modularidade; o PLS mostra
+integração forte entre as duas partes. As taxas de evolução de cada módulo,
+nas 9 espécies (11 marcos):
+
+```{r}
+set.seed(803)
+taxas <- compare.multi.evol.rates(gpa_sp$coords, gp = rep(c("A", "B"), c(5, 6)),
+                                  phy = arv, iter = 999, print.progress = FALSE)
+c(razao = taxas$sigma.d.ratio, p = taxas$P.value)
+```
+
+## Resumo
+
+- `gpagen()` separa forma de tamanho; `gm.prcomp()` faz o morfoespaço (comum
+  ou filogenético).
+- `physignal()` e `procD.pgls()` são o K e o PGLS para dados de alta
+  dimensão.
+- Com mais variáveis que espécies, `mvgls()` com verossimilhança penalizada;
+  com poucos atributos, `mvBM()` com uma matriz de taxas por regime.
+- `modularity.test()`, `integration.test()` e `compare.multi.evol.rates()`
+  para módulos.
