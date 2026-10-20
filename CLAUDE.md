@@ -25,7 +25,7 @@ simulações ou da árvore-guia.
 |---:|---|---|---|---|
 | 1 | A árvore e os dados | A1, A5 2–7 | — | — |
 | 2 | O movimento browniano e a matriz C | A2 1–49 | **`inventarios/a02.md`** | **`slides/a02.qmd` ✔** (65 slides; aula-modelo, aguarda revisão do Diogo) |
-| 3 | Sinal filogenético | A3 24–61, A5 8–10 | — | — |
+| 3 | Sinal filogenético | A3 24–61, A5 7–10 | **`inventarios/a03.md`** | **`slides/a03.qmd` ✔** (60 slides; aguarda revisão do Diogo) |
 | 4 | Regressão filogenética (PGLS) | A2 127–141, A4 50–58 | — | — |
 | 5 | Modelos de evolução contínua | A2 50–88, A4 18–49 | — | — |
 | 6 | Atributos discretos | A2 89–126, A4 1–17 | — | — |
@@ -125,7 +125,8 @@ quando ele decidir.
   interpretar, e as limitações. Modelos de DNA → Aula 6 (ponte para o Mk).
 - **Pacotes das figuras**: `ggplot2`, `dplyr`, `tidyr`,
   `purrr`, `tibble`, `patchwork`, `here`, `knitr`, `ape`, `phytools`,
-  `geiger`, `nlme` (**aprovados**). Sem `ggtree` (árvores por função
+  `geiger`, `nlme` (**aprovados**); `caper` (aprovado para o D de Fritz &
+  Purvis, Aula 3). Sem `ggtree` (árvores por função
   própria) e sem `brms`. `rphylopic` só para baixar silhuetas, fora do render.
 - **Não entram** (como na multidimensionais): Kahoot, webR, "Teste-se",
   atividades extras nos slides.
@@ -173,6 +174,10 @@ quando ele decidir.
 - `R/bm.R`: simulações no tempo (`sim_bm_tempo`, `sim_ou_tempo`,
   `sim_eb_tempo`, `sim_trend_tempo`, `sim_linhagens`, `sim_dados`).
 - `R/diagrama.R`: `diagrama(caixas, setas)` (da multidimensionais).
+- `R/aula03_base.R`: `anolis()`, `lambda_arvore()`, `eb_arvore()`,
+  `vcv_ou_arvore()`, `sim_mvn()`, `k_passos()`, `moran_I()`, `correlograma()`,
+  `pvr_passos()`, `psr_curva()` (todas conferidas com ape/phytools);
+  `R/aula03_*.R`: figuras da Aula 3.
 - `R/aula02_*.R`: figuras da Aula 2 (`intro`, `bm`, `matriz`, `arvore`,
   `pic`). `pic_passos()` faz os contrastes nó a nó.
 - `.claude/launch.json`: servidor `docs` (porta 4321) para o teste de
