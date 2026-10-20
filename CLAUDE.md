@@ -65,20 +65,28 @@ períodos. Decks de ~50–65 slides.
    sequências só de texto. Sequências montadas aos poucos no original (a
    **C** em 9 passos, as linhagens de BM, a **Q** do Mk) viram vários slides
    com a mesma figura crescendo.
-2. **Não corte conteúdo.** Todo bloco do original tem destino na tabela da
+2. **Fidelidade ao original** (Diogo, 19/out/2026): o deck reformulado deve
+   ficar o mais fiel possível ao conteúdo do original, corrigindo erros,
+   duplicatas e redundâncias. Antes de publicar uma aula, rode
+   `python3 -I ferramentas/fidelidade.py <texto-do-pptx> <slide-ini> <slide-fim> slides/aNN.qmd`
+   (o texto vem de `ferramentas/extrai.py <pptx> <saida.txt>`): ele lista os
+   slides do original cujas palavras-chave não aparecem no deck. Cuidado com
+   leituras erradas dos métodos (ex.: os círculos de Pavoine são contribuições
+   à diversidade, não estados ancestrais).
+3. **Não corte conteúdo.** Todo bloco do original tem destino na tabela da
    seção 4 do plano. Encolher só o que o Diogo aprovar (plano, seção 6).
-3. **Passo a passo das contas**, um passo por fragmento (montar **C**, os
+4. **Passo a passo das contas**, um passo por fragmento (montar **C**, os
    contrastes, *P(t) = e^Qt*).
-4. **Texto grande e espaço aproveitado** (pedido do Diogo na revisão da
+5. **Texto grande e espaço aproveitado** (pedido do Diogo na revisão da
    Aula 2): corpo em 32 px, nada abaixo de ~26 px fora das `.ref`. Slide de
    texto com espaço sobrando leva `{.grande}` (1,15em) ou `{.muito-grande}`
    (1,3em); `{.medio}` só quando não couber. Figuras na largura toda
    (`out.width: "100%"`). Meça a altura usada: mire em 600–745 px.
-5. **Referências com link** para o DOI, conferidas no Crossref.
-6. **Reaproveite** cursos irmãos: Procrustes e PCA da multidimensionais
+6. **Referências com link** para o DOI, conferidas no Crossref.
+7. **Reaproveite** cursos irmãos: Procrustes e PCA da multidimensionais
    (Aulas 6 e 4) na Aula 8; OLS e pressupostos da univariada/Bioestatística
    na Aula 4.
-7. **Pergunte antes de adicionar um pacote.**
+8. **Pergunte antes de adicionar um pacote.**
 
 ## Decisões da disciplina
 

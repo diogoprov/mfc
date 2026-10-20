@@ -80,8 +80,8 @@ mapa_plot(aula = 4)
 fig_ols()
 ```
 
-Os mínimos quadrados escolhem a reta que minimiza a soma dos resíduos ao
-quadrado.
+Os mínimos quadrados ordinários (*ordinary least squares*, OLS) escolhem a
+reta que minimiza a soma dos resíduos ao quadrado.
 
 ## Pressupostos do OLS (Gauss-Markov) {.muito-grande .tabela-grande}
 

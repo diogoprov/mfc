@@ -11,6 +11,7 @@ project:
     - "!CLAUDE.md"
     - "!PLANO-conversao-qmd.md"
     - "!inventarios/"
+    - "!ferramentas/"
 
 website:
   title: "Métodos Filogenéticos Comparativos"

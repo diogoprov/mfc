@@ -89,7 +89,7 @@ com espécies tomadas ao acaso na filogenia.
 :::
 
 ```{r}
-#| fig-height: 3.0
+#| fig-height: 2.8
 #| fig-alt: "A árvore-guia duas vezes. À esquerda, barras de um atributo simulado por BM: as espécies irmãs têm barras parecidas. À direita, o mesmo atributo embaralhado entre as pontas: irmãs com barras bem diferentes."
 fig_definicao()
 ```
@@ -333,7 +333,7 @@ O intervalo de confiança pelo perfil segue a recomendação de [Pearse et al. (
 
 ## A amostragem de espécies enviesa o λ
 
-![](../assets/terceiros/pearse-2025-fig3.png){fig-alt="Figura 3 de Pearse et al. (2025): uma filogenia simulada com as espécies amostradas de quatro maneiras e os perfis de verossimilhança de lambda: com amostragem completa ou aleatória, a estimativa fica perto de 1, o valor verdadeiro; com amostragem enviesada pelo próprio atributo, a estimativa cai, e com viés forte vai a 0." height="440px"}
+![](../assets/terceiros/pearse-2025-fig3.png){fig-alt="Figura 3 de Pearse et al. (2025): uma filogenia simulada com as espécies amostradas de quatro maneiras e os perfis de verossimilhança de lambda: com amostragem completa ou aleatória, a estimativa fica perto de 1, o valor verdadeiro; com amostragem enviesada pelo próprio atributo, a estimativa cai, e com viés forte vai a 0." height="420px"}
 
 Quando as espécies amostradas dependem do próprio atributo (um filtro
 ambiental, por exemplo), o λ sai enviesado: não compare λ entre
@@ -422,11 +422,14 @@ Inspirado em [Diniz-Filho (2001)](https://doi.org/10.1554/0014-3820(2001)055[110
 ## Correlograma dos *Anolis*: as classes de distância
 
 ```{r}
+#| fig-height: 3.6
 #| fig-alt: "Histograma das distâncias patrísticas entre pares de espécies de Anolis, com a maioria perto de 2 (pares que só se encontram na raiz), dividido em quatro classes de largura igual."
 fig_correlograma_anolis(1)
 ```
 
-A maioria dos pares só se encontra na raiz (distância perto de 2).
+A maioria dos pares só se encontra na raiz (distância perto de 2). As
+classes de distância permitem avaliar estruturas mais complexas na matriz W
+do que um único I global.
 
 ## Correlograma dos *Anolis*: o I por classe
 
@@ -493,7 +496,9 @@ Nathan Mantel (1919–2002), domínio público, via Wikipedia.
 :::
 :::
 ::: {.column width="65%"}
-- Correlação entre duas matrizes de distância
+- Autocorrelação multidimensional: correlação entre duas matrizes de
+  distância (a filogenética e uma de dissimilaridade fenotípica: euclidiana,
+  Jaccard, distância de Nei, FST de Rogers etc.)
 - Significância por permutação
 - Pode usar vários atributos ao mesmo tempo (uma distância multivariada)
 - Mas, em análises comparativas, tem **baixo poder** e pode enganar: com um
@@ -571,12 +576,14 @@ PCoA).
 ## PVR, passo 3: os autovetores
 
 ```{r}
-#| fig-height: 4.1
+#| fig-height: 3.6
 #| fig-alt: "A árvore-guia e os três primeiros autovetores como barras nas pontas: o primeiro separa os dois grandes clados; o segundo separa sp1 e sp2 de sp3 e sp4; o terceiro separa sp5 de sp6 e sp7."
 fig_pvr(3)
 ```
 
-Cada autovetor é um "corte" da filogenia numa escala diferente.
+Cada autovetor é um "corte" linearmente independente da filogenia: permite
+avaliar o efeito da filogenia em escalas diferentes, e o autovalor diz quanto
+da estrutura da árvore cada corte representa.
 
 ::: {.ref}
 Ideia de um slide de J. A. F. Diniz-Filho.
