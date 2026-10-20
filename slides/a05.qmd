@@ -485,20 +485,14 @@ Simpson (1944), *Tempo and mode in evolution*.
 
 ## A metáfora da paisagem adaptativa
 
-```{r}
-#| fig-width: 7
-#| fig-height: 4.2
-#| out-width: "55%"
-#| fig-alt: "Superfície de aptidão sobre dois atributos, com dois picos de alturas diferentes."
-fig_paisagem()
-```
+![](../assets/terceiros/wilke-paisagem-adaptativa.png){fig-alt="Perfil de uma paisagem de aptidão com três picos, A, B e C, sendo B o mais alto. Setas sobem as encostas em direção a cada pico; uma população num vale sobe, por setas vermelhas, até o pico B." width="64%" fig-align="center"}
 
 Picos de aptidão (Wright 1932) e zonas adaptativas (Simpson 1944); as
 paisagens também mudam no tempo. Em *Cyprinodon* das Bahamas, a paisagem
 medida no campo tem vários picos, que ajudam a explicar a radiação.
 
 ::: {.ref}
-[Martin & Wainwright (2013)](https://doi.org/10.1126/science.1227710), *Science* 339: 208–211.
+[Martin & Wainwright (2013)](https://doi.org/10.1126/science.1227710), *Science* 339: 208–211. Figura: C. O. Wilke, [domínio público](https://commons.wikimedia.org/wiki/File:Fitness-landscape-cartoon.png), via Wikimedia Commons.
 :::
 
 # 8. Várias taxas e vários regimes {.secao}
@@ -621,6 +615,25 @@ No OUM dos *Anolis*, a meia-vida é `r num(log(2) / oum_a, 2)` da altura da
 
 ::: {.ref}
 [Cooper, Thomas, Venditti, Meade & Freckleton (2016)](https://doi.org/10.1111/bij.12701), *Biol. J. Linn. Soc.* 118: 64–77. Desempenho depende da discriminabilidade, da razão sinal/ruído e do número de espécies: [Cressler, Butler & King (2015)](https://doi.org/10.1093/sysbio/syv043).
+:::
+
+## A resposta: as cautelas são exageradas {.grande}
+
+Três contra-argumentos a Cooper et al. (2016):
+
+1. O teste padrão de adaptação compara **ótimos diferentes** (ex.: um por
+   ambiente, OUM × OU1); Cooper et al. avaliaram só OU × BM com um ótimo
+2. Olhe as **estimativas** dos parâmetros (α, meia-vida, θ), não só a
+   significância: elas costumam levar à inferência correta
+3. O viés do erro de medida se corrige com métodos padrão (incluir o erro
+   no modelo)
+
+::: {.nota}
+Conclusão dos autores: não há problema estatístico específico do OU.
+:::
+
+::: {.ref}
+[Grabowski, Pienaar, Voje et al. (2023)](https://doi.org/10.1093/sysbio/syad012), *Syst. Biol.* 72: 955–963.
 :::
 
 ## O "lado escuro" dos métodos comparativos {.grande}

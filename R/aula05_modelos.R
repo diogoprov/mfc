@@ -177,17 +177,6 @@ fig_levy <- function(n = 12, passos = 200, seed = 508) {
 
 # ---- Bloco 7: paisagem adaptativa -------------------------------------------
 
-fig_paisagem <- function() {
-  g <- expand.grid(x = seq(-3, 3, length.out = 120), y = seq(-3, 3, length.out = 120))
-  g$z <- exp(-((g$x - 1.2)^2 + (g$y - 1)^2) / 1.2) + .7 * exp(-((g$x + 1.3)^2 + (g$y + 1.2)^2) / .8)
-  ggplot(g, aes(x, y, z = z)) +
-    geom_raster(aes(fill = z)) +
-    geom_contour(colour = "white", alpha = .7, bins = 9) +
-    scale_fill_gradient(low = cores[["papel"]], high = cores[["verde"]], name = "aptidão") +
-    coord_equal() + labs(x = "atributo 1", y = "atributo 2") + tema_aula(15) +
-    theme(axis.text = element_blank(), panel.grid = element_blank(), legend.position = "right")
-}
-
 # ---- Bloco 8: várias taxas e vários regimes ----------------------------------
 
 #' Árvore dos Anolis com os ecomorfos mapeados, reescalada para altura 1
