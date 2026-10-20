@@ -46,10 +46,13 @@ As figuras dos slides foram geradas em R; o código está em
 
 ## Código R (aula prática)
 
-- {{< fa solid eye >}} **[Ver walkthrough HTML](walkthrough-aula-1-segunda.html)**
-  *R básico, leitura e manipulação de árvores em Newick e Nexus, o efeito
-  da correlação filogenética (simulado) e o `phyndr`.*
-  [{{< fa solid file-code >}} baixar `aula-1-segunda.R`](aula-1-segunda.R)
+- {{< fa solid play >}} **[Roteiro prático (executado)](roteiro.html)**\
+  *O objeto `phylo`, Newick passo a passo, Nexus, enraizamento e
+  politomias, casar a árvore com a tabela, o efeito da não independência
+  (simulado), bootstrap e a forma da árvore. O código roda na página.*
+- {{< fa solid eye >}} [Roteiro da edição de 2020](walkthrough-aula-1-segunda.html)
+  · [{{< fa solid file-code >}} `aula-1-segunda.R`](aula-1-segunda.R)\
+  *Mais manipulação de dados e o `phyndr`.*
 
 Pacotes: `ape`, `phytools`, `geiger`.
 
@@ -76,6 +79,28 @@ a árvore é enraizada e ultramétrica e salve-a em Newick. (3) Calcule o
 índice de Colless (escreva a função) e o γ de Pybus (`ape::gammaStat()`).
 (4) Desenhe a árvore com o comprimento da asa (`wingL`) ao lado das pontas.
 *Avaliação:* explica o que foi podado e por quê, e interpreta Colless e γ.
+
+::: {.callout-tip collapse="true" appearance="simple"}
+## Dicas
+
+- Tudo o que o desafio pede aparece nas seções 3 a 5 e 8 do
+  [roteiro](roteiro.html), com outros dados.
+- `geospiza` é uma lista: a árvore está em `geospiza$phy` e os dados em
+  `geospiza$dat`.
+- Depois do `treedata()`, confira a ordem das linhas (`sort = TRUE`).
+- O γ só faz sentido numa árvore ultramétrica; a função de Colless do
+  roteiro funciona com qualquer árvore binária.
+
+```r
+library(ape); library(phytools); library(geiger)
+data(geospiza, package = "geiger")
+str(geospiza, max.level = 1)
+# 1. name.check(...) e treedata(..., sort = TRUE)
+# 2. is.rooted(), is.ultrametric(), write.tree(..., file = "geospiza.tre")
+# 3. colless(...) e gammaStat(...)
+# 4. plotTree.barplot(...) com o vetor nomeado de wingL
+```
+:::
 
 As respostas comentadas serão publicadas aqui depois do prazo de entrega.
 

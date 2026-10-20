@@ -40,8 +40,7 @@ para respondê-las.
    contínuos e categóricos (Bayesiano, ML, threshold). ANOVA filogenética.
 3. **Taxa de evolução de atributos** (auteur, Brownie) e suas
    relações com taxas de especiação. OU multi-regime (ouch). Métodos
-   para detectar convergência, picos adaptativos e mudança de regimes
-   (SURFACE).
+   para detectar convergência, picos adaptativos e mudança de regimes.
 4. **Simulações** de evolução de atributos e filogenias sob modelos
    alternativos. Medidas de simetria de árvore. Imputação de dados
    faltantes. Visualização de dados filogenéticos.
@@ -51,14 +50,13 @@ para respondê-las.
 6. **Não-estacionaridade**: PVR e ajuste de múltiplas matrizes VCV.
    Partição dos componentes específico e herdado da variação
    fenotípica. Incerteza filogenética.
-7. **Documento dinâmico em R Markdown** — preparação e publicação
+7. **Documento dinâmico em Quarto** — preparação e publicação
    online da análise final.
 
 ### Como o conteúdo está distribuído nas aulas
 
-O texto acima é o da ementa da disciplina. Na versão atual dos materiais,
-ele está organizado em oito aulas pelo [mapa dos métodos](index.qmd), com
-algumas atualizações:
+Na versão atual dos materiais, o conteúdo está organizado em oito aulas
+pelo [mapa dos métodos](index.qmd):
 
 | Aula | Tema | Itens do conteúdo |
 |---:|---|---|
@@ -71,12 +69,10 @@ algumas atualizações:
 | 7 | [Estados ancestrais e visualização](aula-07-ancestrais/index.qmd) | 2 (estados ancestrais), 4 (visualização) |
 | 8 | [Atributos multivariados](aula-08-multivariados/index.qmd) | 3 (taxas), 5 e 2 (versões multivariadas) |
 
-Atualizações em relação ao texto da ementa: o SURFACE saiu (no lugar,
-métodos como `bayou`, PhylogeneticEM e `mvMORPH`); a avaliação usa
-**Quarto**, sucessor do R Markdown; o desenho de estudos cita a versão
-publicada do `phyndr` ([Pennell, FitzJohn & Cornwell 2016](https://doi.org/10.1111/2041-210x.12517));
-e os déficits de conhecimento seguem Hortal et al. (2015), que tratam do
-Darwiniano e do Raunkiaeriano, entre outros.
+Para detectar mudanças de regime, o curso usa métodos como `bayou`,
+PhylogeneticEM e `mvMORPH`; o desenho de estudos cita a versão publicada do
+`phyndr` ([Pennell, FitzJohn & Cornwell 2016](https://doi.org/10.1111/2041-210x.12517));
+e os déficits de conhecimento seguem Hortal et al. (2015).
 
 ## Formato
 

@@ -1,0 +1,323 @@
+---
+title: "Roteiro prático — A árvore e os dados"
+subtitle: "Aula 1 · Métodos Filogenéticos Comparativos"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-tools: true
+    code-overflow: wrap
+execute:
+  echo: true
+  warning: false
+  message: false
+  fig-width: 7
+  fig-height: 5
+---
+
+::: {.callout-note appearance="minimal"}
+Este roteiro **roda de verdade**: os resultados abaixo saíram do código
+mostrado. Copie os blocos para um script, na pasta com os
+[dados da aula](index.qmd#dados-utilizados), e rode em ordem numa sessão
+limpa do R. No fim, o [desafio](index.qmd#desafio) pede o mesmo raciocínio
+com outro conjunto de dados.
+:::
+
+## 0. Pacotes e o básico do R
+
+```{r}
+library(ape)
+library(phytools)
+library(geiger)
+```
+
+Os objetos que mais vamos usar: vetores **com nomes** (um valor por
+espécie), tabelas (`data.frame`) e matrizes.
+
+```{r}
+x <- c(sp1 = 2.51, sp2 = 2.80, sp3 = 2.23)
+x["sp2"]
+names(x)
+d <- data.frame(sp = names(x), A = x)
+d[d$A > 2.3, ]
+```
+
+## 1. O objeto `phylo`
+
+Uma árvore no R é uma lista da classe `phylo`. Vamos ler a árvore-guia do
+curso a partir do texto Newick.
+
+```{r}
+guia <- read.tree(text = "(((sp1:0.18,sp2:0.18):1.06,(sp3:0.02,sp4:0.02):1.22):0.20,(sp5:1.37,(sp6:0.23,sp7:0.23):1.14):0.07);")
+guia
+str(guia)
+```
+
+As peças: `edge` (cada linha é um ramo, do nó pai ao filho), `tip.label`
+(as pontas são os números 1 a *n*), `Nnode` e `edge.length`, na mesma
+ordem de `edge`. Os nós internos são numerados de *n* + 1 em diante, e a
+raiz é *n* + 1.
+
+```{r}
+cbind(guia$edge, comprimento = guia$edge.length)
+```
+
+```{r}
+#| fig-height: 4.5
+plot(guia, label.offset = .03)
+nodelabels(frame = "circle", bg = "white", cex = .8)
+edgelabels(round(guia$edge.length, 2), frame = "none", adj = c(.5, -.4), cex = .75)
+```
+
+## 2. Escrevendo uma árvore: Newick passo a passo
+
+Os mesmos cinco passos dos slides. Rode um por vez e compare o texto com o
+desenho.
+
+```{r}
+#| fig-height: 3
+passos <- c("(A,B);", "(A:2.75,B:3.76);", "((A:2.75,B:3.76):2.0,C:2.6);",
+            "((A:2.75,B:3.76)N1:2.0,C:2.6);", "((A:2.75,B:3.76)N1:2.0,C:2.6)N2;")
+t5 <- read.tree(text = passos[5])
+t5$node.label
+plot(t5, show.node.label = TRUE, cex = 1.3, x.lim = c(0, 7))
+```
+
+E o caminho inverso, da árvore para o texto:
+
+```{r}
+write.tree(t5)
+```
+
+## 3. Lendo arquivos: Nexus e Newick
+
+```{r}
+barb <- read.nexus("BarbetTree.nex")   # Nexus (salvo pelo Mesquite)
+cent <- read.tree("Centrarchidae.tre") # Newick
+barb
+cent
+```
+
+Uma árvore sem comprimentos de ramo (só a topologia) e a mesma árvore
+datada, dos anuros de Gomes:
+
+```{r}
+gomes     <- read.tree("Gomes_phylo.txt")
+gomes_dat <- read.tree("Gomes_tree_datada.txt")
+is.null(gomes$edge.length)      # TRUE: só a topologia
+is.ultrametric(gomes_dat)
+```
+
+O `is.ultrametric()` usa uma tolerância numérica: arredondamentos no
+arquivo podem fazer uma árvore datada "falhar". Compare a maior e a menor
+distância raiz–ponta:
+
+```{r}
+alturas <- node.depth.edgelength(gomes_dat)[1:Ntip(gomes_dat)]
+range(alturas)
+diff(range(alturas))   # diferença de arredondamento, não de biologia
+is.ultrametric(gomes_dat, tol = 1e-4)
+```
+
+```{r}
+#| fig-height: 4.5
+plot(gomes_dat, cex = .7); axisPhylo()
+```
+
+## 4. Enraizamento, politomias e comprimentos
+
+```{r}
+is.rooted(barb); is.binary(barb); is.ultrametric(barb)
+```
+
+Desenraizar e enraizar de novo muda a leitura da árvore (slides, bloco 1):
+
+```{r}
+#| fig-height: 3.2
+u  <- unroot(read.tree(text = "((A:1,B:1):1,(C:1,D:1):1);"))
+r1 <- root(u, "A", resolve.root = TRUE)
+par(mfrow = c(1, 3))
+plot(u, type = "unrooted", main = "não enraizada", cex = 1.6, lab4ut = "axial")
+plot(r1, main = "raiz no ramo de A", cex = 1.6)
+plot(read.tree(text = "((A,B),(C,D));"), main = "raiz no ramo central", cex = 1.6)
+```
+
+Uma politomia e como resolvê-la (aleatoriamente, com ramos de comprimento
+zero) para os métodos que exigem árvore binária:
+
+```{r}
+p <- read.tree(text = "(A,(B,C,D));")
+is.binary(p)
+set.seed(1)
+is.binary(multi2di(p))
+```
+
+Quando só há topologia, `compute.brlen()` atribui comprimentos (por
+exemplo, pelo método de Grafen). Os comprimentos são **inventados**:
+servem para desenhar ou explorar, não como tempo.
+
+```{r}
+#| fig-height: 4.5
+g1 <- compute.brlen(gomes, method = "Grafen")
+is.ultrametric(g1)
+plot(g1, cex = .7); axisPhylo()
+```
+
+## 5. A árvore e a tabela de atributos
+
+Os atributos ficam numa planilha; para os métodos comparativos, quase sempre
+precisamos de um **vetor com os nomes das espécies**.
+
+```{r}
+obj <- read.csv("Centrarchidae.csv", row.names = 1)
+head(obj)
+gape <- setNames(obj$gape.width, rownames(obj))
+head(gape)
+```
+
+Agora o passo que mais dá problema: os nomes da árvore e da tabela batem?
+
+```{r}
+dados_barb <- read.csv("Barbetdata.csv", row.names = 1)
+nc <- name.check(barb, dados_barb)
+nc
+```
+
+Nove subespécies da árvore não têm dados. Duas saídas: podar a árvore
+(`drop.tip()`) ou deixar o `treedata()` casar as duas coisas de uma vez.
+
+```{r}
+casado <- treedata(barb, dados_barb, warnings = FALSE)
+Ntip(casado$phy); nrow(casado$data)
+all(casado$phy$tip.label == rownames(casado$data))
+```
+
+Atenção à última linha: por padrão, o `treedata()` **não** põe as linhas
+da tabela na ordem das pontas. Funções que usam vetores com nomes (como
+`phylosig()` e `fitContinuous()`) casam pelos nomes e não se importam; as que
+usam a ordem das linhas (como `gls()` sem `form = ~sp`) dão resultados
+errados em silêncio. Peça a ordenação, ou ordene você mesmo:
+
+```{r}
+casado <- treedata(barb, dados_barb, sort = TRUE, warnings = FALSE)
+all(casado$phy$tip.label == rownames(casado$data))
+# ou: dados_barb[casado$phy$tip.label, ]
+```
+
+O `treedata()` devolve uma matriz de texto quando a tabela tem colunas de
+tipos diferentes; converta os atributos numéricos antes de usar.
+
+```{r}
+#| fig-height: 6
+asa <- setNames(as.numeric(casado$data[, "wing"]), rownames(casado$data))
+plotTree.barplot(casado$phy, asa, args.plotTree = list(fsize = .5),
+                 args.barplot = list(xlab = "comprimento da asa (log)"))
+```
+
+## 6. Por que a árvore importa: dois atributos independentes
+
+A simulação dos slides (bloco 0), passo a passo. Simulamos uma árvore e dois
+atributos que evoluem por movimento browniano **sem nenhuma relação** entre
+si.
+
+```{r}
+set.seed(21)
+arv <- rcoal(n = 100)
+x <- fastBM(arv); y <- fastBM(arv)
+ajuste_ols <- lm(y ~ x)
+anova(ajuste_ols)
+```
+
+```{r}
+#| fig-height: 4.5
+phylomorphospace(arv, cbind(x, y), label = "off", node.size = c(.4, .6))
+abline(ajuste_ols, lwd = 2, lty = "dashed", col = "firebrick")
+```
+
+O filomorfoespaço mostra o motivo: espécies próximas estão próximas no
+gráfico porque herdaram valores parecidos. Com os contrastes independentes
+(Aula 2), a "relação" desaparece:
+
+```{r}
+ix <- pic(x, arv); iy <- pic(y, arv)
+anova(lm(iy ~ ix - 1))
+```
+
+Rode de novo com outras sementes (`set.seed(2)`, `set.seed(3)`...): quantas
+vezes o OLS dá *p* < 0,05? E os contrastes?
+
+## 7. Suporte dos nós: um bootstrap de verdade
+
+A árvore com bootstrap dos slides (bloco 1), com as 15 sequências de
+camundongos-do-mato do `ape`.
+
+```{r}
+data(woodmouse)
+f  <- function(s) root(nj(dist.dna(s, model = "K80")), 1, resolve.root = TRUE)
+nj_wm <- f(woodmouse)
+set.seed(103)
+bs <- boot.phylo(nj_wm, woodmouse, f, B = 100, quiet = TRUE, rooted = TRUE)
+bs
+```
+
+```{r}
+#| fig-height: 4.5
+plot(nj_wm, cex = .8)
+nodelabels(bs, frame = "none", adj = c(1.2, -.4), cex = .75)
+```
+
+## 8. A forma da árvore
+
+O índice de Colless soma, em cada nó, a diferença entre o número de pontas
+dos dois lados. Escrever a função é um bom exercício de navegação no objeto
+`phylo`:
+
+```{r}
+colless <- function(tr) {
+  n <- Ntip(tr)
+  dif <- sapply((n + 1):(n + tr$Nnode), \(no) {
+    filhos <- tr$edge[tr$edge[, 1] == no, 2]
+    pontas <- sapply(filhos, \(f) if (f <= n) 1 else sum(getDescendants(tr, f) <= n))
+    abs(diff(pontas))
+  })
+  sum(dif)
+}
+c(balanceada = colless(stree(8, "balanced")), pente = colless(stree(8, "left")))
+```
+
+O γ de Pybus compara a posição dos nós no tempo com a esperada sob um
+processo de nascimento puro: γ < 0, nós concentrados perto da raiz.
+
+```{r}
+gammaStat(cent)
+```
+
+## 9. Para fora do R: obter árvores
+
+Estes pacotes não estão instalados nos computadores do curso (precisam de
+internet); o código fica de referência, sem rodar aqui.
+
+```{r}
+#| eval: false
+# Open Tree of Life: árvore sintética para uma lista de nomes
+library(rotl)
+nomes <- tnrs_match_names(c("Rhinella icterica", "Physalaemus cuvieri", "Scinax hayii"))
+arv_otl <- tol_induced_subtree(ott_ids = ott_id(nomes))
+
+# phyndr: trocar espécies da árvore sem dados por equivalentes com dados
+# (ver o roteiro de 2020 e Pennell et al. 2016)
+```
+
+## Resumo
+
+- Uma árvore é um objeto `phylo`: `edge`, `tip.label`, `Nnode`,
+  `edge.length`.
+- Newick e Nexus leem com `read.tree()` e `read.nexus()`; confira sempre se
+  a árvore é enraizada, binária e ultramétrica.
+- Antes de qualquer análise: `name.check()` e `treedata()`, e confira se a
+  ordem das linhas é a das pontas (`sort = TRUE`).
+- Dados de espécies aparentadas não são independentes: o OLS pode achar
+  relação onde não há.
+
+O [roteiro da edição de 2020](walkthrough-aula-1-segunda.html) traz mais
+exemplos de manipulação de dados e o `phyndr`.
