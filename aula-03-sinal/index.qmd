@@ -46,15 +46,18 @@ As figuras dos slides foram geradas em R; o código está em
 
 ## Código R (aula prática)
 
-- {{< fa solid eye >}} **[Ver walkthrough HTML](walkthrough-aula-3-quarta-modificada.html)**
-  *A segunda metade (K, λ, D de Fritz, PVR, correlograma de Moran,
-  Mantel) é desta aula; a primeira (estados ancestrais) é da Aula 7.*
-  [{{< fa solid file-code >}} baixar `aula-3-quarta-modificada.R`](aula-3-quarta-modificada.R)
-- {{< fa solid eye >}} **[Distograma filogenético](walkthrough-phylogenetic-distogram.html)** ·
+- {{< fa solid play >}} **[Roteiro prático (executado)](roteiro.html)**\
+  *K e λ com os testes, referências simuladas, I de Moran, C de Abouheif,
+  Mantel, PVR e o D de Fritz & Purvis, com os cantos da Bocaina. O código
+  roda na página.*
+- {{< fa solid eye >}} [Roteiro da edição de 2020](walkthrough-aula-3-quarta-modificada.html)
+  · [{{< fa solid file-code >}} `aula-3-quarta-modificada.R`](aula-3-quarta-modificada.R)\
+  *A segunda metade (K, λ, D, PVR, correlograma de Moran, Mantel) é desta
+  aula; a primeira (estados ancestrais), da Aula 7.*
+- {{< fa solid eye >}} [Distograma filogenético](walkthrough-phylogenetic-distogram.html) ·
   [{{< fa solid file-code >}} `phylogenetic-distogram.R`](phylogenetic-distogram.R)
-- {{< fa solid eye >}} **[Decomposição da diversidade pelos nós](walkthrough-supfileac.html)** ·
+- {{< fa solid eye >}} [Decomposição da diversidade pelos nós](walkthrough-supfileac.html) ·
   [{{< fa solid file-code >}} `SUPFILEAc.R`](SUPFILEAc.R)
-- PVR também no [roteiro da Aula 7](../aula-07-ancestrais/walkthrough-aula-5-sexta.html).
 
 Pacotes: `ape`, `phytools`, `caper`, `adephylo`.
 
@@ -78,6 +81,28 @@ para o log de SVL, do comprimento da cabeça (HL) e do número de lamelas
 e outro sem relação com ela (`rnorm()`) e estime K e λ para os dois.
 (3) Faça uma tabela com tudo. *Avaliação:* compara os atributos reais com
 as duas referências simuladas e não interpreta sinal alto como restrição.
+
+::: {.callout-tip collapse="true" appearance="simple"}
+## Dicas
+
+- As seções 1 a 3 do [roteiro](roteiro.html) fazem exatamente isso com a
+  frequência dominante dos cantos da Bocaina.
+- `anoletree` vem com os ecomorfos mapeados (classe `simmap`); o
+  `phylosig()` aceita a árvore assim mesmo.
+- Os atributos estão em `anole.data`, uma coluna por atributo, com as
+  espécies nos nomes das linhas: use `setNames(log(anole.data$SVL), rownames(anole.data))`.
+- Fixe a semente antes de cada teste por permutação e das simulações.
+
+```r
+library(ape); library(phytools)
+data(anoletree, anole.data, package = "phytools")
+atributos <- c("SVL", "HL", "LAM")
+# para cada atributo: phylosig(..., method = "K", test = TRUE)
+#                     phylosig(..., method = "lambda", test = TRUE)
+# referências: fastBM(anoletree) e rnorm(Ntip(anoletree)), com nomes
+# tabela final: atributo, K, p(K), lambda, p(lambda)
+```
+:::
 
 As respostas comentadas serão publicadas aqui depois do prazo de entrega.
 
