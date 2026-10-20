@@ -528,6 +528,7 @@ filogenias (filogenômica) e da filogeografia.
 | Aves ([Jetz et al. 2012](https://doi.org/10.1038/nature11631)) · Squamata ([Tonini et al. 2016](https://doi.org/10.1016/j.biocon.2016.03.039)) | amostras de árvores completas · [vertlife.org](https://vertlife.org/phylosubsets/) |
 | Anfíbios ([Jetz & Pyron 2018](https://doi.org/10.1038/s41559-018-0515-5)) · mamíferos ([Upham, Esselstyn & Jetz 2019](https://doi.org/10.1371/journal.pbio.3000494)) | **novo**: árvores completas atuais, também no vertlife |
 | Plantas: V.PhyloMaker2 ([Jin & Qian 2022](https://doi.org/10.1016/j.pld.2022.05.005)) | **novo**: megafilogenia a partir de uma lista de espécies |
+| `phruta` ([Román-Palacios 2023](https://doi.org/10.1111/2041-210X.14147)) | **novo**: do GenBank à árvore datada, reprodutível no R · [docs.ropensci.org/phruta](https://docs.ropensci.org/phruta/) |
 | phyloGenerator ([Pearse & Purvis 2013](https://doi.org/10.1111/2041-210x.12055)), PUmPER ([Izquierdo-Carrasco et al. 2014](https://doi.org/10.1093/bioinformatics/btu053)), PHLAWD, SUPERSMART ([Antonelli et al. 2017](https://doi.org/10.1093/sysbio/syw066)) | gerar árvores do GenBank automaticamente; difíceis de instalar e pouco atualizados |
 
 ::: {.ref}

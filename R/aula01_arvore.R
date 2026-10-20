@@ -188,8 +188,13 @@ fig_enraizar <- function() {
   r1 <- ape::root(u, "A", resolve.root = TRUE); r1 <- ape::compute.brlen(r1, 1)
   r2 <- ape::read.tree(text = "((A:1,B:1):1,(C:1,D:1):1);")
   fundo(); par(mfrow = c(1, 3), mar = c(1, 2, 3, 2), cex.main = 1.8, xpd = NA)
-  ape::plot.phylo(u, type = "unrooted", lab4ut = "horizontal", cex = 2.4, label.offset = .15, edge.width = 3, edge.color = cores[["texto"]],
-                  main = "não enraizada", no.margin = FALSE)
+  # a não enraizada, desenhada à mão: rótulos sempre fora dos ramos
+  plot(NA, xlim = c(-2, 2), ylim = c(-2.1, 2.1), asp = 1, axes = FALSE, xlab = "", ylab = "",
+       main = "não enraizada")
+  segments(0, -.6, 0, .6, lwd = 3, col = cores[["texto"]])
+  segments(0, -.6, c(-1, 1), -1.4, lwd = 3, col = cores[["texto"]])
+  segments(0, .6, c(-1, 1), 1.4, lwd = 3, col = cores[["texto"]])
+  text(c(-1.3, 1.3, -1.3, 1.3), c(-1.65, -1.65, 1.65, 1.65), c("A", "B", "C", "D"), cex = 2.4, font = 3)
   ape::plot.phylo(r1, cex = 2.2, edge.width = 3, edge.color = cores[["texto"]], main = "raiz no ramo de A", label.offset = .1)
   ape::plot.phylo(r2, cex = 2.2, edge.width = 3, edge.color = cores[["texto"]], main = "raiz no ramo central", label.offset = .1)
 }
