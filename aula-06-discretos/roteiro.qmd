@@ -149,6 +149,13 @@ invisible(capture.output({   # o corHMM imprime mensagens de progresso
 c(uma_categoria = hmm1$AICc, duas_categorias = hmm2$AICc)
 ```
 
+O modelo com duas categorias tem o dobro de parâmetros e AICc
+`r format(round(hmm2$AICc - hmm1$AICc, 1), decimal.mark = ",")` unidades
+maior: os dados não sustentam taxas de perda e reganho dos membros
+diferentes entre clados, e uma única categoria basta. Isso não prova que a
+taxa seja constante, só que esta árvore e este caráter não dão informação
+para estimar a variação.
+
 ## 6. Evolução correlacionada: Pagel e as taxas ocultas
 
 Dois caracteres binários da prática (x com estados a/b; y com 0/1). Primeiro
