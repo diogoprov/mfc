@@ -42,19 +42,24 @@ As figuras dos slides foram geradas em R; o código está em
 
 ## Código R (aula prática)
 
-- {{< fa solid eye >}} **[Ver walkthrough HTML](walkthrough-aula-5-sexta.html)**
-  *Gráficos do `phytools` (e do `phylosignal`), PCA filogenética e PVR.*
-  [{{< fa solid file-code >}} baixar `aula-5-sexta.R`](aula-5-sexta.R)
-- Estados ancestrais contínuos e discretos e mapeamento estocástico: a
-  primeira metade do [roteiro da Aula 3](../aula-03-sinal/walkthrough-aula-3-quarta-modificada.html)
-  (dados na [página da Aula 3](../aula-03-sinal/index.qmd)).
+- {{< fa solid play >}} **[Roteiro prático (executado)](roteiro.html)**\
+  *Parcimônia × ML na árvore-guia, o nó 13 e o re-enraizamento, incerteza,
+  `contMap` e fenograma nos *Anolis*, tendência com fósseis, marginal ×
+  conjunta e mapeamento estocástico nas enguias, filomorfoespaço. O código
+  roda na página.*
+- {{< fa solid eye >}} [Roteiro da edição de 2020](walkthrough-aula-5-sexta.html)
+  · [{{< fa solid file-code >}} `aula-5-sexta.R`](aula-5-sexta.R)\
+  *Gráficos do `phytools` e do `phylosignal`, PCA filogenética e PVR.*
+- Os estados ancestrais de 2020 estão na primeira metade do
+  [roteiro da Aula 3](../aula-03-sinal/walkthrough-aula-3-quarta-modificada.html).
 
 Pacotes: `ape`, `phytools`.
 
 ## Dados utilizados
 
+- [`elopomorph.tre`](elopomorph.tre) e [`elopomorph.csv`](elopomorph.csv): modo de alimentação das enguias (Collar et al. 2014)
 - [`canto.csv`](canto.csv) e [`filogenia_bocaina.txt`](filogenia_bocaina.txt): cantos de anuros da Bocaina
-- Enguias e *Anolis*: na [página da Aula 3](../aula-03-sinal/index.qmd)
+- Os *Anolis* vêm do `phytools` (`data(anoletree, anole.data)`).
 
 ## Desafio
 
@@ -70,6 +75,29 @@ resuma o número de mudanças em cada sentido; (3) para a abertura da boca
 (`gape.width`), estime os estados ancestrais com IC 95% (`phytools::fastAnc()`)
 e faça um `contMap`. *Avaliação:* diz quão incerta é a raiz nos dois
 atributos e não apresenta as estimativas como valores conhecidos.
+
+::: {.callout-tip collapse="true" appearance="simple"}
+## Dicas
+
+- As seções 1, 3, 5 e 6 do [roteiro](roteiro.html) fazem cada passo com
+  outros dados.
+- `sunfish.tree` vem com o modo de alimentação mapeado (classe `simmap`):
+  para o `fitMk()` e o `fastAnc()`, use `as.phylo(sunfish.tree)`.
+- `feeding.mode` é um fator; para o vetor com nomes:
+  `setNames(sunfish.data$feeding.mode, rownames(sunfish.data))`.
+- Fixe a semente antes do `make.simmap()`.
+
+```r
+library(ape); library(phytools)
+data(sunfish.tree, sunfish.data, package = "phytools")
+arv <- as.phylo(sunfish.tree)
+modo <- setNames(sunfish.data$feeding.mode, rownames(sunfish.data))
+boca <- setNames(sunfish.data$gape.width, rownames(sunfish.data))
+# 1. fitMk(arv, modo, model = "ER") e "ARD"; ancr(...); pizzas nos nós
+# 2. set.seed(1); make.simmap(arv, modo, model = ..., nsim = 200); summary(...)
+# 3. fastAnc(arv, boca, CI = TRUE); contMap(arv, boca)
+```
+:::
 
 As respostas comentadas serão publicadas aqui depois do prazo de entrega.
 

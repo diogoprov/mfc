@@ -1,0 +1,213 @@
+---
+title: "Roteiro prático — Estados ancestrais e visualização"
+subtitle: "Aula 7 · Métodos Filogenéticos Comparativos"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-tools: true
+    code-overflow: wrap
+execute:
+  echo: true
+  warning: false
+  message: false
+  fig-width: 7
+  fig-height: 5
+---
+
+::: {.callout-note appearance="minimal"}
+Este roteiro **roda de verdade**: os resultados abaixo saíram do código
+mostrado. Copie os blocos para um script, na pasta com os
+[dados da aula](index.qmd#dados-utilizados), e rode em ordem numa sessão
+limpa do R. No fim, o [desafio](index.qmd#desafio) pede o mesmo raciocínio
+com os Centrarchidae.
+:::
+
+## 0. Pacotes
+
+```{r}
+library(ape)
+library(phytools)
+```
+
+## 1. Atributos contínuos na árvore-guia
+
+O atributo A nas pontas; os estados ancestrais por máxima verossimilhança sob
+BM, com o intervalo de confiança de 95%:
+
+```{r}
+guia <- read.tree(text = "(((sp1:0.18,sp2:0.18):1.06,(sp3:0.02,sp4:0.02):1.22):0.20,(sp5:1.37,(sp6:0.23,sp7:0.23):1.14):0.07);")
+A <- setNames(c(2.51, 2.80, 2.23, 2.32, 1.64, 1.18, 0.58), paste0("sp", 1:7))
+ml <- ace(A, guia, method = "ML")
+round(cbind(estimativa = ml$ace, ml$CI95), 3)
+```
+
+Repare no nó 11 (sp3 e sp4, ramos de 0,02): IC estreito. Na raiz (nó 8),
+largo.
+
+Com todos os ramos iguais a 1, a mesma conta dá a parcimônia de mudança
+quadrada **não ponderada**; com os comprimentos, a **ponderada**, que coincide
+com a máxima verossimilhança:
+
+```{r}
+un <- ace(A, compute.brlen(guia, 1), method = "ML")
+round(rbind(ponderada_ML = ml$ace, nao_ponderada = un$ace), 3)
+```
+
+## 2. O nó 13: só os descendentes × a árvore toda
+
+No algoritmo dos contrastes (Aula 2), o valor do nó 13 é a média de sp6 e
+sp7. A estimativa por ML usa a árvore toda:
+
+```{r}
+c(pic_descendentes = mean(A[c("sp6", "sp7")]), ML_arvore_toda = ml$ace[["13"]])
+```
+
+O truque do `fastAnc()`: re-enraizar a árvore em cada nó e usar a
+estimativa da nova raiz. Dá o mesmo resultado, e é rápido em árvores grandes:
+
+```{r}
+fa <- fastAnc(guia, A, vars = TRUE, CI = TRUE)
+round(fa$ace, 3)
+```
+
+```{r}
+#| fig-height: 4
+guia_rot <- guia
+guia_rot$tip.label <- paste0(guia$tip.label, " (", A[guia$tip.label], ")")
+plot(guia_rot, label.offset = 0.03, x.lim = c(0, 1.9))
+nodelabels(round(fa$ace, 2), frame = "rect", bg = "white", cex = 0.8)
+```
+
+## 3. Uma árvore grande: incerteza, `contMap` e fenograma
+
+O tamanho do corpo dos *Anolis* (SVL, já em log natural no `anole.data`):
+
+```{r}
+data(anoletree, anole.data)
+arv <- as.phylo(anoletree)
+svl <- setNames(anole.data$SVL, rownames(anole.data))
+fx <- fastAnc(arv, svl, vars = TRUE, CI = TRUE)
+n <- Ntip(arv)
+profundidade <- node.depth.edgelength(arv)[(n + 1):(n + arv$Nnode)]
+plot(profundidade, fx$var, xlab = "distância do nó à raiz", ylab = "variância da estimativa")
+```
+
+A variância cai perto das pontas; a raiz e os nós profundos estão entre os
+mais incertos, mas nós intermediários com ramos longos podem ser piores.
+
+O `contMap()` pinta os ramos com os valores estimados ao longo deles:
+
+```{r}
+#| fig-height: 7
+obj <- contMap(arv, svl, plot = FALSE)
+plot(obj, fsize = c(0.5, 0.8), outline = FALSE, leg.txt = "log SVL")
+```
+
+E o fenograma com a incerteza dos nós:
+
+```{r}
+fancyTree(arv, type = "phenogram95", x = svl, spread.labels = FALSE, fsize = 0.01)
+```
+
+## 4. O modelo importa: tendência com fósseis
+
+Simulamos um atributo com tendência numa árvore com espécies extintas e
+comparamos as estimativas dos nós com os valores verdadeiros, sob BM e sob
+BM com tendência (`anc.trend()`):
+
+```{r}
+#| fig-height: 4
+set.seed(703)
+fos <- pbtree(b = 1, d = 0.4, n = 60, extant.only = FALSE, scale = 1)
+fos <- compute.brlen(fos, fos$edge.length * 10)
+z <- fastBM(fos, a = 0, mu = 2, sig2 = 1, internal = TRUE)
+pontas <- z[1:Ntip(fos)]; verdade <- z[-(1:Ntip(fos))]
+sob_bm <- fastAnc(fos, pontas)
+sob_trend <- anc.trend(fos, pontas)$ace
+par(mfrow = c(1, 2))
+plot(verdade, sob_bm, main = "BM", xlab = "verdadeiro", ylab = "estimado"); abline(0, 1, lty = 2)
+plot(verdade, sob_trend, main = "BM com tendência", xlab = "verdadeiro", ylab = "estimado"); abline(0, 1, lty = 2)
+c(vies_BM = mean(sob_bm - verdade), vies_tendencia = mean(sob_trend - verdade))
+```
+
+Sob BM, os nós antigos ficam superestimados: o modelo não sabe que o
+atributo andava numa direção.
+
+## 5. Atributos discretos: marginal × conjunta
+
+O modo de alimentação de 61 espécies de enguias e parentes (Collar et al.
+2014):
+
+```{r}
+X <- read.csv("elopomorph.csv", row.names = 1)
+eel <- read.tree("elopomorph.tre")
+modo <- setNames(X$feed_mode, rownames(X))[eel$tip.label]
+table(modo)
+er  <- fitMk(eel, modo, model = "ER")
+ard <- fitMk(eel, modo, model = "ARD")
+c(ER = er$logLik, ARD = ard$logLik)
+```
+
+As probabilidades **marginais** em cada nó e a reconstrução **conjunta**
+(a combinação de estados mais verossímil em todos os nós ao mesmo tempo):
+
+```{r}
+marg <- ancr(er)
+conj <- ancr(er, type = "joint")
+estado_marg <- colnames(marg$ace)[apply(marg$ace, 1, which.max)]
+table(marginal = estado_marg, conjunta = as.character(conj$ace))
+sum(apply(marg$ace, 1, max) < 0.8)   # nós em que nenhum estado passa de 0,8
+```
+
+```{r}
+#| fig-height: 7
+cores <- setNames(c("firebrick", "steelblue"), c("bite", "suction"))
+plotTree(eel, type = "fan", ftype = "off", lwd = 1.5)
+nodelabels(pie = marg$ace, piecol = cores, cex = 0.5)
+tiplabels(pie = to.matrix(modo, levels(factor(modo))), piecol = cores, cex = 0.3)
+legend("bottomleft", legend = c("mordida", "sucção"), pch = 21, pt.bg = cores, pt.cex = 2, bty = "n")
+```
+
+## 6. Mapeamento estocástico
+
+Cem histórias possíveis do caráter, simuladas a partir do modelo ajustado:
+
+```{r}
+set.seed(701)
+mapas <- make.simmap(eel, modo, model = "ER", nsim = 100, message = FALSE)
+resumo <- summary(mapas)
+colMeans(resumo$count)              # mudanças médias por mapa
+quantile(resumo$count[, "N"], c(0.025, 0.975))
+```
+
+```{r}
+#| fig-height: 7
+dm <- densityMap(mapas, plot = FALSE, states = c("bite", "suction"))
+plot(dm, type = "fan", ftype = "off", lwd = c(3, 5), outline = FALSE, leg.txt = "P(sucção)")
+```
+
+## 7. Filomorfoespaço
+
+A árvore projetada no espaço de dois atributos, com os nós nas estimativas
+por ML:
+
+```{r}
+#| fig-height: 5.5
+phylomorphospace(arv, anole.data[arv$tip.label, c("SVL", "TL")], label = "off",
+                 node.size = c(0.5, 1), xlab = "log SVL", ylab = "log cauda")
+```
+
+## Resumo
+
+- `ace()` e `fastAnc()` estimam estados ancestrais contínuos com IC; a
+  parcimônia ponderada coincide com a ML sob BM.
+- A incerteza é grande; o modelo (BM × tendência) muda as estimativas.
+- Em discretos: `ancr()` (marginal ou conjunta) e `make.simmap()` para
+  histórias e contagens de mudanças.
+- `contMap()`, `fancyTree()`, `densityMap()` e `phylomorphospace()` para
+  visualizar.
+
+O [roteiro da edição de 2020](walkthrough-aula-5-sexta.html) traz mais
+gráficos do `phytools` e do `phylosignal`; os estados ancestrais de 2020
+estão no [roteiro da Aula 3](../aula-03-sinal/walkthrough-aula-3-quarta-modificada.html).
