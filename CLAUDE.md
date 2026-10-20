@@ -30,7 +30,7 @@ simulações ou da árvore-guia.
 | 5 | Modelos de evolução contínua | A2 50–88, A4 18–49 | **`inventarios/a05.md`** | **`slides/a05.qmd` ✔** (51 slides; aguarda revisão do Diogo) |
 | 6 | Atributos discretos | A2 89–126, A4 1–17, A1 65–77 | **`inventarios/a06.md`** | **`slides/a06.qmd` ✔** (57 slides; publicada) |
 | 7 | Estados ancestrais e visualização | A3 1–23, A5 11 | **`inventarios/a07.md`** | **`slides/a07.qmd` ✔** (44 slides; publicada) |
-| 8 | Atributos multivariados | A6 | — | — |
+| 8 | Atributos multivariados | A6 1–39 | **`inventarios/a08.md`** | **`slides/a08.qmd` ✔** (39 slides; publicada) |
 
 **Fase 0 (plano) feita em 19/out/2026.** Aprovados pelo Diogo: as 8 aulas,
 o mapa dos métodos e a Aula 2 como aula-modelo; as decisões 4–11 do plano
@@ -137,7 +137,8 @@ quando ele decidir.
   Purvis, Aula 3); `phylolm` (Aula 4); `mvMORPH` (OU multi-regime, Aula 5;
   previsto no plano para a Aula 8); `corHMM` (taxas ocultas e
   `fitCorrelationTest`, Aula 6) e `rr2` (R² de PGLS, Aula 4), ambos sugeridos
-  pelo Diogo. Sem `ggtree` (árvores por função
+  pelo Diogo; `geomorph` (Aula 8, aprovado em 20/out/2026). PhylogeneticEM
+  só citado, sem instalar. Sem `ggtree` (árvores por função
   própria) e sem `brms`. `rphylopic` só para baixar silhuetas, fora do render.
 - **Não entram** (como na multidimensionais): Kahoot, webR, "Teste-se",
   atividades extras nos slides.
@@ -203,6 +204,11 @@ quando ele decidir.
   estados), `ajustes_squamata()` (`fitDiscrete`; reproduz o log L do
   original), `pagel_pratica()`, `correlacao_corhmm()` (~3 min) e as figuras
   da Aula 6.
+- `R/aula08_multivariados.R`: `pleth_ind()`/`pleth_sp()` (`geomorph`),
+  `multivar_resultados()` (K mult., PGLS, `mvgls`, modularidade, taxas por
+  módulo; sementes 801–805), `anolis_bmm()`, `pca_filo_anolis()` e as figuras
+  (Procrustes passo a passo, GPA, elipses, restrições). Não use `pi` como
+  nome de variável: mascara a constante usada em `ret_arred()`.
 - `R/aula01_arvore.R`: `dois_clados()` (X e Y independentes que parecem
   associados), `suporte_woodmouse()` (NJ + bootstrap reais), `formas()`
   (Colless e γ) e as figuras da Aula 1 (Newick em 5 passos, partes da árvore,
