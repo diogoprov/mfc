@@ -58,7 +58,8 @@ desafio apontam as seções). Os dados são lidos relativos à pasta: os
 arquivos de que as Aulas 6 e 7 precisam foram copiados para as pastas
 delas. `praticas.qmd` lista os oito roteiros e, à parte, os walkthroughs de
 2020. Os roteiros 1 e 3 usam `rotl`, `adephylo` e `phylobase` (fora das
-figuras).
+figuras). Desafios e roteiros conferidos e aprovados pelo Diogo
+(20/out/2026).
 
 **Formato**: a disciplina é ofertada condensada em uma semana; cada aula
 ocupa um período (manhã ou tarde) com teoria e prática, 8 aulas em 10
