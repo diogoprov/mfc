@@ -26,7 +26,7 @@ simulações ou da árvore-guia.
 | 1 | A árvore e os dados | A1, A5 2–7 | — | — |
 | 2 | O movimento browniano e a matriz C | A2 1–49 | **`inventarios/a02.md`** | **`slides/a02.qmd` ✔** (65 slides; aula-modelo, aguarda revisão do Diogo) |
 | 3 | Sinal filogenético | A3 24–61, A5 7–10 | **`inventarios/a03.md`** | **`slides/a03.qmd` ✔** (60 slides; aguarda revisão do Diogo) |
-| 4 | Regressão filogenética (PGLS) | A2 127–141, A4 50–58 | — | — |
+| 4 | Regressão filogenética (PGLS) | A2 126–141, A4 50–58 | **`inventarios/a04.md`** | **`slides/a04.qmd` ✔** (37 slides; aguarda revisão do Diogo) |
 | 5 | Modelos de evolução contínua | A2 50–88, A4 18–49 | — | — |
 | 6 | Atributos discretos | A2 89–126, A4 1–17 | — | — |
 | 7 | Estados ancestrais e visualização | A3 1–23, A5 11 | — | — |
@@ -178,6 +178,9 @@ quando ele decidir.
   `vcv_ou_arvore()`, `sim_mvn()`, `k_passos()`, `moran_I()`, `correlograma()`,
   `pvr_passos()`, `psr_curva()` (todas conferidas com ape/phytools);
   `R/aula03_*.R`: figuras da Aula 3.
+- `R/aula04_pgls.R`: `anolis_dados()`, `modelos_anolis()`, `gls_passos()`,
+  `anova_filo()`, `glm_filo()`, `evol_vcv_sunfish()`, `incerteza()` e as
+  figuras da Aula 4.
 - `R/aula02_*.R`: figuras da Aula 2 (`intro`, `bm`, `matriz`, `arvore`,
   `pic`). `pic_passos()` faz os contrastes nó a nó.
 - `.claude/launch.json`: servidor `docs` (porta 4321) para o teste de
