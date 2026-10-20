@@ -61,21 +61,30 @@ abouheif_dados <- function() {
        eta = sum(diff(y)^2) / sum((y - mean(y))^2),
        C = 1 - sum(diff(y)^2) / (2 * sum((y - mean(y))^2)))
 }
+#' A árvore do exemplo (oito pontas, como na figura de Abouheif 1999): as
+#' massas como barras ao lado das pontas e, entre pontas vizinhas, o quadrado
+#' da diferença (d²)
 fig_abouheif <- function(mostrar_d2 = TRUE) {
   a <- abouheif_dados()
-  d <- tibble(i = seq_along(a$y), y = a$y)
-  g <- ggplot(d, aes(i, y)) +
-    geom_col(fill = cores[["accent"]], width = .65) +
-    geom_text(aes(label = format(y, decimal.mark = ",")), vjust = -.5, size = 5.5) +
-    scale_x_continuous(breaks = 1:8, labels = paste("ponta", 1:8)) +
-    scale_y_continuous(expand = expansion(mult = c(0, .25))) +
-    labs(x = "pontas, na ordem da árvore", y = "massa corporal (kg)") + tema_aula(16)
+  tr <- ape::read.tree(text = "(((p1:1,p2:1):1,(p3:1,p4:1):1):1,((p5:1,p6:1):1,(p7:1,p8:1):1):1);")
+  cd <- coord_arvore(tr)
+  pt <- dplyr::filter(cd$nos, ponta) |> mutate(v = a$y[as.integer(sub("p", "", rotulo))]) |> arrange(desc(y))
+  x0 <- 3.6; esc <- 2.6 / max(pt$v)
+  g <- plot_arvore(tr, rotulos = FALSE, base = 5.5, folga = .12) +
+    geom_segment(data = pt, aes(x = x0, xend = x0 + v * esc, y = y, yend = y),
+                 linewidth = 9, colour = cores[["accent"]]) +
+    geom_text(data = pt, aes(x = x0 + v * esc + .08, y = y, label = format(v, decimal.mark = ",")),
+              hjust = 0, size = 5.5, colour = cores[["texto"]]) +
+    annotate("text", x = x0, y = max(pt$y) + .75, hjust = 0, size = 5.5, fontface = "bold",
+             label = "massa corporal (kg)", colour = cores[["texto"]])
   if (mostrar_d2) {
-    dd <- tibble(x = 1:7 + .5, d2 = a$d2, y = pmax(a$y[-1], a$y[-8]) + 9)
-    g <- g + geom_label(data = dd, aes(x, y, label = format(round(d2, 2), decimal.mark = ",")),
-                        size = 4.6, fill = cores[["papel"]], colour = cores[["ferrugem"]], linewidth = .3)
+    dd <- tibble(y = (pt$y[-1] + pt$y[-8]) / 2, d2 = a$d2)
+    g <- g + annotate("text", x = 8.7, y = max(pt$y) + .75, hjust = .5, size = 5.5, fontface = "bold",
+                      label = "d² entre vizinhas", colour = cores[["ferrugem"]]) +
+      geom_label(data = dd, aes(x = 8.7, y = y, label = format(round(d2, 2), decimal.mark = ",")),
+                 size = 5, fill = cores[["papel"]], colour = cores[["ferrugem"]], linewidth = .3)
   }
-  g
+  g + scale_y_continuous(expand = expansion(add = c(.5, 1.1)))
 }
 
 #' Teste de Mantel na árvore-guia: distância patrística × distância no

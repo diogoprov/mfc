@@ -302,15 +302,61 @@ fig_lambda(.05)
 λ = 1: a árvore como ela é (BM). λ = 0: uma **estrela** (espécies
 independentes).
 
+## λ multiplica a matriz, não os ramos
+
+![](../assets/terceiros/pearse-2025-fig1.png){fig-alt="Figura 1 de Pearse et al. (2025): uma árvore de três espécies e a sua matriz C sob lambda igual a 0, 0,5, 1 e 2. Com lambda 0, estrela, covariâncias zero; com 0,5, covariância 1; com 1, a árvore original, covariância 2; com 2, a covariância chega a 4, igual à variância, e o ramo interno ocupa toda a altura da árvore." width="100%"}
+
+O λ escala os elementos **fora da diagonal** de **C**. Pode passar de 1, mas
+só até a covariância igualar a variância (aqui, λ = 2): além disso, **C**
+deixa de ser uma matriz de covariância válida. É por isso que o λ de 1,013
+da Aula 4 é possível.
+
+::: {.ref}
+Fig. 1 de [Pearse, Davies & Wolkovich (2025)](https://doi.org/10.1111/geb.70012), *Glob. Ecol. Biogeogr.* 34: e70012, CC BY 4.0.
+:::
+
 ## O λ é estimado por máxima verossimilhança
 
 ```{r}
+#| fig-height: 3.7
 #| fig-alt: "Log-verossimilhança do SVL dos Anolis em função de lambda: sobe continuamente de lambda igual a 0 até o máximo em lambda igual a 1."
 fig_perfil_lambda()
 ```
 
 SVL dos *Anolis*: λ = `r num(pl$lambda)`; o teste da razão de
 verossimilhança contra λ = 0 dá *p* = `r format(signif(pl$P, 2), decimal.mark = ",")`.
+Relate o **intervalo**, não só a estimativa: o perfil quase sempre é largo.
+
+::: {.ref}
+O intervalo de confiança pelo perfil segue a recomendação de [Pearse et al. (2025)](https://doi.org/10.1111/geb.70012).
+:::
+
+## A amostragem de espécies enviesa o λ
+
+![](../assets/terceiros/pearse-2025-fig3.png){fig-alt="Figura 3 de Pearse et al. (2025): uma filogenia simulada com as espécies amostradas de quatro maneiras e os perfis de verossimilhança de lambda: com amostragem completa ou aleatória, a estimativa fica perto de 1, o valor verdadeiro; com amostragem enviesada pelo próprio atributo, a estimativa cai, e com viés forte vai a 0." height="440px"}
+
+Quando as espécies amostradas dependem do próprio atributo (um filtro
+ambiental, por exemplo), o λ sai enviesado: não compare λ entre
+assembleias diferentes.
+
+::: {.ref}
+Fig. 3 de [Pearse et al. (2025)](https://doi.org/10.1111/geb.70012), CC BY 4.0.
+:::
+
+## Cinco pontos sobre o λ {.grande}
+
+1. Num atributo, o λ mede o quanto a evolução se ajusta ao BM, **não** a
+   taxa de evolução
+2. Estimado em clados amostrados de forma incompleta, supõe amostragem
+   aleatória de espécies, o que quase nunca vale em dados ecológicos
+3. λ alto é necessário, mas não suficiente, para imputar dados pela
+   filogenia
+4. No PGLS, o λ é estimado nos **resíduos** e não mede o sinal dos atributos
+5. Modelos hierárquicos dão medidas parecidas (como o h²), mas não iguais
+
+::: {.ref}
+Paráfrase de [Pearse, Davies & Wolkovich (2025)](https://doi.org/10.1111/geb.70012), *Glob. Ecol. Biogeogr.* 34: e70012.
+:::
 
 ## K e λ não medem a mesma coisa {.grande .tabela-grande}
 
@@ -396,16 +442,17 @@ Com poucos pares na classe, o I pode passar de 1.
 ## C de Abouheif: o exemplo do artigo
 
 ```{r}
-#| fig-height: 4.2
-#| fig-alt: "Massa corporal de oito pontas, na ordem da árvore: 53,6; 51,2; 49,2; 47,5; 10,2; 11,1; 13,2; 12,6 kg; entre cada par de vizinhas, o quadrado da diferença: 5,76; 4; 2,89; 1391,29; 0,81; 4,41; 0,36."
+#| fig-height: 3.2
+#| fig-alt: "Árvore de oito espécies com a massa corporal de cada uma em barras: as quatro do primeiro clado entre 47 e 54 kg, as quatro do segundo entre 10 e 13 kg. À direita, o quadrado da diferença entre cada par de pontas vizinhas: pequeno dentro dos clados (de 0,36 a 5,76) e enorme na passagem de um clado para o outro (1391,29)."
 fig_abouheif()
 ```
 
-O C usa só a **topologia** (a ordem das pontas), não os comprimentos de
-ramo.
+Percorra as pontas na ordem da árvore e some os **quadrados das diferenças
+entre vizinhas** (Σd²). Se espécies próximas são parecidas, Σd² é pequeno
+diante da variação total, e o C é alto.
 
 ::: {.ref}
-Exemplo de Abouheif (1999), *Evol. Ecol. Res.* 1: 895–909, recalculado.
+Exemplo de Abouheif (1999), *Evol. Ecol. Res.* 1: 895–909, recalculado. O C usa só a topologia (a ordem das pontas), não os comprimentos de ramo.
 :::
 
 ## C de Abouheif: a conta {.grande}
@@ -663,15 +710,53 @@ Serve para atributos binários e com vários estados.
 [Pavoine, Baguette & Bonsall (2010)](https://doi.org/10.1890/09-1290), *Ecol. Monogr.*
 :::
 
-## Raiz ou pontas?
+## Raiz ou pontas? As três estatísticas
 
+:::: {.columns}
+::: {.column width="55%"}
 ```{r}
+#| fig-width: 6
+#| fig-height: 5
 #| fig-alt: "Duas árvores de 8 espécies com dois estados nas pontas. A: um clado inteiro azul e outro vermelho, a diversidade está perto da raiz (sinal). B: estados alternados entre irmãs, a diversidade está perto das pontas."
 fig_rao_arvores()
 ```
+:::
+::: {.column width="45%"}
+A contribuição de cada nó para a diversidade é testada de três formas, por
+permutação das pontas:
+
+1. um **único nó** concentra a diversidade?
+2. **poucos nós** a concentram?
+3. ela está enviesada para a **raiz** ou para as **pontas**?
+
+Sinal filogenético: diversidade enviesada para a raiz (A).
+:::
+::::
 
 ::: {.ref}
-Redesenhado a partir do exemplo de [Pavoine et al. (2010)](https://doi.org/10.1890/09-1290).
+[Pavoine, Baguette & Bonsall (2010)](https://doi.org/10.1890/09-1290), *Ecol. Monogr.* 80: 485–507. No original, os testes SN, FN e Ro.
+:::
+
+## Um exemplo: a coloração interna dos anuros {.medio}
+
+:::: {.columns}
+::: {.column width="40%"}
+![](../assets/terceiros/franco-belussi-2017-fig3.jpg){fig-alt="Figura 3 de Franco-Belussi, Provete e De Oliveira (2017): filogenia de 43 espécies de anuros de seis famílias, com os indivíduos como politomias nas pontas; círculos nos nós, de tamanho proporcional à contribuição de cada nó para a entropia quadrática da coloração dos órgãos; os maiores círculos estão perto da raiz e no nó de Leptodactylidae." height="540px"}
+:::
+::: {.column width="60%"}
+- Coloração de órgãos internos (categorias ordinais) em 43 espécies
+- Os indivíduos entram como politomias: o método usa só a topologia, e
+  assim incorpora a variação intraespecífica
+- Círculos: a contribuição de cada nó para a entropia quadrática, **não** a
+  estimativa do estado ancestral naquele nó
+- Com todos os órgãos juntos, a diversidade está **enviesada para a raiz**:
+  sinal filogenético
+- O nó com mais diversidade é o de Leptodactylidae
+:::
+::::
+
+::: {.ref}
+Fig. 3 de [Franco-Belussi, Provete & De Oliveira (2017)](https://doi.org/10.1002/ece3.3438), *Ecol. Evol.* 7: 9222–9233, CC BY 4.0. Ver também [Provete et al. (2012)](https://doi.org/10.1111/j.1463-6409.2012.00559.x), *Zool. Scr.* 41: 547–556.
 :::
 
 ## D de Fritz & Purvis
@@ -714,6 +799,7 @@ mapa_plot(aula = 3)
 ## Leituras {.grande}
 
 - [Revell & Harmon (2022)](https://press.princeton.edu/books/paperback/9780691219035/phylogenetic-comparative-methods-in-r), *Phylogenetic Comparative Methods in R*: seção 4.6 (sinal filogenético)
+- [Pearse, Davies & Wolkovich (2025)](https://doi.org/10.1111/geb.70012): como definir, usar e interpretar o λ
 - [Münkemüller et al. (2012)](https://doi.org/10.1111/j.2041-210x.2012.00196.x): como medir e testar o sinal
 - [Blomberg et al. (2003)](https://doi.org/10.1554/0014-3820(2003)057[0717:tfpsic]2.0.co;2): o K
 - [Revell et al. (2008)](https://doi.org/10.1080/10635150802302427): sinal, processo e taxa

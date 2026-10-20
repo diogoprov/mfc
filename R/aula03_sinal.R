@@ -161,8 +161,12 @@ fig_lambda <- function(lam = 1, marcar = FALSE) {
 fig_perfil_lambda <- function() {
   an <- anolis()
   pl <- phytools::phylosig(an$arvore, an$svl, method = "lambda", test = TRUE)
-  g <- tibble(lambda = seq(0, 1, by = .01)) |> mutate(logL = purrr::map_dbl(lambda, pl$lik))
+  g <- tibble(lambda = seq(0, 1, by = .002)) |> mutate(logL = purrr::map_dbl(lambda, pl$lik))
+  ic <- range(g$lambda[g$logL >= max(g$logL) - qchisq(.95, 1) / 2])   # IC de 95 % pelo perfil
   ggplot(g, aes(lambda, logL)) +
+    annotate("rect", xmin = ic[1], xmax = ic[2], ymin = -Inf, ymax = Inf, fill = cores[["ocre"]], alpha = .18) +
+    annotate("text", x = ic[1], y = min(g$logL) + 3, hjust = 1.05, size = 5, colour = cores[["ocre"]],
+             label = paste0("IC 95 %: ", num(ic[1]), " a ", num(ic[2]))) +
     geom_line(colour = cores[["accent"]], linewidth = 1.3) +
     geom_vline(xintercept = pl$lambda, linetype = "22", colour = cores[["ferrugem"]]) +
     annotate("point", x = 0, y = pl$lik(0), size = 4, colour = cores[["texto"]]) +

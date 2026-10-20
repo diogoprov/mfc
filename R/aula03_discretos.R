@@ -27,7 +27,7 @@ fig_rao_arvores <- function() {
     plot_arvore(tr, rotulos = FALSE, base = 5) +
       geom_point(data = pt, aes(x + .25, y, colour = e), size = 7) +
       scale_colour_manual(values = cor_e, guide = "none") +
-      labs(title = paste0(nome, ": diversidade perto ", lado)) +
+      labs(title = paste0(nome, ": perto ", lado)) +
       theme(plot.title = element_text(hjust = .5, size = 17, face = "bold", colour = cores[["texto"]]))
   }
   um("A", "da raiz") + um("B", "das pontas")
