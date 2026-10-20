@@ -188,6 +188,23 @@ compartilha ancestrais mais recentes com quem. Ver [Scitable, *Reading a
 phylogenetic tree*](https://www.nature.com/scitable/topicpage/reading-a-phylogenetic-tree-the-meaning-of-41956/).
 :::
 
+## Da genealogia à filogenia
+
+```{r}
+#| fig-height: 3.6
+#| fig-alt: "À esquerda, uma genealogia simulada: indivíduos (círculos) de uma população ancestral que se divide em duas, cada um ligado ao pai na geração anterior; as linhagens de três indivíduos amostrados em cada população, em ferrugem, se juntam primeiro dentro da própria população e depois na população ancestral. À direita, a árvore das duas populações."
+fig_genealogia()
+```
+
+::: {.medio}
+As linhagens se juntam primeiro dentro de cada população (monofilia
+recíproca); a árvore das populações resume as genealogias.
+:::
+
+::: {.ref}
+Simulação de Wright-Fisher. Ideia do painel A da Fig. 5.5 de *Introduction to Population Genetics* (Sinauer, 2013), reproduzida por [S. Carr, Memorial University](https://www.mun.ca/biology/scarr/NS_05-05.html).
+:::
+
 ## Partes de uma árvore
 
 ```{r}

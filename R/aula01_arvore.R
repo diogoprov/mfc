@@ -81,6 +81,81 @@ fig_linha_tempo <- function() {
 
 # ---- Bloco 1: o que é uma filogenia ----------------------------------------------
 
+#' Genealogia de Wright-Fisher: uma população ancestral que se divide em
+#' duas; cada indivíduo descende de um pai sorteado na geração anterior da
+#' sua população. As linhagens dos amostrados no presente ficam destacadas
+#' (ideia do painel A da Fig. 5.5 de Introduction to Population Genetics,
+#' Sinauer 2013, reproduzida por S. Carr; redesenhada com simulação própria)
+genealogia_wf <- function(n_anc = 10, n_pop = 5, g_anc = 6, g_pop = 7, n_amostra = 3, seed = 1) {
+  repeat {
+    set.seed(seed)
+    G <- g_anc + g_pop
+    ind <- list(); pais <- list()
+    for (g in 0:G) {
+      if (g < g_anc) {
+        ind[[g + 1]] <- tibble(g = g, id = seq_len(n_anc), pop = "anc", x = seq_len(n_anc) + 1)
+      } else {
+        ind[[g + 1]] <- tibble(g = g, id = seq_len(2 * n_pop), pop = rep(c("p1", "p2"), each = n_pop),
+                               x = c(seq_len(n_pop) - .5, seq_len(n_pop) + n_pop + 2.5))
+      }
+      if (g > 0) {
+        ant <- ind[[g]]; atu <- ind[[g + 1]]
+        pais[[g]] <- sapply(seq_len(nrow(atu)), \(i) {
+          cand <- if (ant$pop[1] == "anc") ant$id else ant$id[ant$pop == atu$pop[i]]
+          cand[sample.int(length(cand), 1)]
+        })
+      }
+    }
+    # linhagens dos amostrados no presente, de trás para a frente
+    am <- c(sample(which(ind[[G + 1]]$pop == "p1"), n_amostra), sample(which(ind[[G + 1]]$pop == "p2"), n_amostra))
+    lin <- list(); atual <- tibble(origem = rep(c("p1", "p2"), each = n_amostra), id = am)
+    coal_pop <- c(p1 = NA, p2 = NA)
+    for (g in G:1) {
+      par_id <- pais[[g]][atual$id]
+      lin[[g]] <- tibble(g1 = g, id1 = atual$id, g0 = g - 1, id0 = par_id)
+      for (pp in c("p1", "p2")) if (is.na(coal_pop[pp]) && length(unique(par_id[atual$origem == pp])) == 1) coal_pop[pp] <- g - 1
+      atual <- tibble(origem = atual$origem, id = par_id)
+    }
+    tudo <- length(unique(atual$id)) == 1   # todas as linhagens coalescem na ancestral
+    if (all(!is.na(coal_pop)) && all(coal_pop >= g_anc) && tudo) break   # monofilia recíproca
+    seed <- seed + 1
+  }
+  pos <- dplyr::bind_rows(ind)
+  arestas <- dplyr::bind_rows(lapply(seq_len(G), \(g) tibble(g1 = g, id1 = seq_along(pais[[g]]), g0 = g - 1, id0 = pais[[g]])))
+  list(pos = pos, arestas = arestas, lin = dplyr::distinct(dplyr::bind_rows(lin)), g_anc = g_anc, G = G, seed = seed)
+}
+
+fig_genealogia <- function(w = genealogia_wf()) {
+  pos <- w$pos
+  xy <- function(d) d |>
+    dplyr::left_join(dplyr::select(pos, g, id, x1 = x), by = c(g1 = "g", id1 = "id")) |>
+    dplyr::left_join(dplyr::select(pos, g, id, x0 = x), by = c(g0 = "g", id0 = "id"))
+  todas <- xy(w$arestas); dest <- xy(w$lin)
+  dest_pts <- dplyr::bind_rows(dplyr::select(w$lin, g = g1, id = id1), dplyr::select(w$lin, g = g0, id = id0)) |>
+    dplyr::distinct() |> dplyr::left_join(pos, by = c("g", "id"))
+  g1 <- ggplot() +
+    geom_segment(data = todas, aes(x0, g0, xend = x1, yend = g1), colour = "#cfc8b8", linewidth = .5) +
+    geom_point(data = pos, aes(x, g), shape = 21, fill = cores[["papel"]], colour = cores[["accent"]], size = 3.2, stroke = .9) +
+    geom_segment(data = dest, aes(x0, g0, xend = x1, yend = g1), colour = cores[["ferrugem"]], linewidth = 1.1) +
+    geom_point(data = dest_pts, aes(x, g), shape = 21, fill = cores[["ferrugem"]], colour = cores[["ferrugem"]], size = 3.2) +
+    annotate("text", x = c(2.5, 10.5), y = w$G + 1, label = c("População 1", "População 2"), size = 6) +
+    annotate("text", x = 6.5, y = -1, label = "População ancestral", size = 6) +
+    annotate("segment", x = -1, xend = -1, y = 0, yend = w$G, linewidth = .8,
+             arrow = arrow(length = unit(.25, "cm"), type = "closed")) +
+    annotate("text", x = -1.5, y = w$G / 2, label = "tempo", angle = 90, size = 5.5) +
+    coord_cartesian(xlim = c(-2, 13), ylim = c(-1.5, w$G + 1.5)) + theme_void() +
+    theme(plot.background = element_rect(fill = cores[["papel"]], colour = NA))
+  arv <- tibble(x = c(0, 0), y = c(0, 0), xend = c(-1.3, 1.3), yend = c(w$G - w$g_anc, w$G - w$g_anc))
+  g2 <- ggplot(arv) +
+    geom_segment(aes(x, y, xend = xend, yend = yend), linewidth = 1.6, colour = cores[["ferrugem"]]) +
+    annotate("segment", x = 0, xend = 0, y = -w$g_anc, yend = 0, linewidth = 1.6, colour = cores[["ferrugem"]]) +
+    annotate("text", x = c(-1.3, 1.3), y = w$G - w$g_anc + 1, label = c("Pop. 1", "Pop. 2"), size = 6) +
+    coord_cartesian(xlim = c(-2.2, 2.2), ylim = c(-w$g_anc - 1.5, w$G - w$g_anc + 1.5)) + theme_void() +
+    theme(plot.background = element_rect(fill = cores[["papel"]], colour = NA))
+  g1 + g2 + plot_layout(widths = c(2.3, 1)) &
+    theme(plot.background = element_rect(fill = cores[["papel"]], colour = NA))
+}
+
 fig_partes <- function() {
   tr <- arvore_guia(); cd <- coord_arvore(tr); n <- cd$nos
   xmax <- max(n$x); no10 <- n[n$no == 10, ]; raiz <- n[n$no == 8, ]
