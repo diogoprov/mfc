@@ -554,6 +554,7 @@ cautela.
 
 | Base | Grupo | Link |
 |---|---|---|
+| TetrapodTraits ([Moura et al. 2024](https://doi.org/10.1371/journal.pbio.3002658)) | tetrápodes (~33 mil espécies) | **novo** · [Zenodo](https://doi.org/10.5281/zenodo.22536349) |
 | AmphiBIO ([Oliveira et al. 2017](https://doi.org/10.1038/sdata.2017.123)) | anfíbios | **novo** |
 | AVONET ([Tobias et al. 2022](https://doi.org/10.1111/ele.13898)) · EltonTraits ([Wilman et al. 2014](https://doi.org/10.1890/13-1917.1)) | aves (e mamíferos) | **novo** |
 | PanTHERIA ([Jones et al. 2009](https://doi.org/10.1890/08-1494.1)) | mamíferos | **novo** |
