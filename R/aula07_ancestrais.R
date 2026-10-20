@@ -124,7 +124,7 @@ fig_ic_guia <- function(g = guia_ancestrais()) {
 
 #' Anolis: variância das estimativas × distância do nó à raiz
 fig_var_prof <- function() {
-  an <- anolis(); tr <- an$arvore; x <- log(an$svl); n <- ape::Ntip(tr)
+  an <- anolis(); tr <- an$arvore; x <- an$svl; n <- ape::Ntip(tr)   # anole.data já está em log natural
   fa <- phytools::fastAnc(tr, x, vars = TRUE)
   d <- tibble(prof = ape::node.depth.edgelength(tr)[(n + 1):(n + tr$Nnode)], v = fa$var)
   ggplot(d, aes(prof, v)) +
@@ -134,7 +134,7 @@ fig_var_prof <- function() {
 }
 
 fig_contmap <- function() {
-  an <- anolis(); x <- log(an$svl)
+  an <- anolis(); x <- an$svl   # anole.data já está em log natural
   obj <- phytools::contMap(an$arvore, x, plot = FALSE)
   obj <- phytools::setMap(obj, c("#1c6e8c", "#e9dfc9", "#a3472e"))
   fundo(); plot(obj, fsize = c(.45, .9), lwd = c(3, 5), outline = FALSE, legend = FALSE)
@@ -143,7 +143,7 @@ fig_contmap <- function() {
 }
 
 fig_fenograma95 <- function() {
-  an <- anolis(); x <- log(an$svl)
+  an <- anolis(); x <- an$svl   # anole.data já está em log natural
   fundo(); phytools::fancyTree(an$arvore, type = "phenogram95", x = x, spread.labels = FALSE,
                                fsize = .01, ylab = "log SVL", xlab = "tempo (altura = 1)")
 }
@@ -210,7 +210,7 @@ fig_contagens <- function(cont, rotulos) {
 #' nós nas estimativas por ML
 fig_filomorfo <- function() {
   an <- anolis(); data(anole.data, package = "phytools", envir = environment())
-  X <- log(as.matrix(anole.data[an$arvore$tip.label, c("SVL", "TL")]))
+  X <- as.matrix(anole.data[an$arvore$tip.label, c("SVL", "TL")])   # já em log
   colnames(X) <- c("log SVL", "log cauda")
   fundo(); phytools::phylomorphospace(an$arvore, X, label = "off", node.size = c(.6, 1.1),
                                       control = list(col.node = setNames(

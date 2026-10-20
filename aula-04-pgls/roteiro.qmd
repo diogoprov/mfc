@@ -1,0 +1,229 @@
+---
+title: "Roteiro prático — Regressão filogenética (PGLS)"
+subtitle: "Aula 4 · Métodos Filogenéticos Comparativos"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-tools: true
+    code-overflow: wrap
+execute:
+  echo: true
+  warning: false
+  message: false
+  fig-width: 7
+  fig-height: 4.5
+---
+
+::: {.callout-note appearance="minimal"}
+Este roteiro **roda de verdade**: os resultados abaixo saíram do código
+mostrado. Copie os blocos para um script e rode em ordem numa sessão limpa do
+R. No fim, o [desafio](index.qmd#desafio) pede o mesmo raciocínio com outro
+par de atributos.
+:::
+
+## 0. Pacotes e dados
+
+```{r}
+library(ape)
+library(phytools)
+library(nlme)
+library(phylolm)
+library(rr2)
+```
+
+Os *Anolis* das Grandes Antilhas (Mahler et al. 2010, no `phytools`). A
+árvore vem com os ecomorfos mapeados (classe `simmap`); para o `gls()`,
+basta a árvore comum.
+
+```{r}
+data(anoletree, anole.data)
+ecomorfo <- getStates(anoletree, "tips")
+arv <- as.phylo(anoletree)
+arv
+head(anole.data)
+```
+
+Os atributos do `anole.data` **já estão em logaritmo natural** (SVL de 3,5 a
+5,1 corresponde a 32–166 mm): não aplique `log()` de novo.
+
+```{r}
+dados <- data.frame(sp = rownames(anole.data),
+                    svl = anole.data$SVL, hll = anole.data$HLL,
+                    eco = factor(ecomorfo[rownames(anole.data)]))
+rownames(dados) <- dados$sp
+head(dados)
+```
+
+## 1. O GLS à mão, na árvore-guia
+
+O estimador GLS usa a matriz **C** (Aula 2) para pesar as observações:
+β = (**X**′**C**⁻¹**X**)⁻¹ **X**′**C**⁻¹**y**. Com os atributos A e B da
+árvore-guia:
+
+```{r}
+guia <- read.tree(text = "(((sp1:0.18,sp2:0.18):1.06,(sp3:0.02,sp4:0.02):1.22):0.20,(sp5:1.37,(sp6:0.23,sp7:0.23):1.14):0.07);")
+A <- c(2.51, 2.80, 2.23, 2.32, 1.64, 1.18, 0.58)
+B <- c(0.38, 0.89, 0.88, 1.60, 0.33, 1.42, 0.31)
+C <- vcv(guia)
+X <- cbind(1, A)
+Ci <- solve(C)
+beta_gls <- solve(t(X) %*% Ci %*% X, t(X) %*% Ci %*% B)
+beta_gls
+```
+
+A inclinação, 1,398, é a mesma da regressão dos contrastes pela origem
+(Aula 2). Com **C** = identidade (a árvore em estrela), o GLS vira o OLS:
+
+```{r}
+solve(t(X) %*% X, t(X) %*% B)
+coef(lm(B ~ A))
+```
+
+## 2. PGLS no R
+
+Agora os *Anolis*: comprimento do membro posterior contra SVL. Três
+estruturas para os resíduos: nenhuma (OLS), BM e λ de Pagel. O
+`form = ~sp` amarra cada linha da tabela à ponta certa da árvore.
+
+```{r}
+m_ols <- gls(hll ~ svl, data = dados, method = "ML")
+m_bm  <- gls(hll ~ svl, data = dados, method = "ML",
+             correlation = corBrownian(1, arv, form = ~sp))
+m_lam <- gls(hll ~ svl, data = dados, method = "ML",
+             correlation = corPagel(1, arv, form = ~sp))
+summary(m_lam)$tTable
+```
+
+```{r}
+tab <- sapply(list(OLS = m_ols, BM = m_bm, lambda = m_lam), \(m)
+  c(inclinacao = coef(m)[["svl"]], EP = sqrt(diag(vcov(m)))[["svl"]], AIC = AIC(m)))
+round(tab, 3)
+m_lam$modelStruct$corStruct   # o lambda estimado
+```
+
+Nos *Anolis*, as três inclinações são parecidas, mas o AIC prefere com folga
+os modelos com a árvore: o OLS subestima a dependência entre as espécies. O
+`corPagel` às vezes estima λ um pouco acima de 1; isso acontece e não quer
+dizer erro.
+
+## 3. Quanto o modelo explica?
+
+O R² do OLS não serve para resíduos correlacionados. O `rr2` calcula três
+versões (Ives 2019):
+
+```{r}
+R2(m_lam)
+```
+
+## 4. Diagnóstico
+
+O pressuposto do PGLS é sobre os **resíduos**. Os resíduos "normalizados"
+do `gls()` já descontam a estrutura filogenética e devem parecer ruído.
+
+```{r}
+#| fig-height: 3.8
+par(mfrow = c(1, 2))
+plot(fitted(m_lam), resid(m_lam, type = "normalized"),
+     xlab = "ajustado", ylab = "resíduo normalizado"); abline(h = 0, lty = 2)
+qqnorm(resid(m_lam, type = "normalized")); qqline(resid(m_lam, type = "normalized"))
+```
+
+Quanto sinal há nos resíduos do OLS? Se houver, o OLS está errado e o PGLS é
+necessário, **independentemente** do sinal em cada atributo.
+
+```{r}
+res_ols <- setNames(resid(m_ols), dados$sp)
+phylosig(arv, res_ols, method = "lambda", test = TRUE)
+```
+
+λ ≈ 1 nos resíduos do OLS: o modelo sem árvore viola o pressuposto de
+independência.
+
+## 5. ANOVA e ANCOVA filogenéticas
+
+O membro posterior relativo (o resíduo da regressão no SVL) difere entre
+ecomorfos? A ANOVA filogenética compara o F observado com o de dados
+simulados por BM na árvore.
+
+```{r}
+dados$res <- resid(m_bm)
+set.seed(43)
+phylANOVA(arv, setNames(dados$eco, dados$sp), setNames(dados$res, dados$sp), nsim = 999)$Pf
+```
+
+A ANCOVA filogenética põe o tamanho e o ecomorfo no mesmo modelo:
+
+```{r}
+m_ancova <- gls(hll ~ svl + eco, data = dados, method = "ML",
+                correlation = corBrownian(1, arv, form = ~sp))
+anova(m_ancova)
+```
+
+Os ecomorfos diferem no membro posterior relativo mesmo considerando a
+filogenia; o `anova()` do `gls()` testa os termos em sequência (primeiro o
+SVL, depois o ecomorfo).
+
+## 6. Respostas binárias e contagens: o GLM filogenético
+
+Ser *trunk-ground* (0 ou 1) depende do membro posterior relativo? E o
+número de lamelas (uma contagem) cresce com o tamanho?
+
+```{r}
+dados$tg  <- as.integer(dados$eco == "TG")
+dados$res_z <- as.numeric(scale(dados$res))       # padronizar ajuda o ajuste
+dados$lam <- round(exp(anole.data$LAM))          # de volta para contagem
+m_log <- phyloglm(tg ~ res_z, data = dados, phy = arv, method = "logistic_MPLE")
+summary(m_log)$coefficients
+m_poi <- phyloglm(lam ~ svl, data = dados, phy = arv, method = "poisson_GEE")
+summary(m_poi)$coefficients
+```
+
+## 7. Quando a correlação muda na árvore
+
+A covariância evolutiva entre dois atributos pode ser diferente entre
+regimes. Nos Centrarchidae (`phytools`), o modo de alimentação está mapeado
+na árvore: uma matriz de taxas para todos ou uma por regime?
+
+```{r}
+data(sunfish.tree, sunfish.data)
+vv <- evol.vcv(sunfish.tree, as.matrix(sunfish.data[, c("gape.width", "buccal.length")]))
+vv
+```
+
+Duas matrizes ajustam melhor que uma: nos piscívoros, abertura da boca e
+comprimento bucal evoluem juntos (covariância positiva); nos não piscívoros,
+quase independentes.
+
+## 8. Incerteza filogenética
+
+A árvore também é uma estimativa. Uma forma simples de ver o efeito:
+refazer o PGLS em várias árvores (aqui, os mesmos ramos perturbados ao
+acaso, só para ilustrar; numa análise real, use uma amostra da posterior).
+
+```{r}
+set.seed(44)
+b <- replicate(100, {
+  a2 <- arv
+  a2$edge.length <- arv$edge.length * exp(rnorm(nrow(arv$edge), 0, .4))
+  coef(gls(hll ~ svl, data = dados, correlation = corBrownian(1, a2, form = ~sp)))[["svl"]]
+})
+summary(b)
+hist(b, main = "", xlab = "inclinação do PGLS em 100 árvores")
+abline(v = coef(m_bm)[["svl"]], col = "firebrick", lwd = 2)
+```
+
+## Resumo
+
+- O PGLS é um GLS com **C**; sob BM, dá a mesma inclinação que os
+  contrastes.
+- Estime λ junto com a regressão e cheque os **resíduos**, não os
+  atributos.
+- `rr2::R2()` para o R²; `phylANOVA()` e `gls(... + fator)` para ANOVA e
+  ANCOVA; `phyloglm()` para respostas binárias e contagens.
+- `evol.vcv()` compara uma matriz de taxas com uma por regime; refaça a
+  análise em várias árvores para ver a incerteza.
+
+O PGLS e a ANOVA filogenética da edição de 2020 estão no
+[roteiro da Aula 2](../aula-02-bm-matriz-c/walkthrough-aula-2-terca.html), e o
+`evol.vcv`, no [roteiro da Aula 5](../aula-05-modelos/walkthrough-aula-quinta.html).

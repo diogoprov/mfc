@@ -64,9 +64,9 @@ as escolhas estão justificadas (30 %); a interpretação está correta (40 %).
 
 **Uma matriz de taxas ou várias?** Com os *Anolis* (`anoletree` traz os
 ecomorfos mapeados): (1) faça a PCA comum e a filogenética
-(`phytools::phyl.pca()`) do log dos seis atributos e compare as cargas dos
-dois primeiros eixos; (2) com o log dos membros anterior (FLL) e posterior
-(HLL), ajuste BM com uma matriz de taxas e com uma por ecomorfo
+(`phytools::phyl.pca()`) dos seis atributos (já em log natural no
+`anole.data`) e compare as cargas dos dois primeiros eixos; (2) com os
+membros anterior (FLL) e posterior (HLL), ajuste BM com uma matriz de taxas e com uma por ecomorfo
 (`mvMORPH::mvBM(model = "BM1")` e `"BMM"`), compare por AICc e desenhe as
 elipses das matrizes. *Avaliação:* interpreta as diferenças entre as
 matrizes em termos de taxas e de correlação evolutiva, e comenta os ecomorfos

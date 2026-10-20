@@ -281,6 +281,9 @@ fechamento → leituras com o aviso do Coggle → meme e prática.
   da árvore-guia; 9 = sp1–sp4; 10 = sp1+sp2; 11 = sp3+sp4; 12 = sp5–sp7;
   13 = sp6+sp7).
 
+- `phytools::anole.data` **já está em log natural** (SVL 3,46–5,11 = 32–166
+  mm): não aplique `log()` de novo. `geiger::treedata()` não põe as linhas na
+  ordem das pontas sem `sort = TRUE`.
 - Árvore não ultramétrica ou sem comprimentos de ramo; nomes das pontas que
   não batem com os dados (`geiger::name.check`); ordem das linhas em
   `nlme::gls` com `corBrownian`/`corPagel` (use `form = ~sp`).

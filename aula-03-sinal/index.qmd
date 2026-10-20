@@ -76,8 +76,8 @@ as escolhas estão justificadas (30 %); a interpretação está correta (40 %).
 
 **Quanto sinal há em cada atributo?** Com `data(anoletree, anole.data, package = "phytools")`:
 (1) estime K e λ, com os testes (`phytools::phylosig(..., test = TRUE)`),
-para o log de SVL, do comprimento da cabeça (HL) e do número de lamelas
-(LAM). (2) Simule um atributo por BM na mesma árvore (`phytools::fastBM()`)
+para SVL, comprimento da cabeça (HL) e número de lamelas (LAM), que no
+`anole.data` já estão em logaritmo natural. (2) Simule um atributo por BM na mesma árvore (`phytools::fastBM()`)
 e outro sem relação com ela (`rnorm()`) e estime K e λ para os dois.
 (3) Faça uma tabela com tudo. *Avaliação:* compara os atributos reais com
 as duas referências simuladas e não interpreta sinal alto como restrição.
@@ -90,7 +90,8 @@ as duas referências simuladas e não interpreta sinal alto como restrição.
 - `anoletree` vem com os ecomorfos mapeados (classe `simmap`); o
   `phylosig()` aceita a árvore assim mesmo.
 - Os atributos estão em `anole.data`, uma coluna por atributo, com as
-  espécies nos nomes das linhas: use `setNames(log(anole.data$SVL), rownames(anole.data))`.
+  espécies nos nomes das linhas: use `setNames(anole.data$SVL, rownames(anole.data))`.
+  Os valores **já estão em log natural**: não aplique `log()` de novo.
 - Fixe a semente antes de cada teste por permutação e das simulações.
 
 ```r

@@ -45,7 +45,7 @@ anolis_bmm <- function() {
   source(here::here("R/aula05_modelos.R"), local = TRUE)
   tr <- anolis_simmap()$arvore
   e <- new.env(); utils::data("anole.data", package = "phytools", envir = e)
-  X <- log(as.matrix(e$anole.data[tr$tip.label, c("SVL", "TL")]))
+  X <- as.matrix(e$anole.data[tr$tip.label, c("SVL", "TL")])   # já em log
   b1 <- mvMORPH::mvBM(tr, X, model = "BM1", diagnostic = FALSE, echo = FALSE)
   bm <- mvMORPH::mvBM(tr, X, model = "BMM", diagnostic = FALSE, echo = FALSE)
   list(aicc = c(BM1 = b1$AICc, BMM = bm$AICc), sigma = bm$sigma)
@@ -188,7 +188,7 @@ fig_restricoes <- function() {
 pca_filo_anolis <- function() {
   an <- anolis(); tr <- an$arvore
   e <- new.env(); utils::data("anole.data", package = "phytools", envir = e)
-  X <- log(as.matrix(e$anole.data[tr$tip.label, ]))
+  X <- as.matrix(e$anole.data[tr$tip.label, ])   # já em log
   pp <- phytools::phyl.pca(tr, X, method = "BM", mode = "cov")
   pc <- stats::prcomp(X)
   ve_f <- diag(pp$Eval) / sum(diag(pp$Eval)); ve_c <- pc$sdev^2 / sum(pc$sdev^2)

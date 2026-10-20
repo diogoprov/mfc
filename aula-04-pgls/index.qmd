@@ -43,13 +43,13 @@ As figuras dos slides foram geradas em R; o código está em
 
 ## Código R (aula prática)
 
-Esta aula não tem roteiro próprio da edição de 2020; a prática está em
-partes de outros roteiros:
-
-- PGLS e ANOVA filogenética: seções `#---PGLS` e `#---ANOVA filogenética`
-  do [roteiro da Aula 2](../aula-02-bm-matriz-c/walkthrough-aula-2-terca.html)
-- Matrizes de taxas por regime (`evol.vcv`): seção `#---evol.vcv` do
-  [roteiro da Aula 5](../aula-05-modelos/walkthrough-aula-quinta.html)
+- {{< fa solid play >}} **[Roteiro prático (executado)](roteiro.html)**\
+  *O GLS à mão na árvore-guia, PGLS com BM e λ, R² com `rr2`, diagnóstico
+  e sinal nos resíduos, ANOVA e ANCOVA filogenéticas, GLM filogenético,
+  `evol.vcv` e incerteza filogenética. O código roda na página.*
+- Na edição de 2020: seções `#---PGLS` e `#---ANOVA filogenética` do
+  [roteiro da Aula 2](../aula-02-bm-matriz-c/walkthrough-aula-2-terca.html) e
+  `#---evol.vcv` do [roteiro da Aula 5](../aula-05-modelos/walkthrough-aula-quinta.html).
 
 Pacotes: `ape`, `nlme`, `phytools`, `phylolm`, `rr2`.
 
@@ -66,13 +66,36 @@ pedidas e até uma página de interpretação. Critério: o script roda (30 %);
 as escolhas estão justificadas (30 %); a interpretação está correta (40 %).
 
 **OLS, PIC e PGLS.** Com `data(anoletree, anole.data, package = "phytools")`,
-modele o log do comprimento da cabeça (HL) contra o log de SVL: (1) por
+modele o comprimento da cabeça (HL) contra o SVL (os dois já em log
+natural no `anole.data`): (1) por
 OLS; (2) por PGLS com `corBrownian` e com `corPagel` (`nlme::gls`,
 `form = ~sp`); (3) pela regressão dos contrastes pela origem. (4) Compare
 as inclinações e os erros-padrão numa tabela, calcule o R² do PGLS com
 `rr2::R2()` e estime o sinal nos resíduos do OLS. *Avaliação:* mostra que
 PIC e PGLS-BM dão a mesma inclinação e justifica a escolha do modelo pelos
 resíduos, não pelos atributos.
+
+::: {.callout-tip collapse="true" appearance="simple"}
+## Dicas
+
+- As seções 2 a 4 do [roteiro](roteiro.html) fazem o mesmo com o membro
+  posterior; a equivalência com os contrastes está na seção 6 do
+  [roteiro da Aula 2](../aula-02-bm-matriz-c/roteiro.html#a-regressão-dos-contrastes).
+- Use `as.phylo(anoletree)` para tirar o mapa dos ecomorfos antes do `gls()`.
+- Para os contrastes, use vetores com nomes: `pic(setNames(dados$hl, dados$sp), arv)`.
+- O sinal nos resíduos: `phylosig(arv, setNames(resid(m_ols), dados$sp), method = "lambda", test = TRUE)`.
+
+```r
+library(ape); library(phytools); library(nlme); library(rr2)
+data(anoletree, anole.data, package = "phytools")
+arv <- as.phylo(anoletree)
+dados <- data.frame(sp = rownames(anole.data), hl = anole.data$HL, svl = anole.data$SVL)
+# m_ols <- gls(hl ~ svl, data = dados, method = "ML")
+# m_bm  <- gls(..., correlation = corBrownian(1, arv, form = ~sp))
+# m_lam <- gls(..., correlation = corPagel(1, arv, form = ~sp))
+# contrastes: lm(pic_hl ~ pic_svl - 1)
+```
+:::
 
 As respostas comentadas serão publicadas aqui depois do prazo de entrega.
 
