@@ -1,0 +1,545 @@
+---
+title: "Estados ancestrais e visualização"
+subtitle: "Aula 7 · Métodos Filogenéticos Comparativos · PPGBA/UFMS"
+author: "Diogo B. Provete"
+lang: pt
+format:
+  revealjs:
+    theme: [default, theme.scss]
+    slide-number: c/t
+    show-slide-number: all
+    auto-stretch: false
+    preview-links: auto
+    history: false
+    footer: "Métodos Filogenéticos Comparativos · PPGBA/UFMS"
+    code-overflow: wrap
+    fig-align: center
+    width: 1250
+    height: 750
+knitr:
+  opts_chunk:
+    out.width: "100%"
+    dev.args:
+      bg: "#faf7f0"
+
+execute:
+  echo: false
+  warning: false
+  message: false
+  fig-width: 10
+  fig-height: 4.4
+---
+
+```{r}
+#| label: setup
+source(here::here("R/mapa.R"))
+source(here::here("R/aula07_ancestrais.R"))
+
+g  <- guia_ancestrais()
+aj <- ajustes_enguias()
+cs <- mapas_squamata()
+td <- tendencia_fosseis()
+erro <- td |> group_by(modelo) |> summarise(r = cor(verdadeiro, estimado), vies = mean(estimado - verdadeiro))
+ic <- function(no) paste0(num(g$ic[no, 1], 2), " a ", num(g$ic[no, 2], 2))
+cont_e <- aj$contagens[, "N"]
+```
+
+## Hoje {.muito-grande}
+
+1. Por que estimar estados ancestrais
+2. Atributos contínuos: parcimônia, verossimilhança e incerteza
+3. Atributos discretos: marginal, conjunta e mapeamento estocástico
+4. Visualização
+
+## Onde estamos
+
+```{r}
+#| fig-height: 5.0
+#| fig-alt: "Mapa dos métodos com as células de estados ancestrais de atributos contínuos e discretos destacadas."
+mapa_plot(aula = 7)
+```
+
+# 1. Por que estimar estados ancestrais {.secao}
+
+[Como era o ancestral?]{.familia .ancestral}
+
+## Por que estimar o estado ancestral? {.muito-grande}
+
+- "Reconstruir" a história evolutiva, a sequência de mudanças de um caráter,
+  normalmente nos nós das filogenias
+- Ex.: entender como a colonização de uma ilha afetou a evolução do tamanho
+  do corpo
+- Correlacionar com alguma característica do ambiente no passado
+- Idealmente, com medidas de incerteza associadas às estimativas; nem todos
+  os métodos permitem calcular um IC 95%
+
+## A árvore e o atributo
+
+```{r}
+#| fig-width: 8
+#| fig-height: 4.4
+#| out-width: "75%"
+#| fig-alt: "A árvore-guia de sete espécies com o valor do atributo A ao lado de cada ponta, de 2,51 em sp1 a 0,58 em sp7."
+fig_guia_nos(g, 1)
+```
+
+## E nos nós?
+
+```{r}
+#| fig-width: 8
+#| fig-height: 4.4
+#| out-width: "75%"
+#| fig-alt: "A mesma árvore com um ponto de interrogação em cada um dos seis nós internos."
+fig_guia_nos(g, 2)
+```
+
+Inferir como os atributos mudaram ao longo do tempo.
+
+## As estimativas
+
+```{r}
+#| fig-width: 8
+#| fig-height: 4.4
+#| out-width: "75%"
+#| fig-alt: "A mesma árvore com as estimativas por máxima verossimilhança nos nós: 1,83 na raiz, 1,99 e 2,60 no clado de sp1 a sp4, 2,27 em sp3 e sp4, 1,77 e 0,96 no clado de sp5 a sp7."
+fig_guia_nos(g, 3)
+```
+
+Inferir como os atributos mudaram e visualizar padrões macroevolutivos
+complexos.
+
+## Métodos e limitações {.muito-grande}
+
+**Principais métodos**: parcimônia de mudança quadrada; máxima
+verossimilhança; mínimos quadrados generalizados (GLS); bayesianos. Os três
+primeiros estão em `ape::ace`; os baseados em modelos dão incerteza.
+
+**Limitações**: o modelo de evolução afeta as estimativas, e há muita
+incerteza associada a elas.
+
+::: {.definicao}
+Ou seja: se você não precisa dos estados ancestrais, não os estime!
+:::
+
+# 2. Atributos contínuos {.secao}
+
+[Como era o ancestral?]{.familia .ancestral}
+
+## Parcimônia de mudança quadrada {.grande}
+
+- Funciona no contexto da inferência filogenética por parcimônia: minimiza
+  a soma dos quadrados das mudanças ao longo da árvore
+- **Não ponderada**: ignora os comprimentos de ramo (aceitável num
+  cladograma antigo, sem comprimentos)
+- **Ponderada**: considera os comprimentos de ramo
+- Não permite calcular a incerteza das estimativas
+- Em caracteres discretos, a parcimônia supõe taxas de transição muito
+  baixas e pode errar quando esse não é o melhor modelo
+
+::: {.ref}
+[Maddison (1991)](https://doi.org/10.2307/2992324), *Syst. Zool.* 40: 304–314.
+:::
+
+## Máxima verossimilhança {.grande}
+
+- O conjunto de estados ancestrais mais verossímil, considerando a filogenia
+  toda
+- Incorpora os comprimentos de ramo
+- Precisa de um modelo de evolução para estimar a taxa: BM no `ape`, OU no
+  `bayou`; outra saída é "esticar" a árvore por um escalar (Aula 3)
+- Equivale à parcimônia de mudança quadrada quando a árvore não tem
+  comprimentos de ramo
+
+::: {.ref}
+[Schluter, Price, Mooers & Ludwig (1997)](https://doi.org/10.1111/j.1558-5646.1997.tb05095.x), *Evolution* 51: 1699–1711.
+:::
+
+## Quando os métodos coincidem
+
+```{r}
+#| fig-height: 4.2
+#| fig-alt: "Três caixas: parcimônia de mudança quadrada não ponderada, no alto; ponderada, embaixo; máxima verossimilhança sob BM, à direita. A não ponderada liga-se às outras duas por setas rotuladas comprimentos de ramo iguais."
+fig_equivalencias(1)
+```
+
+## Quando os métodos coincidem
+
+```{r}
+#| fig-height: 4.2
+#| fig-alt: "O mesmo esquema com uma terceira seta, da parcimônia ponderada para a máxima verossimilhança, rotulada mesmas estimativas."
+fig_equivalencias(2)
+```
+
+```{r}
+#| echo: true
+#| eval: false
+ape::ace(x, arvore, method = "ML")                      # ponderada = ML
+ape::ace(x, ape::compute.brlen(arvore, 1), method = "ML")  # não ponderada
+```
+
+## Na árvore-guia {.muito-grande .tabela-grande}
+
+| Nó | 8 (raiz) | 9 | 10 | 11 | 12 | 13 |
+|---|---:|---:|---:|---:|---:|---:|
+| ML (= ponderada) | `r num(g$ml[1], 2)` | `r num(g$ml[2], 2)` | `r num(g$ml[3], 2)` | `r num(g$ml[4], 2)` | `r num(g$ml[5], 2)` | `r num(g$ml[6], 2)` |
+| ramos = 1 (não ponderada) | `r num(g$un[1], 2)` | `r num(g$un[2], 2)` | `r num(g$un[3], 2)` | `r num(g$un[4], 2)` | `r num(g$un[5], 2)` | `r num(g$un[6], 2)` |
+
+Ignorar os comprimentos muda as estimativas: no nó 13, sp6 e sp7 pesam
+menos quando seus ramos curtos ficam iguais aos longos do resto da árvore.
+
+## Métodos estatísticos {.grande}
+
+- Os estados ancestrais são os valores que maximizam a probabilidade dos
+  dados, dada a árvore
+- Tentativa e erro a partir de um valor inicial é ineficiente em árvores
+  grandes; o algoritmo de *pruning* dos PICs resolve: **o contraste da raiz
+  dá a estimativa de máxima verossimilhança da raiz**
+- Precisa de um modelo de evolução; o BM é o mais comum (diferença entre
+  espécies proporcional ao tempo de divergência)
+- Permite estimar a variância de cada estimativa e o IC 95%
+
+::: {.ref}
+[Felsenstein (1985)](https://doi.org/10.1086/284325); [Pagel (1999)](https://doi.org/10.1080/106351599260184), *Syst. Biol.* 48: 612–622; GLS: [Martins & Hansen (1997)](https://doi.org/10.1086/286013).
+:::
+
+## Passo a passo: o nó 13 pelos descendentes
+
+```{r}
+#| fig-width: 8
+#| fig-height: 4.4
+#| out-width: "70%"
+#| fig-alt: "A árvore-guia com só os ramos de sp6 e sp7 destacados e o valor 0,88 no nó 13."
+fig_no13(g, 1)
+```
+
+::: {.medio}
+No *pruning* dos PICs (Aula 2), o valor do nó 13 é a média de sp6 e sp7
+(ramos iguais): (1,18 + 0,58)/2 = `r num(g$no13, 2)`. Só usa os descendentes.
+:::
+
+## Passo a passo: o nó 13 pela árvore toda
+
+```{r}
+#| fig-width: 8
+#| fig-height: 4.4
+#| out-width: "70%"
+#| fig-alt: "A mesma árvore com todos os ramos destacados e o valor 0,96 no nó 13."
+fig_no13(g, 2)
+```
+
+::: {.medio}
+A estimativa por ML usa a árvore toda: o resto do clado e das espécies puxa o
+nó 13 para `r num(g$ml[["13"]], 2)`.
+:::
+
+## Como usar a árvore toda? {.grande}
+
+O *pruning* só dá a estimativa "completa" na **raiz**, que recebe a
+informação de todas as espécies.
+
+::: {.fragment}
+- Truque: **re-enraizar** a árvore em cada nó e pegar a estimativa da nova
+  raiz (`phytools::fastAnc`)
+- Na raiz original: `r num(g$ml[["8"]], 2)`, o mesmo valor dos PICs da
+  Aula 2
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+#| eval: false
+phytools::fastAnc(arvore, x, vars = TRUE, CI = TRUE)
+```
+:::
+
+## Incertezas {.muito-grande}
+
+- As variâncias das estimativas são sempre grandes
+- A incerteza cresce à medida que se afasta das pontas: acúmulo de
+  incerteza
+- A raiz e os nós profundos costumam estar entre os mais incertos
+
+::: {.ref}
+IC 95% para estados ancestrais: [Garland, Midford & Ives (1999)](https://doi.org/10.1093/icb/39.2.374), *Am. Zool.* 39: 374–388.
+:::
+
+## A incerteza na árvore-guia
+
+```{r}
+#| fig-height: 4.5
+#| fig-alt: "As estimativas dos seis nós da árvore-guia no espaço tempo × atributo, com barras de IC 95%. O nó 11, de ramos muito curtos, tem um IC estreito; a raiz e os nós 9 e 12 têm ICs de quase uma unidade."
+fig_ic_guia(g)
+```
+
+::: {.medio}
+IC 95% da raiz: `r ic("8")`; do nó 11 (sp3 e sp4, ramos de 0,02): `r ic("11")`.
+:::
+
+## E numa árvore grande?
+
+```{r}
+#| fig-height: 4.0
+#| fig-alt: "Variância da estimativa de log SVL nos 81 nós da árvore dos Anolis contra a distância do nó à raiz: alta e espalhada nos nós profundos e intermediários, caindo perto das pontas."
+fig_var_prof()
+```
+
+::: {.medio}
+*Anolis* (log SVL): a variância cai perto das pontas. A raiz não é,
+necessariamente, o nó mais incerto: nós intermediários com ramos longos
+podem ser piores.
+:::
+
+## `contMap`
+
+```{r}
+#| fig-height: 4.5
+#| fig-alt: "Árvore dos Anolis com os ramos coloridos pelo log SVL estimado ao longo deles, do azul (menor) ao ferrugem (maior), com uma barra de cor."
+fig_contmap()
+```
+
+::: {.ref}
+[Revell (2013)](https://doi.org/10.1111/2041-210X.12066), *Methods Ecol. Evol.* 4: 754–759.
+:::
+
+## Fenograma com IC 95%
+
+```{r}
+#| fig-height: 4.2
+#| fig-alt: "Fenograma dos Anolis: o log SVL no eixo vertical contra o tempo, com as linhagens partindo da raiz e uma faixa azul translúcida marcando o IC 95% dos nós."
+fig_fenograma95()
+```
+
+::: {.ref}
+`phytools::fancyTree(type = "phenogram95")`. O original chamava esta figura de `densityMap`, que é outra coisa (bloco 3).
+:::
+
+## Especificação do modelo {.muito-grande}
+
+- Se o modelo usado para estimar os estados ancestrais não for o adequado
+  para aquele atributo, as estimativas serão erradas
+- Ex.: BM × BM com tendência; a tendência é difícil de detectar sem
+  fósseis (Aula 5)
+- Métodos bayesianos permitem incorporar os fósseis como *priors*
+
+::: {.ref}
+[Finarelli & Flynn (2006)](https://doi.org/10.1080/10635150500541698), *Syst. Biol.* 55: 301–313; precisão dos métodos: [Webster & Purvis (2002)](https://doi.org/10.1098/rspb.2001.1873), *Proc. R. Soc. B* 269: 143–149.
+:::
+
+## Uma tendência com fósseis
+
+```{r}
+#| fig-height: 4.3
+#| fig-alt: "Estimativas dos estados ancestrais contra os valores verdadeiros numa simulação com tendência e espécies fósseis. Sob BM, os pontos ficam acima da diagonal, sobretudo nos nós antigos; sob BM com tendência, ficam sobre a diagonal."
+fig_tendencia_fosseis(td)
+```
+
+::: {.medio}
+Simulação com tendência (μ > 0) numa árvore com fósseis. Sob BM, viés médio
+de `r num(erro$vies[erro$modelo == "BM (sem tendência)"], 2)`; com a
+tendência no modelo (`phytools::anc.trend`),
+`r num(erro$vies[erro$modelo == "BM com tendência"], 2)`.
+:::
+
+# 3. Atributos discretos {.secao}
+
+[Como era o ancestral?]{.familia .ancestral}
+
+## O modelo Mk de novo {.muito-grande}
+
+Máxima verossimilhança e um modelo Mk ajustado aos dados (Aula 6): a matriz
+**Q** dá as taxas instantâneas, e delas vem a probabilidade de cada estado
+depois de um tempo *t*:
+
+$$\mathbf{p}_t = e^{\mathbf{Q}t}\,\mathbf{p}_0 \qquad \mathbf{Q} = \begin{bmatrix} -q_{01} & q_{01} \\ q_{10} & -q_{10} \end{bmatrix}$$
+
+## Morder ou sugar?
+
+```{r}
+#| fig-width: 7
+#| fig-height: 5.5
+#| out-width: "50%"
+#| fig-align: center
+#| fig-alt: "Árvore em leque de 61 espécies de enguias e parentes, com um círculo em cada ponta: ferrugem para alimentação por mordida, azul para sucção."
+fig_enguias_pontas(aj$e)
+```
+
+::: {.ref}
+`r ape::Ntip(aj$e$arvore)` espécies de Elopomorpha; Mk ER: log L = `r num(aj$er$logLik, 2)` (o ARD, `r num(aj$ard$logLik, 2)`, não melhora). Dados de [Collar et al. (2014)](https://doi.org/10.1038/ncomms6505), *Nat. Commun.* 5: 5505, usados na prática.
+:::
+
+## Estimativa marginal e conjunta {.muito-grande}
+
+- **Conjunta** (*joint*): o conjunto de estados que, **juntos**, maximizam a
+  verossimilhança em todos os nós; restringe-se à história mais verossímil
+  do caráter
+- **Marginal**: o estado de um nó que maximiza a verossimilhança, integrando
+  sobre todos os estados nos outros nós, proporcionalmente à sua
+  probabilidade; dá uma probabilidade para cada estado em cada nó
+
+::: {.ref}
+Conjunta: [Pupko et al. (2000)](https://doi.org/10.1093/oxfordjournals.molbev.a026369), *Mol. Biol. Evol.* 17: 890–896; marginal: [Pagel (1999)](https://doi.org/10.1080/106351599260184).
+:::
+
+## As probabilidades marginais
+
+```{r}
+#| fig-width: 7
+#| fig-height: 5.5
+#| out-width: "50%"
+#| fig-align: center
+#| fig-alt: "A árvore das enguias com uma pizza em cada nó mostrando a probabilidade marginal de mordida (ferrugem) e de sucção (azul); muitas pizzas são divididas quase ao meio."
+fig_enguias_marginal(aj)
+```
+
+::: {.medio}
+Em `r aj$incertos` dos `r nrow(aj$marg)` nós, nenhum estado passa de 0,8.
+:::
+
+## Marginal × conjunta
+
+```{r}
+#| fig-width: 7
+#| fig-height: 5.5
+#| out-width: "50%"
+#| fig-align: center
+#| fig-alt: "A mesma árvore com anéis pretos nos três nós em que o estado mais provável pela estimativa marginal difere do da estimativa conjunta."
+fig_enguias_marginal(aj, aneis = TRUE)
+```
+
+::: {.medio}
+Discordam em `r length(aj$discorda)` nós (anéis), onde as probabilidades
+marginais estão perto de 0,5.
+:::
+
+## Mapeamento estocástico {.grande}
+
+- Amostra os estados nos nós **e a história do caráter** (as mudanças ao
+  longo dos ramos) da distribuição posterior conjunta
+- Primeiro amostra uma matriz **Q** (da posterior, ou fixa no valor de ML);
+  depois, os estados nos nós, condicionados a **Q**; por fim, simula as
+  mudanças ao longo dos ramos
+- Repetido muitas vezes, dá a distribuição do número de mudanças e do tempo
+  em cada estado
+
+::: {.ref}
+[Nielsen (2002)](https://doi.org/10.1080/10635150290102393), *Syst. Biol.* 51: 729–739; [Huelsenbeck, Nielsen & Bollback (2003)](https://doi.org/10.1080/10635150390192780), *Syst. Biol.* 52: 131–158; [Bollback (2006)](https://doi.org/10.1186/1471-2105-7-88).
+:::
+
+## Um mapa
+
+```{r}
+#| fig-width: 7
+#| fig-height: 5.5
+#| out-width: "50%"
+#| fig-align: center
+#| fig-alt: "Um mapa estocástico na árvore das enguias: cada ramo pintado de ferrugem (mordida) ou azul (sucção), com as trocas de cor no meio dos ramos."
+fig_um_mapa(aj)
+```
+
+::: {.medio}
+Uma história possível, com as mudanças no meio dos ramos.
+:::
+
+## Cem mapas
+
+```{r}
+#| fig-width: 7
+#| fig-height: 5.5
+#| out-width: "50%"
+#| fig-align: center
+#| fig-alt: "Resumo de 100 mapas estocásticos (densityMap): a probabilidade posterior de sucção ao longo de cada ramo, do ferrugem (0) ao azul (1)."
+fig_densitymap(aj)
+```
+
+::: {.ref}
+`phytools::make.simmap(arvore, x, model = "ER", nsim = 100)` e `densityMap`.
+:::
+
+## Quantas mudanças?
+
+```{r}
+#| fig-height: 4.0
+#| fig-alt: "Histogramas do número de mudanças de mordida para sucção e de sucção para mordida nos 100 mapas."
+fig_contagens(aj$contagens, c("mordida,sucção" = "mordida → sucção", "sucção,mordida" = "sucção → mordida"))
+```
+
+::: {.medio}
+Média de `r num(mean(cont_e), 1)` mudanças por mapa (IC 95%:
+`r quantile(cont_e, .025)` a `r quantile(cont_e, .975)`).
+:::
+
+## E os Squamata da Aula 6?
+
+```{r}
+#| fig-height: 4.0
+#| fig-alt: "Histogramas do número de perdas e de reganhos de membros em 100 mapas estocásticos dos Squamata sob o modelo ARD."
+fig_contagens(cs, c("com,sem" = "perdas (com → sem)", "sem,com" = "reganhos (sem → com)"))
+```
+
+::: {.medio}
+Sob ARD: `r num(mean(cs[, "com,sem"]), 1)` perdas
+(`r quantile(cs[, "com,sem"], .025)` a `r quantile(cs[, "com,sem"], .975)`) e
+`r num(mean(cs[, "sem,com"]), 1)` reganhos por mapa. Os reganhos dependem do
+modelo, que os dados não distinguem bem (Aula 6).
+:::
+
+# 4. Visualização {.secao}
+
+[Como era o ancestral?]{.familia .ancestral}
+
+## Gráficos do `phytools` {.grande .tabela-grande}
+
+| Função | O que mostra |
+|---|---|
+| `plotTree`, `plotSimmap` | a árvore; um mapa estocástico |
+| `contMap` | atributo contínuo estimado ao longo dos ramos |
+| `densityMap` | probabilidade posterior de um estado ao longo dos ramos |
+| `phenogram`, `fancyTree` | atributo × tempo (com IC 95%) |
+| `phylomorphospace` | a árvore no espaço de dois atributos |
+| `dotTree`, `plotTree.barplot` | valores das pontas ao lado da árvore |
+
+::: {.ref}
+[Revell (2012)](https://doi.org/10.1111/j.2041-210X.2011.00169.x), *Methods Ecol. Evol.* 3: 217–223. Para gráficos de sinal filogenético, o pacote `phylosignal`.
+:::
+
+## Filomorfoespaço
+
+```{r}
+#| fig-width: 6
+#| fig-height: 5
+#| out-width: "52%"
+#| fig-alt: "Filomorfoespaço dos Anolis: log do comprimento da cauda contra log SVL, com as espécies em azul e os nós internos, nas estimativas por máxima verossimilhança, ligados pelos ramos da árvore."
+fig_filomorfo()
+```
+
+::: {.ref}
+Os nós ficam nas estimativas por ML dos dois atributos; volta na Aula 8.
+:::
+
+# Para fechar {.secao}
+
+## Onde estamos
+
+```{r}
+#| fig-height: 5.0
+#| fig-alt: "O mapa dos métodos de novo, com as células de estados ancestrais destacadas."
+mapa_plot(aula = 7)
+```
+
+## Leituras {.muito-grande}
+
+- [Revell & Harmon (2022)](https://press.princeton.edu/books/paperback/9780691219035/phylogenetic-comparative-methods-in-r), *Phylogenetic Comparative Methods in R*: capítulos 8 e 13
+- [Huelsenbeck, Nielsen & Bollback (2003)](https://doi.org/10.1080/10635150390192780): mapeamento estocástico
+- [Webster & Purvis (2002)](https://doi.org/10.1098/rspb.2001.1873): quão precisas são as estimativas
+
+## Agora é com vocês
+
+::: {.meme}
+![](../assets/memes/saudade.jpg){fig-alt="Pintura Saudade, de Almeida Júnior: uma mulher de xale escuro, junto a uma janela, lê uma carta e chora. Legenda: eu só queria saber como era o ancestral; IC 95%: de 1,34 a 2,32." height="560px"}
+
+[Eu só queria saber como era o ancestral]{.meme-topo} [IC 95%: de `r num(g$ic["8", 1], 2)` a `r num(g$ic["8", 2], 2)`]{.meme-base}
+:::
+
+::: {.ref}
+Almeida Júnior, *Saudade* (1899), domínio público, via Wikimedia Commons. Prática: o walkthrough da Aula 7 e o desafio.
+:::

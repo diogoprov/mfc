@@ -28,8 +28,8 @@ simulações ou da árvore-guia.
 | 3 | Sinal filogenético | A3 24–61, A5 7–10 | **`inventarios/a03.md`** | **`slides/a03.qmd` ✔** (60 slides; aguarda revisão do Diogo) |
 | 4 | Regressão filogenética (PGLS) | A2 126–141, A4 50–58 | **`inventarios/a04.md`** | **`slides/a04.qmd` ✔** (37 slides; aguarda revisão do Diogo) |
 | 5 | Modelos de evolução contínua | A2 50–88, A4 18–49 | **`inventarios/a05.md`** | **`slides/a05.qmd` ✔** (51 slides; aguarda revisão do Diogo) |
-| 6 | Atributos discretos | A2 89–126, A4 1–17, A1 65–77 | **`inventarios/a06.md`** | **`slides/a06.qmd` ✔** (57 slides; aguarda aprovação para publicar) |
-| 7 | Estados ancestrais e visualização | A3 1–23, A5 11 | — | — |
+| 6 | Atributos discretos | A2 89–126, A4 1–17, A1 65–77 | **`inventarios/a06.md`** | **`slides/a06.qmd` ✔** (57 slides; publicada) |
+| 7 | Estados ancestrais e visualização | A3 1–23, A5 11 | **`inventarios/a07.md`** | **`slides/a07.qmd` ✔** (44 slides; publicada) |
 | 8 | Atributos multivariados | A6 | — | — |
 
 **Fase 0 (plano) feita em 19/out/2026.** Aprovados pelo Diogo: as 8 aulas,
@@ -203,6 +203,12 @@ quando ele decidir.
   estados), `ajustes_squamata()` (`fitDiscrete`; reproduz o log L do
   original), `pagel_pratica()`, `correlacao_corhmm()` (~3 min) e as figuras
   da Aula 6.
+- `R/aula07_ancestrais.R`: `guia_ancestrais()` (ML e parcimônia na
+  árvore-guia), `enguias()`/`ajustes_enguias()` (Collar et al. 2014; marginal
+  × conjunta com `phytools::ancr`, 100 mapas estocásticos),
+  `mapas_squamata()`, `tendencia_fosseis()` e as figuras (algumas em gráficos
+  base do `phytools`: `contMap`, `fancyTree`, `densityMap`,
+  `phylomorphospace`).
 - `R/aula04_pgls.R`: `anolis_dados()`, `modelos_anolis()`, `gls_passos()`,
   `anova_filo()`, `glm_filo()`, `evol_vcv_sunfish()`, `incerteza()` e as
   figuras da Aula 4.
