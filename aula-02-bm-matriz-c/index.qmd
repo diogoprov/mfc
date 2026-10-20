@@ -43,12 +43,16 @@ As figuras dos slides foram geradas em R; o código está em
 
 ## Código R (aula prática)
 
-- {{< fa solid eye >}} **[Ver walkthrough HTML](walkthrough-aula-2-terca.html)**
-  *BM simulado sem e com filogenia. O mesmo roteiro segue com OU e
-  tendência (Aula 5), o Mk nos Squamata (Aula 6) e PGLS (Aula 4).*
-  [{{< fa solid file-code >}} baixar `aula-2-terca.R`](aula-2-terca.R)
+- {{< fa solid play >}} **[Roteiro prático (executado)](roteiro.html)**\
+  *BM no tempo e numa árvore, distância patrística e matriz **C**, a
+  covariância das réplicas, contrastes independentes passo a passo e a
+  regressão pela origem. O código roda na página.*
+- {{< fa solid eye >}} [Roteiro da edição de 2020](walkthrough-aula-2-terca.html)
+  · [{{< fa solid file-code >}} `aula-2-terca.R`](aula-2-terca.R)\
+  *BM simulado; o mesmo roteiro segue com OU e tendência (Aula 5), o Mk nos
+  Squamata (Aula 6) e PGLS (Aula 4).*
 - A simulação do efeito da correlação filogenética está no
-  [roteiro da Aula 1](../aula-01-arvore-dados/walkthrough-aula-1-segunda.html).
+  [roteiro da Aula 1](../aula-01-arvore-dados/roteiro.html#por-que-a-árvore-importa-dois-atributos-independentes).
 
 Pacotes: `ape`, `phytools`, `geiger`, `nlme`.
 
@@ -75,6 +79,28 @@ atributo A dos slides (sp1 a sp7: 2,51; 2,80; 2,23; 2,32; 1,64; 1,18; 0,58) com
 `ape::pic()` e a estimativa da raiz.
 *Avaliação:* explica por que sp3 e sp4 têm covariância tão alta e o que isso
 significa para uma análise que as trate como independentes.
+
+::: {.callout-tip collapse="true" appearance="simple"}
+## Dicas
+
+- As seções 3 a 5 do [roteiro](roteiro.html) fazem cada passo numa árvore
+  menor ou com o atributo B.
+- Para somar os ramos compartilhados: `nodepath(arvore, i, j)` ou
+  `mrca()` com `node.depth.edgelength()`.
+- `fastBM(arvore, nsim = 10000)` devolve uma matriz com uma coluna por
+  réplica; a covariância entre as espécies é `cov(t(...))`.
+- A estimativa da raiz pelos contrastes: `ace(A, arvore, method = "pic")`.
+
+```r
+library(ape); library(phytools)
+guia <- read.tree(text = "...")   # a árvore-guia do enunciado
+A <- setNames(c(2.51, 2.80, 2.23, 2.32, 1.64, 1.18, 0.58), paste0("sp", 1:7))
+C_mao <- matrix(NA, 7, 7, dimnames = list(guia$tip.label, guia$tip.label))
+# 1. preencha C_mao e compare: all.equal(C_mao, vcv(guia))
+# 2. reps <- fastBM(guia, nsim = 10000); round(cov(t(reps)) - vcv(guia), 2)
+# 3. pic(A, guia) e a raiz
+```
+:::
 
 As respostas comentadas serão publicadas aqui depois do prazo de entrega.
 

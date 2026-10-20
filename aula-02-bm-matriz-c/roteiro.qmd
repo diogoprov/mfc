@@ -1,0 +1,216 @@
+---
+title: "Roteiro prático — O movimento browniano e a matriz C"
+subtitle: "Aula 2 · Métodos Filogenéticos Comparativos"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-tools: true
+    code-overflow: wrap
+execute:
+  echo: true
+  warning: false
+  message: false
+  fig-width: 7
+  fig-height: 4.5
+---
+
+::: {.callout-note appearance="minimal"}
+Este roteiro **roda de verdade**: os resultados abaixo saíram do código
+mostrado. Copie os blocos para um script e rode em ordem numa sessão limpa do
+R. No fim, o [desafio](index.qmd#desafio) pede o mesmo raciocínio com a
+árvore-guia.
+:::
+
+## 0. Pacotes
+
+```{r}
+library(ape)
+library(phytools)
+```
+
+## 1. O movimento browniano no tempo
+
+Sob BM, a cada intervalo de tempo o atributo recebe um passo aleatório de
+média zero e variância σ². A trajetória é a soma acumulada dos passos.
+
+```{r}
+set.seed(21)
+t <- 0:100        # tempo
+sig2 <- 0.01      # taxa
+passos <- rnorm(length(t) - 1, mean = 0, sd = sqrt(sig2))
+x <- c(0, cumsum(passos))
+plot(t, x, type = "l", xlab = "tempo", ylab = "atributo")
+```
+
+Agora 100 linhagens independentes, todas partindo de zero:
+
+```{r}
+nsim <- 100
+X <- matrix(rnorm(nsim * (length(t) - 1), sd = sqrt(sig2)), nsim)
+X <- cbind(0, t(apply(X, 1, cumsum)))     # uma linha por linhagem
+matplot(t, t(X), type = "l", lty = 1, col = adjustcolor("grey30", .3),
+        xlab = "tempo", ylab = "atributo")
+```
+
+A média fica em zero e a **variância cresce linearmente com o tempo**:
+esperamos σ²*t*.
+
+```{r}
+var_t <- apply(X, 2, var)
+plot(t, var_t, xlab = "tempo", ylab = "variância entre linhagens")
+abline(0, sig2, col = "firebrick", lwd = 2)   # a reta esperada, sig2 * t
+c(observada = var_t[101], esperada = sig2 * 100)
+```
+
+Divida `sig2` por 10 e rode de novo: as trajetórias se espalham bem menos.
+
+## 2. O BM numa árvore
+
+Numa árvore, as linhagens compartilham o caminho até se separarem. Vamos
+simular um atributo na árvore-guia, guardando também os valores nos nós, e
+desenhar o fenograma.
+
+```{r}
+guia <- read.tree(text = "(((sp1:0.18,sp2:0.18):1.06,(sp3:0.02,sp4:0.02):1.22):0.20,(sp5:1.37,(sp6:0.23,sp7:0.23):1.14):0.07);")
+set.seed(7)
+z <- fastBM(guia, sig2 = 1, internal = TRUE)
+round(z, 2)
+phenogram(guia, z, spread.labels = TRUE, ylab = "atributo", xlab = "tempo")
+```
+
+sp3 e sp4 se separaram há pouco (ramos de 0,02): só podem diferir pelo
+pouco que cada uma evoluiu depois disso, e o resto do caminho é **comum às
+duas**. Rode com outras sementes e compare a diferença entre sp3 e sp4 com a
+diferença entre sp4 e sp5.
+
+## 3. Distância patrística e a matriz C
+
+A distância patrística é a soma dos ramos entre duas espécies:
+
+```{r}
+round(cophenetic(guia), 2)
+```
+
+A matriz **C** guarda o contrário: o tempo que cada par **compartilha** desde
+a raiz. Na diagonal, a distância de cada espécie até a raiz.
+
+```{r}
+C <- vcv(guia)
+round(C, 2)
+```
+
+De onde vêm esses números? O tempo compartilhado por duas espécies é a
+profundidade do seu ancestral comum mais recente. Vamos montar **C** de
+outro jeito, numa árvore menor, para conferir a regra.
+
+```{r}
+#| fig-height: 3
+peq <- read.tree(text = "((A:1,B:1):2,(C:2.5,D:2.5):0.5);")
+plot(peq); edgelabels(peq$edge.length, frame = "none", adj = c(.5, -.4))
+anc   <- mrca(peq)                       # nó ancestral de cada par
+prof  <- node.depth.edgelength(peq)      # distância de cada nó (e ponta) à raiz
+C_mao <- matrix(prof[anc], 4, 4, dimnames = dimnames(anc))
+C_mao
+all.equal(C_mao, vcv(peq))
+```
+
+A e B compartilham 2 unidades (o ramo até o seu ancestral); A e C, nada (o
+ancestral comum é a raiz).
+
+## 4. A covariância das réplicas é σ²**C**
+
+Se simularmos o BM muitas vezes na mesma árvore, a covariância entre as
+espécies nas réplicas se aproxima de σ²**C**. `fastBM(nsim = ...)` devolve
+uma coluna por réplica.
+
+```{r}
+set.seed(11)
+reps <- fastBM(peq, sig2 = 1, nsim = 5000)
+round(cov(t(reps)), 2)
+```
+
+Compare com `vcv(peq)`: é a mesma matriz, a menos do ruído de simulação.
+Essa é a ideia central dos métodos comparativos: **C** diz quanto
+esperamos que duas espécies se pareçam só por parentesco.
+
+## 5. Contrastes independentes, passo a passo
+
+O atributo B da árvore-guia (Freckleton et al. 2002, nos slides):
+
+```{r}
+B <- setNames(c(0.38, 0.89, 0.88, 1.60, 0.33, 1.42, 0.31), paste0("sp", 1:7))
+```
+
+**Passo 1**: o contraste entre duas irmãs é a diferença padronizada pela
+raiz da soma dos ramos. Para sp6 e sp7 (ramos de 0,23):
+
+```{r}
+(B["sp6"] - B["sp7"]) / sqrt(0.23 + 0.23)
+```
+
+**Passo 2**: o valor do nó é a média ponderada pelo inverso dos ramos
+(aqui, ramos iguais, a média simples). **Passo 3**: o ramo que leva ao nó é
+alongado em *v*~6~*v*~7~/(*v*~6~ + *v*~7~). E repete até a raiz. O `pic()` faz
+tudo isso:
+
+```{r}
+pic_B <- pic(B, guia)
+round(pic_B, 3)
+```
+
+O contraste do nó 13 (sp6 e sp7) é o mesmo da conta à mão (o sinal depende
+da ordem das irmãs). Os valores de cada nó calculados pelo próprio algoritmo
+(passo 2) saem do `ace()`:
+
+```{r}
+ace(B, guia, method = "pic")$ace
+```
+
+O primeiro valor (nó 8) é a raiz. Só esse coincide com a estimativa por
+máxima verossimilhança: os dos outros nós usam apenas os descendentes
+(Aula 7).
+
+## 6. A regressão dos contrastes
+
+Com os dois atributos, a regressão dos contrastes passa **pela origem**
+(sem intercepto): um contraste é uma diferença, e diferença zero em A deve
+dar diferença zero em B.
+
+```{r}
+A <- setNames(c(2.51, 2.80, 2.23, 2.32, 1.64, 1.18, 0.58), paste0("sp", 1:7))
+pic_A <- pic(A, guia)
+ajuste_pic <- lm(pic_B ~ pic_A - 1)
+coef(ajuste_pic)
+```
+
+Compare com a regressão comum nas espécies, que ignora a árvore:
+
+```{r}
+coef(lm(B ~ A))
+```
+
+```{r}
+#| fig-height: 3.8
+par(mfrow = c(1, 2))
+plot(A, B, pch = 19, main = "espécies"); abline(lm(B ~ A), lty = 2)
+plot(pic_A, pic_B, pch = 19, main = "contrastes"); abline(h = 0, v = 0, col = "grey")
+abline(ajuste_pic, col = "firebrick", lwd = 2)
+```
+
+Nas espécies, A e B quase não se relacionam (inclinação perto de zero);
+nos contrastes, a relação aparece. Na Aula 4 veremos que essa inclinação é a
+mesma do PGLS sob BM.
+
+## Resumo
+
+- Sob BM, a variância entre linhagens cresce como σ²*t*; a média não muda.
+- **C** guarda o tempo compartilhado por cada par de espécies: a
+  profundidade do ancestral comum. `vcv()` monta a matriz.
+- Réplicas de BM numa árvore têm covariância σ²**C**.
+- Os contrastes de Felsenstein transformam *n* espécies em *n* − 1
+  contrastes independentes; a regressão passa pela origem.
+
+O [roteiro da edição de 2020](walkthrough-aula-2-terca.html) continua com
+OU, tendência e comparação de modelos (Aula 5), o Mk (Aula 6) e o PGLS
+(Aula 4).
