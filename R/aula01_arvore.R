@@ -194,12 +194,36 @@ fig_enraizar <- function() {
   ape::plot.phylo(r2, cex = 2.2, edge.width = 3, edge.color = cores[["texto"]], main = "raiz no ramo central", label.offset = .1)
 }
 
+#' Eixo embaixo de uma árvore desenhada por plot_arvore(): tempo antes do
+#' presente ("tempo"), barra de escala ("escala") ou só um aviso ("nenhum")
+eixo_arvore <- function(tr, tipo = "tempo", titulo = "tempo antes do presente", base = 5) {
+  xmax <- max(ape::node.depth.edgelength(tr))
+  y0 <- 0.25
+  cor <- cores[["texto"]]
+  if (tipo == "tempo") {
+    t <- pretty(c(0, xmax)); t <- t[t <= xmax + 1e-9]
+    x <- xmax - t
+    list(annotate("segment", x = 0, xend = xmax, y = y0, yend = y0, colour = cor, linewidth = .6),
+         annotate("segment", x = x, xend = x, y = y0, yend = y0 - .15, colour = cor, linewidth = .6),
+         annotate("text", x = x, y = y0 - .45, label = format(t, decimal.mark = ","), size = base * .8, colour = cor),
+         annotate("text", x = xmax / 2, y = y0 - 1, label = titulo, size = base * .85, colour = cor))
+  } else if (tipo == "escala") {
+    L <- signif(xmax / 4, 1)
+    list(annotate("segment", x = 0, xend = L, y = y0, yend = y0, colour = cor, linewidth = 1.2),
+         annotate("text", x = L / 2, y = y0 - .45, label = format(L, decimal.mark = ","), size = base * .8, colour = cor),
+         annotate("text", x = xmax / 2, y = y0 - 1, label = titulo, size = base * .85, colour = cor))
+  } else {
+    list(annotate("text", x = xmax / 2, y = y0 - .6, label = titulo, size = base * .85, colour = cores[["neutro"]],
+                  fontface = "italic"))
+  }
+}
+
 fig_politomia <- function() {
   d <- ape::compute.brlen(ape::read.tree(text = "(A,(B,(C,D)));"), method = "Grafen")
   p <- ape::compute.brlen(ape::read.tree(text = "(A,(B,C,D));"), method = "Grafen")
   tt <- theme(plot.title = element_text(hjust = .5, size = 20, face = "bold", colour = cores[["texto"]]))
-  (plot_arvore(d, base = 7, larg = 1.6) + labs(title = "dicotomias") + tt) +
-    (plot_arvore(p, base = 7, larg = 1.6) + labs(title = "politomia") + tt)
+  (plot_arvore(d, base = 7, larg = 1.6) + eixo_arvore(d, base = 6) + labs(title = "dicotomias") + tt) +
+    (plot_arvore(p, base = 7, larg = 1.6) + eixo_arvore(p, base = 6) + labs(title = "politomia") + tt)
 }
 
 #' Cladograma, filograma e cronograma da árvore-guia
@@ -208,9 +232,11 @@ fig_tipos <- function(seed = 102) {
   cl <- ape::compute.brlen(tr, method = "Grafen")
   set.seed(seed); fi <- tr; fi$edge.length <- tr$edge.length * exp(rnorm(nrow(tr$edge), 0, .6))
   tt <- theme(plot.title = element_text(hjust = .5, size = 19, face = "bold", colour = cores[["texto"]]))
-  (plot_arvore(cl, base = 5.5, larg = 1.3) + labs(title = "cladograma") + tt) +
-    (plot_arvore(fi, base = 5.5, larg = 1.3) + labs(title = "filograma") + tt) +
-    (plot_arvore(tr, base = 5.5, larg = 1.3) + labs(title = "cronograma") + tt)
+  (plot_arvore(cl, base = 5.5, larg = 1.3) + eixo_arvore(cl, "nenhum", "comprimentos sem significado") +
+     labs(title = "cladograma") + tt) +
+    (plot_arvore(fi, base = 5.5, larg = 1.3) + eixo_arvore(fi, "escala", "divergência") +
+       labs(title = "filograma") + tt) +
+    (plot_arvore(tr, base = 5.5, larg = 1.3) + eixo_arvore(tr) + labs(title = "cronograma") + tt)
 }
 
 #' Bootstrap de verdade: NJ (distância K80) no woodmouse do ape, 100 réplicas,
@@ -246,7 +272,8 @@ fig_newick <- function(etapa = 1) {
   plot_arvore(tr, comprimentos = etapa >= 2, rot_nos = rot, base = 8, larg = 1.8, folga = .12, dig = 2) +
     labs(title = newick_passos[etapa]) +
     theme(plot.title = element_text(family = "mono", size = 26, face = "bold", colour = cores[["accent_dark"]],
-                                    hjust = 0, margin = margin(b = 10)))
+                                    hjust = 0, margin = margin(t = 6, b = 10)),
+          plot.margin = margin(14, 8, 6, 8))
 }
 
 # ---- Bloco 3: de onde vem a árvore --------------------------------------------------
