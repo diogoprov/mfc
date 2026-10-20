@@ -28,7 +28,7 @@ simulações ou da árvore-guia.
 | 3 | Sinal filogenético | A3 24–61, A5 7–10 | **`inventarios/a03.md`** | **`slides/a03.qmd` ✔** (60 slides; aguarda revisão do Diogo) |
 | 4 | Regressão filogenética (PGLS) | A2 126–141, A4 50–58 | **`inventarios/a04.md`** | **`slides/a04.qmd` ✔** (37 slides; aguarda revisão do Diogo) |
 | 5 | Modelos de evolução contínua | A2 50–88, A4 18–49 | **`inventarios/a05.md`** | **`slides/a05.qmd` ✔** (51 slides; aguarda revisão do Diogo) |
-| 6 | Atributos discretos | A2 89–126, A4 1–17 | — | — |
+| 6 | Atributos discretos | A2 89–126, A4 1–17, A1 65–77 | **`inventarios/a06.md`** | **`slides/a06.qmd` ✔** (57 slides; aguarda aprovação para publicar) |
 | 7 | Estados ancestrais e visualização | A3 1–23, A5 11 | — | — |
 | 8 | Atributos multivariados | A6 | — | — |
 
@@ -135,7 +135,9 @@ quando ele decidir.
   `purrr`, `tibble`, `patchwork`, `here`, `knitr`, `ape`, `phytools`,
   `geiger`, `nlme` (**aprovados**); `caper` (aprovado para o D de Fritz &
   Purvis, Aula 3); `phylolm` (Aula 4); `mvMORPH` (OU multi-regime, Aula 5;
-  previsto no plano para a Aula 8). Sem `ggtree` (árvores por função
+  previsto no plano para a Aula 8); `corHMM` (taxas ocultas e
+  `fitCorrelationTest`, Aula 6) e `rr2` (R² de PGLS, Aula 4), ambos sugeridos
+  pelo Diogo. Sem `ggtree` (árvores por função
   própria) e sem `brms`. `rphylopic` só para baixar silhuetas, fora do render.
 - **Não entram** (como na multidimensionais): Kahoot, webR, "Teste-se",
   atividades extras nos slides.
@@ -155,6 +157,11 @@ quando ele decidir.
 - **Regra geral: use o máximo possível de imagens CC BY e CC0** (Diogo,
   19/out/2026): figura de artigo ou do Commons com essas licenças vem antes
   do redesenho. CC BY-NC só quando não houver alternativa.
+- **Aula 6, correlação de discretos** (Diogo, 19/out/2026): o modelo de
+  Pagel (1994) fica como base conceitual; depois o problema da
+  pseudorreplicação (Maddison & FitzJohn 2015; Uyeda et al. 2018) e, como
+  ferramenta principal, o teste com taxas ocultas do `corHMM` (Boyko &
+  Beaulieu 2023). BayesTraits/`btw` só como alternativa citada.
 - **Aula 4**: além do PGLS, só `phylolm::phyloglm` (logística e Poisson).
   Nada de `brms` nem de modelos mistos (exigem background demais).
 - **Abertura da Aula 1** (aprovada): 3–4 slides que retomam as leituras
@@ -162,7 +169,9 @@ quando ele decidir.
 - **Créditos de slides de colegas**: o original não marca tudo. Já
   identificados pelo Diogo: o esquema de Hansen & Martins e o caminho inverso
   (J. A. F. Diniz-Filho, Aula 2), os dados como processo estocástico (José
-  Hidasi-Neto, Aula 2). `.ref`: "Ideia de um slide de ...". Na dúvida,
+  Hidasi-Neto, Aula 2). Os slides de **fundo azul** do original (ex.: o formato
+  Newick, Aula 1 original, slides 42–46) são de J. A. F. Diniz-Filho:
+  refazer/adaptar, com crédito. `.ref`: "Ideia de um slide de ...". Na dúvida,
   pergunte de quem é um slide sem crédito.
 - **Figuras de terceiros**: livro de Harmon (2019) é CC BY-SA 4.0 →
   redesenhar. Slides de J. A. F. Diniz-Filho (Aula 3 original) → aproveitar a
@@ -190,6 +199,10 @@ quando ele decidir.
 - `R/aula05_modelos.R`: verossimilhança do BM, simulações de OU/EB/tendência,
   `ajustes_anolis()` (`fitContinuous`, com semente), BBM/FPK/Lévy,
   `ajustes_regimes()` (`mvMORPH`, OUM com os ecomorfos), `brownie_sunfish()`.
+- `R/aula06_discretos.R`: `squamata()` (Brandley et al. 2008, binário e 4
+  estados), `ajustes_squamata()` (`fitDiscrete`; reproduz o log L do
+  original), `pagel_pratica()`, `correlacao_corhmm()` (~3 min) e as figuras
+  da Aula 6.
 - `R/aula04_pgls.R`: `anolis_dados()`, `modelos_anolis()`, `gls_passos()`,
   `anova_filo()`, `glm_filo()`, `evol_vcv_sunfish()`, `incerteza()` e as
   figuras da Aula 4.

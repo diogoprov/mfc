@@ -225,7 +225,7 @@ a **meia-vida filogenética**, $\ln 2/\alpha$.
 $$V(t) = \sigma_0^2\, \frac{e^{rt} - 1}{r}$$
 
 ::: {.ref}
-Zonas adaptativas: Simpson (1944), *Tempo and mode in evolution*.
+O EB vem do modelo ACDC (*accelerating–decelerating*) de [Blomberg, Garland & Ives (2003)](https://doi.org/10.1554/0014-3820(2003)057[0717:tfpsic]2.0.co;2), *Evolution* 57: 717–745: é o caso em que a taxa desacelera. Nome *early burst*: [Harmon et al. (2010)](https://doi.org/10.1111/j.1558-5646.2010.01025.x). Zonas adaptativas: Simpson (1944), *Tempo and mode in evolution*.
 :::
 
 ## *Early burst* e *late burst*
@@ -239,7 +239,7 @@ fig_acdc()
 Com $r < 0$, desacelera (EB); com $r > 0$, acelera.
 
 ::: {.ref}
-O modelo ACDC de [Blomberg, Garland & Ives (2003)](https://doi.org/10.1554/0014-3820(2003)057[0717:tfpsic]2.0.co;2).
+O modelo ACDC de [Blomberg, Garland & Ives (2003)](https://doi.org/10.1554/0014-3820(2003)057[0717:tfpsic]2.0.co;2): desacelerado (DC) = EB; acelerado (AC) = *late burst*.
 :::
 
 ## Onde está a variação?
@@ -277,13 +277,57 @@ $$dX = \mu\, dt + \sigma\, dB$$
 fig_tendencia()
 ```
 
+::: {.medio}
+O mesmo σ² nos dois grupos; muda só o sinal de μ.
+:::
+
+## A equação, termo a termo {.grande}
+
+$$\Large dX = \color{#a15e3f}{\mu\, dt} + \color{#1c6e8c}{\sigma\, dB}$$
+
+::: {.fragment}
+- [μ *dt*]{style="color:#a15e3f"}: o passo **determinístico**; a cada
+  intervalo *dt*, o atributo anda μ *dt* na mesma direção (μ > 0 sobe,
+  μ < 0 desce)
+- [σ *dB*]{style="color:#1c6e8c"}: o passo **aleatório** do BM, com
+  variância σ² *dt*
+:::
+
+::: {.fragment}
+Somando os passos de 0 a *t*:
+
+$$E[X(t)] = z_0 + \mu t \qquad \text{Var}[X(t)] = \sigma^2 t$$
+
+A tendência desloca a **média**; a variância cresce como no BM.
+:::
+
+::: {.fragment}
+Com μ = 0, volta o BM: $dX = \sigma\, dB$.
+:::
+
+## Por que é preciso fósseis {.grande}
+
+Numa árvore ultramétrica, todas as pontas estão à mesma distância *T* da
+raiz:
+
+$$E[X_i] = z_0 + \mu T \quad \text{para toda espécie } i$$
+
+::: {.fragment}
+Os dados só informam a soma $z_0 + \mu T$: um ancestral pequeno com
+tendência positiva e um grande sem tendência preveem as mesmas pontas. μ e
+*z*~0~ **não são identificáveis**.
+:::
+
+::: {.fragment}
 ::: {.definicao}
-Numa árvore só de espécies atuais (ultramétrica), a tendência **não se
-distingue** do BM: é preciso fósseis.
+Com fósseis, as pontas ficam a distâncias $t_i$ diferentes da raiz e
+$E[X_i] = z_0 + \mu t_i$ muda de uma ponta para outra: μ passa a ser
+estimável.
+:::
 :::
 
 ::: {.ref}
-[Finarelli & Flynn (2006)](https://doi.org/10.1080/10635150500541698), *Syst. Biol.* 55: 301–313.
+Nos Caniformia, incluir os fósseis muda as estimativas do tamanho ancestral: [Finarelli & Flynn (2006)](https://doi.org/10.1080/10635150500541698), *Syst. Biol.* 55: 301–313.
 :::
 
 # 4. Comparando modelos {.secao}

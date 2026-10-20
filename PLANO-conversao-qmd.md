@@ -166,7 +166,7 @@ Ao final, o aluno deve ser capaz de:
 | 3 | **Sinal filogenético** | Há sinal? | A3 24–61; A5 8–10 (PVR) | λ desenhado como transformação da árvore; poder com poucas espécies; estatística δ |
 | 4 | **Regressão filogenética (PGLS)** | Estão associados? (contínuo) | A2 127–141; A4 50–58 (`evol.vcv`, `ratematrix`) | ANOVA filogenética; regressão logística filogenética; slide "além do PGLS": regressão logística e de Poisson filogenéticas com `phylolm::phyloglm` (sem `brms`/modelos mistos); incerteza filogenética |
 | 5 | **Modelos de evolução contínua: de um a vários regimes** | Como evolui? (contínuo) | A2 50–88; A4 18–49 | identificabilidade do OU e meia-vida filogenética; `l1ou`/PhylogeneticEM/`bayou` no lugar do SURFACE (✔ **SURFACE sai**: ninguém mais usa); adequação de modelos; ✔ bloco curto "além dos quatro": BBM (Boucher & Démery 2016) e FPK (Boucher et al. 2018) como paisagens; ✔ Lévy/evolução pulsada em 1 slide |
-| 6 | **Atributos discretos** | Como evolui? e Estão associados? (discreto) | A2 89–126; A4 1–17; A1 65 e 68–77 (Markov, modelos de DNA) | Mk com taxas ocultas (`corHMM`); pseudorreplicação no método de Pagel |
+| 6 | **Atributos discretos** | Como evolui? e Estão associados? (discreto) | A2 89–126; A4 1–17; A1 65 e 68–77 (Markov, modelos de DNA) | Mk com taxas ocultas (`corHMM`); pseudorreplicação no método de Pagel; teste de correlação com taxas ocultas (`corHMM::fitCorrelationTest`, Boyko & Beaulieu 2023) como ferramenta principal, BayesTraits como alternativa |
 | 7 | **Estados ancestrais e visualização** | Como era o ancestral? | A3 1–23; A5 11 | incerteza nas estimativas; estado ancestral sob OU × BM |
 | 8 | **Atributos multivariados** | linha multivariada | A6 1–39; reaproveitar Procrustes (multidimensionais, Aula 6) e PCA (Aula 4) | K multivariado; PGLS multivariado; dados do `geomorph` (`plethodon`) |
 
@@ -387,7 +387,7 @@ desta disciplina:
 | Origem | Exemplos | Tratamento |
 |---|---|---|
 | Livro de L. Harmon, *Phylogenetic Comparative Methods* (2019) | A2 18–31, 48, 112 | **CC BY-SA 4.0** (Crossref, `10.32942/osf.io/e3xnr`): redesenhar em R; ".ref": "Inspirado em Harmon (2019), cap. N" |
-| Slides de J. A. F. Diniz-Filho (crédito no original) | A3 38–55 | ✔ aproveitar a ideia e **redesenhar pesadamente** em R (aprovado); crédito na `.ref`: "Ideia de um slide de J. A. F. Diniz-Filho" |
+| Slides de J. A. F. Diniz-Filho (crédito no original; e todos os de **fundo azul**, como o Newick em A1 42–46) | A3 38–55; A1 42–46 | ✔ aproveitar a ideia e **redesenhar pesadamente** em R (aprovado); crédito na `.ref`: "Ideia de um slide de J. A. F. Diniz-Filho" |
 | Artigos da *Syst. Biol.* | A2 69 (Bokma et al. 2016, CC BY-NC segundo a nota do slide), A2 71, A6 23, 32–33 | conferir a licença; CC BY/BY-NC → original com crédito; demais → redesenhar |
 | Artigos da Wiley/*Evolution* | A2 91 (dígitos em Squamata), A6 37 | redesenhar ou citar |
 | Retratos de pesquisadores | A1 15–17, A2 9, 52, 65, 68; A4 22, 35 | só domínio público do Commons (Brown, Ornstein, Uhlenbeck, Cope, Depéret, Wright: conferir); fotos recentes saem |

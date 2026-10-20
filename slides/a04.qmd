@@ -262,6 +262,35 @@ nlme::gls(hll ~ svl, data = dados, method = "ML",
 O `corPagel` pode dar λ um pouco acima de 1.
 :::
 
+## Quanto o modelo explica? {.grande}
+
+O R² do OLS não serve para modelos com resíduos correlacionados. O pacote
+`rr2` calcula três R² para PGLS, `phylolm` e modelos mistos:
+
+```{r}
+#| echo: true
+#| eval: false
+rr2::R2(pgls)
+```
+
+```{r}
+r2 <- rr2::R2(m$pgls)
+```
+
+::: {.tabela-grande}
+
+| R² | Ideia | *Anolis* |
+|:--|:--------------|--:|
+| R²~lik~ | verossimilhança contra o modelo só com intercepto | `r num(r2[["R2_lik"]], 3)` |
+| R²~resid~ | variância dos resíduos | `r num(r2[["R2_resid"]], 3)` |
+| R²~pred~ | variância das predições, com a parte filogenética | `r num(r2[["R2_pred"]], 3)` |
+
+:::
+
+::: {.ref}
+[Ives (2019)](https://doi.org/10.1093/sysbio/syy060), *Syst. Biol.* 68: 234–251; [Ives & Li (2018)](https://doi.org/10.21105/joss.01028), *J. Open Source Softw.* 3: 1028. R² do OLS nos mesmos dados: `r num(summary(m$ols)$r.squared, 3)`.
+:::
+
 # 3. Diagnóstico {.secao}
 
 [Estão associados?]{.familia .relacao}

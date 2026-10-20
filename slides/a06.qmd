@@ -1,0 +1,697 @@
+---
+title: "Atributos discretos"
+subtitle: "Aula 6 · Métodos Filogenéticos Comparativos · PPGBA/UFMS"
+author: "Diogo B. Provete"
+lang: pt
+format:
+  revealjs:
+    theme: [default, theme.scss]
+    slide-number: c/t
+    show-slide-number: all
+    auto-stretch: false
+    preview-links: auto
+    history: false
+    footer: "Métodos Filogenéticos Comparativos · PPGBA/UFMS"
+    code-overflow: wrap
+    fig-align: center
+    width: 1250
+    height: 750
+knitr:
+  opts_chunk:
+    out.width: "100%"
+    dev.args:
+      bg: "#faf7f0"
+
+execute:
+  echo: false
+  warning: false
+  message: false
+  fig-width: 10
+  fig-height: 4.4
+---
+
+```{r}
+#| label: setup
+source(here::here("R/mapa.R"))
+source(here::here("R/aula06_discretos.R"))
+
+numm <- function(x, d = 2) sub(",", "{,}", num(x, d), fixed = TRUE)
+
+aj <- ajustes_squamata(); s <- aj$s; t4 <- aj$tab4
+er <- aj$er; ard <- aj$ard
+n_sp <- length(s$bin); n_sem <- sum(s$bin == "sem")
+q4n <- table(s$q4)
+pg <- pagel_pratica()
+ch <- correlacao_corhmm()
+pm <- .5 + .5 * exp(-2 * .1 * 5)
+```
+
+## Hoje {.grande}
+
+1. Do DNA ao Mk: processos de Markov
+2. O modelo Mk para um caráter binário
+3. Dados reais: a perda dos membros nos Squamata
+4. Caracteres multiestado
+5. Taxas ocultas
+6. Evolução correlacionada: de Pagel ao corHMM
+7. O modelo de limiar
+
+## Onde estamos
+
+```{r}
+#| fig-height: 5.0
+#| fig-alt: "Mapa dos métodos com as células de evolução e de associação de atributos discretos destacadas."
+mapa_plot(aula = 6)
+```
+
+# 1. Do DNA ao Mk: processos de Markov {.secao}
+
+[Como evolui?]{.familia .modelos}
+
+## Modelos de evolução de sequências {.muito-grande}
+
+- Processos de Markov homogêneos de tempo contínuo
+- Descritos por matrizes **Q**: matrizes 4 × 4 em que cada elemento é a
+  **taxa instantânea** de mudança de uma base para outra
+
+$$\mathbf{Q} = \begin{bmatrix} \cdot & q_{AC} & q_{AG} & q_{AT} \\ q_{CA} & \cdot & q_{CG} & q_{CT} \\ q_{GA} & q_{GC} & \cdot & q_{GT} \\ q_{TA} & q_{TC} & q_{TG} & \cdot \end{bmatrix}$$
+
+::: {.ref}
+Visão geral: [Holder & Lewis (2003)](https://doi.org/10.1038/nrg1044), *Nat. Rev. Genet.* 4: 275–284.
+:::
+
+## Transições e transversões
+
+```{r}
+#| fig-width: 8
+#| fig-height: 4.4
+#| out-width: "76%"
+#| fig-alt: "As quatro bases nos cantos de um quadrado: A e G (purinas, verdes) no alto, C e T (pirimidinas, ocres) embaixo. Setas azuis horizontais marcam as transições (purina para purina, pirimidina para pirimidina); setas ferrugem verticais e diagonais, as transversões."
+fig_dna()
+```
+
+::: {.ref}
+Transições: purina ↔ purina ou pirimidina ↔ pirimidina. Transversões: purina ↔ pirimidina. Redesenhado a partir de [S. Carr, Memorial University](https://www.mun.ca/biology/scarr/Transitions_vs_Transversions.html).
+:::
+
+## O que é um processo de Markov? {.muito-grande}
+
+O próximo estado depende **só do estado atual**, não de como se chegou
+nele: o processo tem "memória curta".
+
+::: {.nota}
+Uma visualização interativa das cadeias de Markov:
+[setosa.io/ev/markov-chains](https://setosa.io/ev/markov-chains/).
+:::
+
+## Pressupostos {.grande}
+
+- **Memória curta**: em qualquer instante, a taxa de mudança da base *i*
+  para a *j* não depende da história anterior a *i*
+- **Tempo homogêneo**: as taxas de substituição não mudam com o tempo
+- **Estacionário**: as frequências relativas das bases
+  (π~A~, π~C~, π~G~, π~T~) estão em equilíbrio
+- Muitos modelos são também **reversíveis no tempo**: a taxa de *i* para
+  *j* é igual à de *j* para *i*
+
+Esses pressupostos tornam possível modelar as substituições como um processo
+estocástico.
+
+## Os modelos de substituição {.grande .tabela-grande}
+
+| Modelo | Frequências das bases | Taxas | Parâmetros |
+|---|---|---|---:|
+| JC69 | iguais (¼ cada) | uma só | 0 |
+| K2P | iguais | transição ≠ transversão | 1 |
+| F81 | diferentes (A + T ≠ C + G) | uma só | 3 |
+| HKY85 | diferentes | transição ≠ transversão | 4 |
+| GTR | diferentes | uma por par de bases | 8 |
+
+::: {.medio}
+O K2P existe porque as transições costumam ser mais frequentes que as
+transversões; o HKY85 combina F81 e K2P; o GTR é o mais geral.
+:::
+
+::: {.ref}
+[Jukes & Cantor (1969)](https://doi.org/10.1016/B978-1-4832-3211-9.50009-7); [Kimura (1980)](https://doi.org/10.1007/bf01731581); [Felsenstein (1981)](https://doi.org/10.1007/bf01734359); [Hasegawa, Kishino & Yano (1985)](https://doi.org/10.1007/bf02101694); revisão em [Yang & Rannala (2012)](https://doi.org/10.1038/nrg3186). Parâmetros livres além dos comprimentos de ramo.
+:::
+
+## Por que isso importa aqui?
+
+```{r}
+#| fig-height: 3.6
+#| fig-alt: "Três matrizes Q lado a lado: a GTR de nucleotídeos (todas as taxas fora da diagonal livres), a de dois caracteres binários com quatro estados combinados (taxas nulas onde os dois caracteres mudariam ao mesmo tempo) e a de estados ordenados (só transições entre estados vizinhos)."
+fig_tres_Q()
+```
+
+::: {.medio}
+Os modelos de substituição usam o **mesmo arcabouço** (processos de Markov)
+que os métodos comparativos para caracteres discretos: correlação entre
+caracteres binários, caracteres multiestado, estados ordenados.
+:::
+
+::: {.ref}
+Redesenhado de [O'Meara (2012)](https://doi.org/10.1146/annurev-ecolsys-110411-160331), *Annu. Rev. Ecol. Evol. Syst.* 43: 267–285.
+:::
+
+## O modelo Mk de Lewis (2001) {.muito-grande}
+
+O processo de Markov adaptado para caracteres morfológicos: *k* estados e
+uma taxa única *q* para qualquer mudança (o "JC69 da morfologia").
+
+$$\mathbf{Q} = \begin{bmatrix} -(k-1)q & q & \cdots & q \\ q & -(k-1)q & \cdots & q \\ \vdots & & \ddots & \vdots \\ q & q & \cdots & -(k-1)q \end{bmatrix}$$
+
+::: {.ref}
+[Lewis (2001)](https://doi.org/10.1080/106351501753462876), *Syst. Biol.* 50: 913–925.
+:::
+
+# 2. O modelo Mk para um caráter binário {.secao}
+
+[Como evolui?]{.familia .modelos}
+
+## Quantas vezes os Squamata perderam os membros?
+
+```{r}
+#| fig-width: 6
+#| fig-height: 4.6
+#| out-width: "52%"
+#| fig-alt: "Árvore de 258 espécies de Squamata com um quadrado na ponta de cada espécie: azul para com membros, ferrugem para sem membros. As espécies sem membros aparecem em vários clados separados."
+fig_squamata(s)
+```
+
+::: {.ref}
+`r n_sp` espécies, `r n_sem` sem membros. Dados de [Brandley, Huelsenbeck & Wiens (2008)](https://doi.org/10.1111/j.1558-5646.2008.00430.x), *Evolution* 62: 2042–2064, usados na prática.
+:::
+
+## Dois estados
+
+```{r}
+#| fig-height: 3.0
+#| fig-alt: "Duas caixas: estado 0, sem membros (escura), e estado 1, com membros (clara)."
+fig_estados(1)
+```
+
+## Mudanças entre os estados
+
+```{r}
+#| fig-height: 3.0
+#| fig-alt: "As duas caixas ligadas por duas setas, uma em cada sentido."
+fig_estados(2)
+```
+
+## As taxas q~01~ e q~10~
+
+```{r}
+#| fig-height: 3.0
+#| fig-alt: "As duas caixas com as setas rotuladas: q01 de sem membros para com membros e q10 de com membros para sem membros."
+fig_estados(3)
+```
+
+::: {.definicao}
+q~01~ e q~10~ são **taxas instantâneas** de mudança de estado.
+:::
+
+## O estado pode mudar ao longo de um ramo
+
+```{r}
+#| fig-height: 1.7
+#| fig-alt: "Um ramo dividido em três trechos: estado 0, depois 1, depois 0 de novo."
+fig_ramo(TRUE)
+```
+
+::: {.fragment .medio}
+```{r}
+#| fig-height: 1.9
+#| fig-alt: "Um ramo de comprimento t com o estado 1 no início e um ponto de interrogação no fim."
+fig_ramo(FALSE)
+```
+
+Sabemos o estado no início do ramo (1). Qual a probabilidade de, depois do
+tempo *t*, ele ter mudado para 0, ou seja, *P*~10~(*t*)?
+:::
+
+## A matriz de taxas instantâneas {.muito-grande}
+
+$$\mathbf{Q} = \begin{bmatrix} -q_{01} & q_{01} \\ q_{10} & -q_{10} \end{bmatrix}$$
+
+::: {.fragment}
+- Linhas: estado de partida; colunas: estado de chegada
+- A diagonal é o negativo da soma das outras taxas da linha: **cada linha
+  soma 0**
+:::
+
+## Da taxa à probabilidade {.muito-grande}
+
+As probabilidades de transição ao longo de um ramo de comprimento *t* vêm da
+**exponenciação da matriz**:
+
+$$\mathbf{P}(t) = e^{\mathbf{Q}t}$$
+
+::: {.fragment}
+*P*~ij~(*t*): probabilidade de estar em *j* no fim do ramo, partindo de *i*.
+Cada linha de **P**(*t*) soma 1.
+:::
+
+## Um exemplo passo a passo {.grande}
+
+q~01~ = q~10~ = 0,1 e *t* = 5 milhões de anos
+
+::: {.fragment}
+$$\mathbf{Q}t = \begin{bmatrix} -0{,}1 & 0{,}1 \\ 0{,}1 & -0{,}1 \end{bmatrix} \times 5 = \begin{bmatrix} -0{,}5 & 0{,}5 \\ 0{,}5 & -0{,}5 \end{bmatrix}$$
+:::
+
+::: {.fragment}
+Com duas taxas iguais, a exponencial tem forma fechada:
+
+$$P_{11}(t) = \tfrac{1}{2} + \tfrac{1}{2}e^{-2qt} = 0{,}5 + 0{,}5 \times e^{-1} = 0{,}5 + 0{,}184 = 0{,}684$$
+:::
+
+::: {.fragment}
+$$e^{\mathbf{Q}t} = \begin{bmatrix} 0{,}68 & 0{,}32 \\ 0{,}32 & 0{,}68 \end{bmatrix}$$
+:::
+
+## *P*(*t*) ao longo do tempo
+
+```{r}
+#| fig-height: 3.9
+#| fig-alt: "Duas curvas de probabilidade ao longo de 30 milhões de anos: continuar no estado 1 cai de 1 para 0,5 e mudar para 0 sobe de 0 para 0,5; em t = 5 os valores são 0,68 e 0,32."
+fig_Pt()
+```
+
+::: {.medio}
+Com o tempo, as duas probabilidades convergem para as frequências de
+equilíbrio (0,5 e 0,5): em ramos longos, o estado no início diz pouco sobre o
+estado no fim.
+:::
+
+## Taxas lentas, rápidas e desiguais
+
+```{r}
+#| fig-height: 4.6
+#| fig-alt: "Três simulações do mesmo modelo Mk na árvore dos Squamata. ER lento: quase todas as pontas com membros. ER rápido: estados misturados em toda a árvore. Taxas desiguais: a maioria das pontas sem membros."
+fig_mk_sim(s)
+```
+
+::: {.ref}
+Simulações com `phytools::sim.Mk` na árvore dos Squamata (azul: com membros; ferrugem: sem). Ideia de [Harmon (2019), cap. 7](https://lukejharmon.github.io/pcm/chapter7_introdiscrete/).
+:::
+
+# 3. Dados reais: a perda dos membros nos Squamata {.secao}
+
+[Como evolui?]{.familia .modelos}
+
+## Taxas iguais × taxas desiguais
+
+```{r}
+#| fig-height: 2.25
+#| fig-alt: "Modelo de taxas iguais: as duas setas entre sem membros e com membros com a mesma espessura e a mesma taxa q."
+fig_er_ard("ER")
+```
+
+::: {.fragment}
+```{r}
+#| fig-height: 2.25
+#| fig-alt: "Modelo de taxas desiguais: a seta q01 grossa e a seta q10 fina."
+fig_er_ard("ARD")
+```
+:::
+
+::: {.grande}
+```{r}
+#| echo: true
+#| eval: false
+geiger::fitDiscrete(arvore, membros, model = "ER")   # e "ARD"
+```
+:::
+
+## O resultado {.grande}
+
+:::: {.columns}
+::: {.column width="50%"}
+**Taxas iguais**: log L = `r num(er$lnL, 1)`
+
+$$\mathbf{Q}_{ER} = \begin{bmatrix} -`r numm(er$q12, 4)` & `r numm(er$q12, 4)` \\ `r numm(er$q12, 4)` & -`r numm(er$q12, 4)` \end{bmatrix}$$
+:::
+::: {.column width="50%"}
+**Taxas desiguais**: log L = `r num(ard$lnL, 1)`
+
+$$\mathbf{Q}_{ARD} = \begin{bmatrix} -`r numm(ard$q12, 4)` & `r numm(ard$q12, 4)` \\ `r numm(ard$q21, 4)` & -`r numm(ard$q21, 4)` \end{bmatrix}$$
+:::
+::::
+
+Linhas e colunas na ordem do `geiger`: **com**, **sem** membros.
+
+::: {.fragment}
+AICc: `r num(er$aicc, 2)` (ER) × `r num(ard$aicc, 2)` (ARD). A diferença é
+de `r num(er$aicc - ard$aicc, 2)`: os dados não distinguem os dois modelos, e
+a taxa maior de "reganho" no ARD não tem suporte.
+:::
+
+## E a pergunta do início? {.muito-grande}
+
+O Mk estima **taxas**, não o número de mudanças. Para contar quantas vezes
+os membros foram perdidos, é preciso reconstruir a história na árvore.
+
+::: {.nota}
+Os mesmos modelos servem para estimar os estados nos nós internos e para o
+mapeamento estocástico: é o tema da Aula 7.
+:::
+
+## Abordagem bayesiana {.muito-grande}
+
+Em vez de um valor ótimo, a distribuição posterior das taxas.
+
+```{r}
+#| echo: true
+#| eval: false
+phytools::mcmcMk(arvore, membros, model = "ARD")   # discretos
+geiger::fitContinuousMCMC(arvore, x)               # contínuos
+```
+
+::: {.nota}
+O original citava `geiger::fitDiscreteMCMC`, que não existe mais no
+`geiger`; hoje, `phytools::mcmcMk` faz o mesmo papel.
+:::
+
+# 4. Caracteres multiestado {.secao}
+
+[Como evolui?]{.familia .modelos}
+
+## Quatro estados
+
+```{r}
+#| fig-height: 3.8
+#| fig-alt: "Quatro caixas coloridas (0 sem membros, 1 só anteriores, 2 só posteriores, 3 os quatro membros) ligadas por setas nos dois sentidos entre todos os pares, inclusive nas diagonais."
+fig_multi()
+```
+
+::: {.medio}
+Os Squamata da prática: `r q4n[["sem membros"]]` sem membros,
+`r q4n[["só anteriores"]]` só com os anteriores, `r q4n[["só posteriores"]]`
+só com os posteriores e `r q4n[["os quatro"]]` com os quatro.
+:::
+
+## A matriz de taxas instantâneas
+
+```{r}
+#| fig-width: 6
+#| fig-height: 4
+#| out-width: "60%"
+#| fig-alt: "A matriz Q de quatro estados com doze taxas fora da diagonal, todas na mesma cor: o modelo de taxas iguais, com um parâmetro."
+fig_Q4("ER")
+```
+
+## Simétrico: seis parâmetros
+
+```{r}
+#| fig-width: 6
+#| fig-height: 4
+#| out-width: "60%"
+#| fig-alt: "A matriz Q de quatro estados com cada par de taxas simétricas (q01 e q10, q02 e q20 etc.) na mesma cor: seis parâmetros."
+fig_Q4("SYM")
+```
+
+::: {.ref}
+SYM: a taxa de *i* para *j* é igual à de *j* para *i*.
+:::
+
+## Todas as taxas diferentes: doze parâmetros
+
+```{r}
+#| fig-width: 6
+#| fig-height: 4
+#| out-width: "60%"
+#| fig-alt: "A matriz Q de quatro estados com cada uma das doze taxas numa cor diferente: doze parâmetros."
+fig_Q4("ARD")
+```
+
+## Os membros dos Squamata {.muito-grande .tabela-grande}
+
+| Modelo | k | log L | AICc | peso |
+|---|---:|---:|---:|---:|
+| `r t4$modelo[1]` | `r t4$k[1]` | `r num(t4$logL[1], 1)` | `r num(t4$AICc[1], 1)` | `r num(t4$peso[1], 3)` |
+| `r t4$modelo[2]` | `r t4$k[2]` | `r num(t4$logL[2], 1)` | `r num(t4$AICc[2], 1)` | `r num(t4$peso[2], 3)` |
+| `r t4$modelo[3]` | `r t4$k[3]` | `r num(t4$logL[3], 1)` | `r num(t4$AICc[3], 1)` | `r num(t4$peso[3], 3)` |
+
+O modelo simétrico vence: as taxas variam entre pares de estados, mas os
+dados não sustentam taxas diferentes nos dois sentidos.
+
+# 5. Taxas ocultas {.secao}
+
+[Como evolui?]{.familia .modelos}
+
+## E se a taxa mudar ao longo da árvore? {.grande}
+
+```{r}
+#| fig-height: 3.4
+#| fig-alt: "Quatro caixas: 0A e 1A na categoria A, de taxas lentas, e 0B e 1B na categoria B, de taxas rápidas; setas horizontais mudam o estado observado e setas verticais trocam de categoria."
+fig_ocultas()
+```
+
+Cada estado observado (0, 1) se divide em categorias **não observadas**
+(A, B) com taxas próprias: o modelo de Markov oculto (HMM).
+
+## Por que importa {.muito-grande}
+
+- Um Mk com taxa única supõe que todos os clados mudam no mesmo ritmo
+- Com taxas ocultas, alguns clados podem ser "lentos" e outros "rápidos"
+- A seleção de modelos (AICc) diz se a categoria extra vale o parâmetro a
+  mais
+
+::: {.ref}
+[Beaulieu, O'Meara & Donoghue (2013)](https://doi.org/10.1093/sysbio/syt034), *Syst. Biol.* 62: 725–737; pacote `corHMM`.
+:::
+
+# 6. Evolução correlacionada: de Pagel ao corHMM {.secao}
+
+[Estão associados?]{.familia .relacao}
+
+## Correlações entre caracteres discretos {.muito-grande}
+
+Perguntas mais comuns:
+
+- Os dois caracteres evoluem de forma correlacionada?
+- Quando o caráter X muda para o estado 1, é provável que Y também mude
+  para 1?
+
+::: {.ref}
+[Pagel (1994)](https://doi.org/10.1098/rspb.1994.0006), *Proc. R. Soc. B* 255: 37–45.
+:::
+
+## Modelo independente
+
+```{r}
+#| fig-width: 6
+#| fig-height: 4
+#| out-width: "62%"
+#| fig-alt: "Os quatro estados combinados de dois caracteres binários (0,0; 0,1; 1,0; 1,1) nos cantos de um quadrado. As setas horizontais (mudanças em Y) têm as mesmas cores em cima e embaixo, e as verticais (mudanças em X), as mesmas cores à esquerda e à direita: quatro taxas."
+fig_pagel(FALSE)
+```
+
+::: {.medio}
+As taxas de um caráter **não dependem** do estado do outro.
+:::
+
+## Modelo dependente
+
+```{r}
+#| fig-width: 6
+#| fig-height: 4
+#| out-width: "62%"
+#| fig-alt: "O mesmo quadrado com as oito setas em cores diferentes: oito taxas."
+fig_pagel(TRUE)
+```
+
+::: {.medio}
+As taxas de um caráter **dependem** do estado do outro.
+:::
+
+## A matriz de Pagel (1994) {.grande}
+
+Estados (X, Y): 0,0 · 0,1 · 1,0 · 1,1
+
+$$\mathbf{Q} = \begin{bmatrix} -(q_{12}+q_{13}) & q_{12} & q_{13} & 0 \\ q_{21} & -(q_{21}+q_{24}) & 0 & q_{24} \\ q_{31} & 0 & -(q_{31}+q_{34}) & q_{34} \\ 0 & q_{42} & q_{43} & -(q_{42}+q_{43}) \end{bmatrix}$$
+
+- Os zeros: os dois caracteres não mudam no mesmo instante
+- Independente: q~12~ = q~34~, q~21~ = q~43~, q~13~ = q~24~, q~31~ = q~42~
+  (4 taxas); dependente: 8 taxas
+
+## O método {.grande}
+
+1. Ajuste os dois modelos aos dados
+2. Veja qual tem mais suporte (razão de verossimilhança ou AICc)
+3. Se o modelo independente for favorecido, não podemos dizer que as taxas
+   de evolução dos dois caracteres estão correlacionadas
+
+```{r}
+#| echo: true
+#| eval: false
+phytools::fitPagel(arvore, x, y)
+```
+
+::: {.fragment}
+Dados da prática (300 espécies): log L =
+`r num(pg$independent.logL, 1)` (independente) ×
+`r num(pg$dependent.logL, 1)` (dependente); *p* `r ifelse(pg$P < .001, "< 0,001", num(pg$P, 3))`.
+:::
+
+## O problema: pseudorreplicação filogenética {.grande}
+
+```{r}
+#| fig-width: 8
+#| fig-height: 4.4
+#| out-width: "68%"
+#| fig-alt: "Árvore de 40 espécies em que um único ramo, marcado com uma estrela, leva a um clado cujas espécies têm X = 1 e Y = 1; todas as outras espécies têm X = 0 e Y = 0."
+fig_pseudorep()
+```
+
+Uma **única** mudança conjunta, num clado, basta para o teste de Pagel
+apontar correlação "significativa".
+
+## Por que isso acontece {.grande}
+
+- O modelo independente supõe taxas constantes em toda a árvore; uma
+  mudança única e não replicada fica muito improvável sob ele
+- O modelo dependente "explica" a mudança com taxas a mais, mesmo sem
+  nenhuma relação de causa entre os caracteres
+- O mesmo problema afeta os modelos de diversificação (xxSSE), os
+  contrastes e os modelos OU
+
+::: {.ref}
+[Maddison & FitzJohn (2015)](https://doi.org/10.1093/sysbio/syu070), *Syst. Biol.* 64: 127–136; [Uyeda, Zenil-Ferguson & Pennell (2018)](https://doi.org/10.1093/sysbio/syy031), *Syst. Biol.* 67: 1091–1109.
+:::
+
+## A saída: taxas ocultas nos dois modelos {.grande}
+
+Se a variação de taxas ao longo da árvore entra no modelo **independente**,
+uma mudança única deixa de favorecer o modelo dependente.
+
+- Compare quatro modelos: independente e correlacionado, cada um com e sem
+  uma categoria de taxas ocultas
+- O modelo de Pagel continua sendo a base; muda o modelo nulo
+
+```{r}
+#| echo: true
+#| eval: false
+corHMM::fitCorrelationTest(arvore, dados)   # dados: espécie, x, y
+```
+
+::: {.ref}
+[Boyko & Beaulieu (2023)](https://doi.org/10.1093/sysbio/syac066), *Syst. Biol.* 72: 476–488; [Boyko & Beaulieu (2021)](https://doi.org/10.1111/2041-210x.13534), *Methods Ecol. Evol.* 12: 468–478.
+:::
+
+## Os dados da prática, de novo {.grande .tabela-grande}
+
+| Modelo | log L | AICc | peso |
+|---|---:|---:|---:|
+| `r ch$modelo[1]` | `r num(ch$logL[1], 1)` | `r num(ch$AICc[1], 1)` | `r ifelse(ch$peso[1] < .001, "< 0,001", num(ch$peso[1], 3))` |
+| `r ch$modelo[2]` | `r num(ch$logL[2], 1)` | `r num(ch$AICc[2], 1)` | `r ifelse(ch$peso[2] < .001, "< 0,001", num(ch$peso[2], 3))` |
+| `r ch$modelo[3]` | `r num(ch$logL[3], 1)` | `r num(ch$AICc[3], 1)` | `r ifelse(ch$peso[3] < .001, "< 0,001", num(ch$peso[3], 3))` |
+| `r ch$modelo[4]` | `r num(ch$logL[4], 1)` | `r num(ch$AICc[4], 1)` | `r ifelse(ch$peso[4] < .001, "< 0,001", num(ch$peso[4], 3))` |
+
+::: {.fragment}
+O modelo independente com taxas ocultas ajusta quase tão bem quanto o
+correlacionado: o suporte à correlação continua, mas bem mais modesto do que
+o teste de Pagel sugeria (*p* < 0,001).
+:::
+
+## BayesTraits {.grande}
+
+- O mesmo modelo de Pagel num arcabouço bayesiano: distribuição posterior
+  das taxas, fator de Bayes para comparar os modelos e *reversible-jump*
+  MCMC para escolher quais taxas são iguais
+- Programa à parte; no R, o pacote [`btw`](https://github.com/rgriff23/btw)
+  chama o BayesTraits (exige o executável instalado e não é atualizado desde
+  2021)
+- As taxas ocultas também entram nos modelos do BayesTraits, mas o
+  `corHMM` faz o teste completo dentro do R
+
+::: {.ref}
+[Pagel & Meade (2006)](https://doi.org/10.1086/503444), *Am. Nat.* 167: 808–825; [BayesTraits](https://www.evolution.reading.ac.uk/BayesTraitsV4.1.3/BayesTraitsV4.1.3.html).
+:::
+
+# 7. O modelo de limiar {.secao}
+
+[Estão associados?]{.familia .relacao}
+
+## Felsenstein (2012) {.grande}
+
+- Adaptou o modelo de limiar (*threshold*) da genética quantitativa para os
+  métodos comparativos
+- Permite estimar a matriz de covariância entre atributos discretos e
+  contínuos
+
+**Diferença em relação ao Mk**
+
+- No Mk, as transições são instantâneas e as taxas, constantes
+- Mudar de 0 para 1 deixa o caráter com a mesma probabilidade de mudar de 1
+  para 2: a fixação do estado é muito rápida
+- Não é um bom modelo para caracteres morfológicos e ecológicos complexos
+
+::: {.ref}
+[Felsenstein (2012)](https://doi.org/10.1086/663681), *Am. Nat.* 179: 145–156.
+:::
+
+## A ideia vem de Wright (1934) {.grande}
+
+- Um modelo para entender a polidactilia em porquinhos-da-índia
+- Fenótipos discretos (número de dedos) são determinados por um caráter
+  contínuo subjacente e não observado, a ***liability***
+- Se esse caráter contínuo cruzar um limiar, o estado muda
+- Uma aproximação para caracteres modulados por muitos genes
+
+::: {.ref}
+[Wright (1934)](https://doi.org/10.1093/genetics/19.6.506), *Genetics* 19: 506–536.
+:::
+
+## A *liability* e o limiar
+
+```{r}
+#| fig-height: 4.4
+#| fig-alt: "Seis trajetórias de movimento browniano da liability ao longo do tempo; acima da linha do limiar o estado observado é 1, abaixo é 0. As linhagens cruzam o limiar várias vezes."
+fig_limiar()
+```
+
+::: {.ref}
+A *liability* evolui como no BM; só vemos de que lado do limiar ela está. Ideia do [blog do phytools](http://blog.phytools.org/2013/10/ancestral-state-estimation-under.html); estados ancestrais sob o limiar: [Revell (2014)](https://doi.org/10.1111/evo.12300), *Evolution* 68: 743–759.
+:::
+
+## Correlação pelo modelo de limiar {.grande}
+
+- Estima a correlação entre caracteres contínuos e categóricos, ou entre
+  dois categóricos
+- A correlação é estimada entre as *liabilities*
+- Implementação bayesiana no `phytools` (`threshBayes`) ou por
+  verossimilhança no programa `threshml`, de J. Felsenstein
+
+::: {.ref}
+[Felsenstein (2012)](https://doi.org/10.1086/663681), *Am. Nat.* 179: 145–156.
+:::
+
+# Para fechar {.secao}
+
+## Onde estamos
+
+```{r}
+#| fig-height: 5.0
+#| fig-alt: "O mapa dos métodos de novo, com as células de atributos discretos destacadas."
+mapa_plot(aula = 6)
+```
+
+## Leituras {.muito-grande}
+
+- [Revell & Harmon (2022)](https://press.princeton.edu/books/paperback/9780691219035/phylogenetic-comparative-methods-in-r), *Phylogenetic Comparative Methods in R*: capítulos 6 e 7
+- [Maddison & FitzJohn (2015)](https://doi.org/10.1093/sysbio/syu070): o problema dos testes de correlação
+- [Boyko & Beaulieu (2023)](https://doi.org/10.1093/sysbio/syac066): taxas ocultas como saída
+
+## Agora é com vocês
+
+::: {.meme}
+![](../assets/memes/caipira-picando-fumo.jpg){fig-alt="Pintura Caipira picando fumo, de Almeida Júnior: um homem descalço, sentado num tronco diante de uma casa de pau a pique, pica fumo com uma faca, de olhos baixos. Legenda: o teste de Pagel deu p < 0,001; mas foi uma mudança só, num clado." height="560px"}
+
+[Pagel deu *p* < 0,001]{.meme-topo} [Mas foi uma mudança só, num clado]{.meme-base}
+:::
+
+::: {.ref}
+Almeida Júnior, *Caipira picando fumo* (1893), domínio público, via Wikimedia Commons. Prática: o walkthrough da Aula 6 e o desafio.
+:::

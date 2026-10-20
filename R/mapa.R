@@ -28,7 +28,7 @@ mapa_celulas <- tibble::tribble(
   3, 2, "marginal · conjunta\nmapeamento\nestocástico",             list(7),
   3, 1, "filomorfoespaço",                                         list(c(7, 8)),
   4, 3, "PIC · PGLS\nANOVA filogenética\nGLM filogenético",        list(c(2, 4)),
-  4, 2, "Pagel (1994) · threshold\nregressão logística\nfilogenética", list(6),
+  4, 2, "Pagel (1994) · corHMM\nthreshold · regressão\nlogística filogenética", list(c(4, 6)),
   4, 1, "PGLS multivariado\nPCA filogenética",                     list(8)
 )
 

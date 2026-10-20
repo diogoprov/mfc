@@ -81,7 +81,7 @@ fig_modelos_C <- function() {
     fit(vcv_ou_arvore(tr, 5), "OU, α = 5")) |>
     mutate(modelo = factor(modelo, levels = modelo))
   ggplot(d, aes(svl, hll)) +
-    geom_point(colour = cores[["neutro"]], size = 2.5) +
+    geom_point(colour = cores[["texto"]], alpha = .45, size = 2.8) +
     geom_abline(data = r, aes(intercept = b0, slope = b1, colour = modelo), linewidth = 1.1) +
     scale_colour_manual(values = cores_linhagem[c(2, 1, 3, 4)],
                         labels = paste0(r$modelo, ": ", num(r$b1, 3)), name = "inclinação") +
