@@ -23,7 +23,7 @@ simulações ou da árvore-guia.
 
 | Nova aula | Título | Origem principal | Inventário | Deck |
 |---:|---|---|---|---|
-| 1 | A árvore e os dados | A1, A5 2–7 | — | — |
+| 1 | A árvore e os dados | A1 8–158, A5 1–7 | **`inventarios/a01.md`** | **`slides/a01.qmd` ✔** (60 slides; publicada) |
 | 2 | O movimento browniano e a matriz C | A2 1–49 | **`inventarios/a02.md`** | **`slides/a02.qmd` ✔** (65 slides; aula-modelo, aguarda revisão do Diogo) |
 | 3 | Sinal filogenético | A3 24–61, A5 7–10 | **`inventarios/a03.md`** | **`slides/a03.qmd` ✔** (60 slides; aguarda revisão do Diogo) |
 | 4 | Regressão filogenética (PGLS) | A2 126–141, A4 50–58 | **`inventarios/a04.md`** | **`slides/a04.qmd` ✔** (37 slides; aguarda revisão do Diogo) |
@@ -203,6 +203,10 @@ quando ele decidir.
   estados), `ajustes_squamata()` (`fitDiscrete`; reproduz o log L do
   original), `pagel_pratica()`, `correlacao_corhmm()` (~3 min) e as figuras
   da Aula 6.
+- `R/aula01_arvore.R`: `dois_clados()` (X e Y independentes que parecem
+  associados), `suporte_woodmouse()` (NJ + bootstrap reais), `formas()`
+  (Colless e γ) e as figuras da Aula 1 (Newick em 5 passos, partes da árvore,
+  enraizamento, tipos de árvore, fluxos).
 - `R/aula07_ancestrais.R`: `guia_ancestrais()` (ML e parcimônia na
   árvore-guia), `enguias()`/`ajustes_enguias()` (Collar et al. 2014; marginal
   × conjunta com `phytools::ancr`, 100 mapas estocásticos),
