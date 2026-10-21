@@ -63,8 +63,8 @@ pelo [mapa dos métodos](index.qmd):
 | 1 | [A árvore e os dados](aula-01-arvore-dados/index.qmd) | 1, 4 (simetria, imputação) |
 | 2 | [O movimento browniano e a matriz C](aula-02-bm-matriz-c/index.qmd) | 1 (matriz de variância-covariância), 2 (BM, PIC) |
 | 3 | [Sinal filogenético](aula-03-sinal/index.qmd) | 5, 6 (PVR) |
-| 4 | [Regressão filogenética (PGLS)](aula-04-pgls/index.qmd) | 2 (PGLS, ANOVA), 6 (várias matrizes, incerteza) |
-| 5 | [Modelos de evolução contínua](aula-05-modelos/index.qmd) | 2 (OU, ACDC, tendência, EB), 3 |
+| 4 | [Modelos de evolução contínua](aula-04-modelos/index.qmd) | 2 (OU, ACDC, tendência, EB), 3 |
+| 5 | [Regressão filogenética (PGLS)](aula-05-pgls/index.qmd) | 2 (PGLS, ANOVA), 6 (várias matrizes, incerteza) |
 | 6 | [Atributos discretos](aula-06-discretos/index.qmd) | 2 (evolução correlacionada, threshold) |
 | 7 | [Estados ancestrais e visualização](aula-07-ancestrais/index.qmd) | 2 (estados ancestrais), 4 (visualização) |
 | 8 | [Atributos multivariados](aula-08-multivariados/index.qmd) | 3 (taxas), 5 e 2 (versões multivariadas) |

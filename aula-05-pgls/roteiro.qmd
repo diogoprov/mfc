@@ -1,6 +1,6 @@
 ---
 title: "Roteiro prático — Regressão filogenética (PGLS)"
-subtitle: "Aula 4 · Métodos Filogenéticos Comparativos"
+subtitle: "Aula 5 · Métodos Filogenéticos Comparativos"
 format:
   html:
     toc: true
@@ -13,6 +13,8 @@ execute:
   message: false
   fig-width: 7
   fig-height: 4.5
+aliases:
+  - "../aula-04-pgls/roteiro.html"
 ---
 
 ::: {.callout-note appearance="minimal"}
@@ -244,4 +246,4 @@ abline(v = coef(m_bm)[["svl"]], col = "firebrick", lwd = 2)
 
 O PGLS e a ANOVA filogenética da edição de 2020 estão no
 [roteiro da Aula 2](../aula-02-bm-matriz-c/walkthrough-aula-2-terca.html), e o
-`evol.vcv`, no [roteiro da Aula 5](../aula-05-modelos/walkthrough-aula-quinta.html).
+`evol.vcv`, no [roteiro da Aula 4](../aula-04-modelos/walkthrough-aula-quinta.html).

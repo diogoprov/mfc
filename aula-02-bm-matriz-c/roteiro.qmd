@@ -199,7 +199,7 @@ abline(ajuste_pic, col = "firebrick", lwd = 2)
 ```
 
 Nas espécies, A e B quase não se relacionam (inclinação perto de zero);
-nos contrastes, a relação aparece. Na Aula 4 veremos que essa inclinação é a
+nos contrastes, a relação aparece. Na Aula 5 veremos que essa inclinação é a
 mesma do PGLS sob BM.
 
 ## Resumo
@@ -212,5 +212,5 @@ mesma do PGLS sob BM.
   contrastes independentes; a regressão passa pela origem.
 
 O [roteiro da edição de 2020](walkthrough-aula-2-terca.html) continua com
-OU, tendência e comparação de modelos (Aula 5), o Mk (Aula 6) e o PGLS
-(Aula 4).
+OU, tendência e comparação de modelos (Aula 4), o Mk (Aula 6) e o PGLS
+(Aula 5).

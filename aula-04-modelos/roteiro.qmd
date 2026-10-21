@@ -1,6 +1,6 @@
 ---
 title: "Roteiro prático — Modelos de evolução contínua"
-subtitle: "Aula 5 · Métodos Filogenéticos Comparativos"
+subtitle: "Aula 4 · Métodos Filogenéticos Comparativos"
 format:
   html:
     toc: true
@@ -13,6 +13,8 @@ execute:
   message: false
   fig-width: 7
   fig-height: 4.5
+aliases:
+  - "../aula-05-modelos/roteiro.html"
 ---
 
 ::: {.callout-note appearance="minimal"}

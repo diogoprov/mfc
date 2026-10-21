@@ -26,8 +26,8 @@ simulações ou da árvore-guia.
 | 1 | A árvore e os dados | A1 8–158, A5 1–7 | **`inventarios/a01.md`** | **`slides/a01.qmd` ✔** (revisada e publicada) |
 | 2 | O movimento browniano e a matriz C | A2 1–49 | **`inventarios/a02.md`** | **`slides/a02.qmd` ✔** (aula-modelo; revisada e publicada) |
 | 3 | Sinal filogenético | A3 24–61, A5 7–10 | **`inventarios/a03.md`** | **`slides/a03.qmd` ✔** (revisada e publicada) |
-| 4 | Regressão filogenética (PGLS) | A2 126–141, A4 50–58 | **`inventarios/a04.md`** | **`slides/a04.qmd` ✔** (revisada e publicada) |
-| 5 | Modelos de evolução contínua | A2 50–88, A4 18–49 | **`inventarios/a05.md`** | **`slides/a05.qmd` ✔** (revisada e publicada) |
+| 4 | Modelos de evolução contínua | A2 50–88, A4 18–49 | **`inventarios/a04.md`** | **`slides/a04.qmd` ✔** (revisada e publicada) |
+| 5 | Regressão filogenética (PGLS) | A2 126–141, A4 50–58 | **`inventarios/a05.md`** | **`slides/a05.qmd` ✔** (revisada e publicada) |
 | 6 | Atributos discretos | A2 89–126, A4 1–17, A1 65–77 | **`inventarios/a06.md`** | **`slides/a06.qmd` ✔** (revisada e publicada) |
 | 7 | Estados ancestrais e visualização | A3 1–23, A5 11 | **`inventarios/a07.md`** | **`slides/a07.qmd` ✔** (revisada e publicada) |
 | 8 | Atributos multivariados | A6 1–39 | **`inventarios/a08.md`** | **`slides/a08.qmd` ✔** (revisada e publicada) |
@@ -41,7 +41,7 @@ arquivo, inventário da aula-modelo e o esboço do mapa
 às decisões 4–11.**
 
 **Site reorganizado (20/out/2026)**: oito pastas `aula-0N-*` (`arvore-dados`,
-`bm-matriz-c`, `sinal`, `pgls`, `modelos`, `discretos`, `ancestrais`,
+`bm-matriz-c`, `sinal`, `modelos`, `pgls`, `discretos`, `ancestrais`,
 `multivariados`), cada uma com `index.qmd` (slides, em 3 minutos, conteúdo,
 roteiro, dados, desafio, leituras). Os walkthroughs de 2020 ficaram inteiros
 na pasta da aula com mais conteúdo deles e têm `aliases` para as URLs
@@ -60,6 +60,13 @@ delas. `praticas.qmd` lista os oito roteiros e, à parte, os walkthroughs de
 2020. Os roteiros 1 e 3 usam `rotl`, `adephylo` e `phylobase` (fora das
 figuras). Desafios e roteiros conferidos e aprovados pelo Diogo
 (20/out/2026).
+
+**Ordem 4 ↔ 5 invertida (20/out/2026, Diogo)**: modelos de evolução
+contínua (Aula 4) antes do PGLS (Aula 5), porque o PGLS usa
+verossimilhança, OU e matrizes de taxas por regime. Pastas
+`aula-04-modelos` e `aula-05-pgls`, com aliases para as URLs anteriores; as
+URLs `slides/a04.html` e `a05.html` trocaram de conteúdo.
+`PLANO-conversao-qmd.md` mantém a numeração antiga.
 
 **Formato**: a disciplina é ofertada condensada em uma semana; cada aula
 ocupa um período (manhã ou tarde) com teoria e prática, 8 aulas em 10
@@ -106,7 +113,7 @@ períodos. Decks de ~50–65 slides.
 6. **Referências com link** para o DOI, conferidas no Crossref.
 7. **Reaproveite** cursos irmãos: Procrustes e PCA da multidimensionais
    (Aulas 6 e 4) na Aula 8; OLS e pressupostos da univariada/Bioestatística
-   na Aula 4.
+   na Aula 5.
 8. **Pergunte antes de adicionar um pacote.**
 
 ## Decisões da disciplina
@@ -156,9 +163,9 @@ quando ele decidir.
 - **Pacotes das figuras**: `ggplot2`, `dplyr`, `tidyr`,
   `purrr`, `tibble`, `patchwork`, `here`, `knitr`, `ape`, `phytools`,
   `geiger`, `nlme` (**aprovados**); `caper` (aprovado para o D de Fritz &
-  Purvis, Aula 3); `phylolm` (Aula 4); `mvMORPH` (OU multi-regime, Aula 5;
+  Purvis, Aula 3); `phylolm` (Aula 5); `mvMORPH` (OU multi-regime, Aula 4;
   previsto no plano para a Aula 8); `corHMM` (taxas ocultas e
-  `fitCorrelationTest`, Aula 6) e `rr2` (R² de PGLS, Aula 4), ambos sugeridos
+  `fitCorrelationTest`, Aula 6) e `rr2` (R² de PGLS, Aula 5), ambos sugeridos
   pelo Diogo; `geomorph` (Aula 8, aprovado em 20/out/2026). PhylogeneticEM
   só citado, sem instalar. Sem `ggtree` (árvores por função
   própria) e sem `brms`. `rphylopic` só para baixar silhuetas, fora do render.
@@ -185,7 +192,7 @@ quando ele decidir.
   pseudorreplicação (Maddison & FitzJohn 2015; Uyeda et al. 2018) e, como
   ferramenta principal, o teste com taxas ocultas do `corHMM` (Boyko &
   Beaulieu 2023). BayesTraits/`btw` só como alternativa citada.
-- **Aula 4**: além do PGLS, só `phylolm::phyloglm` (logística e Poisson).
+- **Aula 5**: além do PGLS, só `phylolm::phyloglm` (logística e Poisson).
   Nada de `brms` nem de modelos mistos (exigem background demais).
 - **Abertura da Aula 1** (aprovada): 3–4 slides que retomam as leituras
   prévias (perguntas, mapa como síntese, não independência, linha do tempo).
@@ -219,7 +226,7 @@ quando ele decidir.
   `vcv_ou_arvore()`, `sim_mvn()`, `k_passos()`, `moran_I()`, `correlograma()`,
   `pvr_passos()`, `psr_curva()` (todas conferidas com ape/phytools);
   `R/aula03_*.R`: figuras da Aula 3.
-- `R/aula05_modelos.R`: verossimilhança do BM, simulações de OU/EB/tendência,
+- `R/aula04_modelos.R`: verossimilhança do BM, simulações de OU/EB/tendência,
   `ajustes_anolis()` (`fitContinuous`, com semente), BBM/FPK/Lévy,
   `ajustes_regimes()` (`mvMORPH`, OUM com os ecomorfos), `brownie_sunfish()`.
 - `R/aula06_discretos.R`: `squamata()` (Brandley et al. 2008, binário e 4
@@ -241,9 +248,9 @@ quando ele decidir.
   `mapas_squamata()`, `tendencia_fosseis()` e as figuras (algumas em gráficos
   base do `phytools`: `contMap`, `fancyTree`, `densityMap`,
   `phylomorphospace`).
-- `R/aula04_pgls.R`: `anolis_dados()`, `modelos_anolis()`, `gls_passos()`,
+- `R/aula05_pgls.R`: `anolis_dados()`, `modelos_anolis()`, `gls_passos()`,
   `anova_filo()`, `glm_filo()`, `evol_vcv_sunfish()`, `incerteza()` e as
-  figuras da Aula 4.
+  figuras da Aula 5.
 - `R/aula02_*.R`: figuras da Aula 2 (`intro`, `bm`, `matriz`, `arvore`,
   `pic`). `pic_passos()` faz os contrastes nó a nó.
 - `.claude/launch.json`: servidor `docs` (porta 4321) para o teste de

@@ -1,5 +1,5 @@
 ---
-title: "Modelos de evolução contínua"
+title: "Regressão filogenética (PGLS)"
 subtitle: "Aula 5 · Métodos Filogenéticos Comparativos · PPGBA/UFMS"
 author: "Diogo B. Provete"
 lang: pt
@@ -33,629 +33,470 @@ execute:
 ```{r}
 #| label: setup
 source(here::here("R/mapa.R"))
-source(here::here("R/aula05_modelos.R"))
+source(here::here("R/aula05_pgls.R"))
 
 numm <- function(x, d = 2) sub(",", "{,}", num(x, d), fixed = TRUE)
-vb  <- bm_verossimilhanca()
-aj  <- ajustes_anolis(); ta <- aj$tab
-ar  <- ajustes_regimes(); tr_ <- ar$tab
-oum_a <- ar$oum$alpha
-bs  <- brownie_sunfish()
+pval <- function(p) if (p < .001) "< 0,001" else paste("=", num(p, 3))
+
+gp  <- gls_passos()
+m   <- modelos_anolis()
+tt  <- summary(m$pgls)$tTable
+s   <- sinal_residuos()
+av  <- anova_filo(m)
+anc <- anova(gls(hll ~ svl + eco, m$dados, correlation = corBrownian(1, m$arvore, form = ~sp)))
+gl  <- glm_filo(m)
+cl  <- summary(gl$lg)$coefficients; cp <- summary(gl$po)$coefficients
+ev  <- evol_vcv_sunfish()
+inc <- incerteza()
 ```
 
-## Hoje {.grande}
+## Hoje {.muito-grande}
 
-1. Verossimilhança: estimando σ² e a raiz
-2. O modelo Ornstein-Uhlenbeck
-3. *Early burst* e tendência
-4. Comparando modelos
-5. Adequação do modelo
-6. Além dos quatro: BBM, FPK e evolução pulsada
-7. Paisagens adaptativas e radiação
-8. Várias taxas e vários regimes
-9. Cautelas com o OU
+1. Do OLS ao GLS
+2. PGLS na prática
+3. Diagnóstico
+4. ANOVA e ANCOVA filogenéticas
+5. Além do PGLS: GLM filogenético
+6. Quando a correlação muda na árvore
+7. Incerteza filogenética
 
 ## Onde estamos
 
 ```{r}
 #| fig-height: 5.0
-#| fig-alt: "Mapa dos métodos com a célula dos modelos de evolução de atributos contínuos destacada."
+#| fig-alt: "Mapa dos métodos com a célula dos atributos contínuos associados (PIC, PGLS, ANOVA filogenética, GLM filogenético) destacada."
 mapa_plot(aula = 5)
 ```
 
-# 1. Verossimilhança: estimando σ² e a raiz {.secao}
+# 1. Do OLS ao GLS {.secao}
 
-[Como evolui?]{.familia .modelos}
+[Estão associados?]{.familia .relacao}
 
-## A verossimilhança do BM {.grande}
-
-Sob BM, os valores das pontas seguem uma normal multivariada com média na
-raiz e covariância σ²**C** (Aula 2):
-
-$$\mathbf{X} \sim N\big(z_0 \mathbf{1},\ \sigma^2 \mathbf{C}\big)$$
-
-$$\log L(z_0, \sigma^2) = -\tfrac{1}{2}\Big[n \log(2\pi) + n \log \sigma^2 + \log|\mathbf{C}| + \tfrac{(\mathbf{X} - z_0\mathbf{1})' \mathbf{C}^{-1} (\mathbf{X} - z_0\mathbf{1})}{\sigma^2}\Big]$$
-
-::: {.fragment}
-Os valores de $z_0$ e $\sigma^2$ que maximizam log L são as estimativas de
-máxima verossimilhança.
-:::
-
-## Atributo A da árvore-guia
+## Antes, relembrando o modelo linear (OLS)
 
 ```{r}
-#| fig-height: 4.0
-#| fig-alt: "Log-verossimilhança do BM para o atributo A em função de sigma ao quadrado, com o máximo marcado em 0,356."
-fig_bm_logL(vb)
+#| fig-height: 4.1
+#| fig-alt: "Dispersão de 14 pontos com a reta de regressão; os resíduos aparecem como segmentos verticais entre cada ponto e a reta, e a equação y igual a b0 mais b1 x mais e está escrita no canto."
+fig_ols()
 ```
 
-$\hat\sigma^2 = `r numm(vb$s2, 3)`$ e $\hat z_0 = `r numm(vb$z0, 2)`$: a raiz estimada é a mesma dos
-contrastes (Aula 2) e é o primeiro "estado ancestral" (Aula 7).
+Os mínimos quadrados ordinários (*ordinary least squares*, OLS) escolhem a
+reta que minimiza a soma dos resíduos ao quadrado.
 
-# 2. O modelo Ornstein-Uhlenbeck {.secao}
+## Pressupostos do OLS (Gauss-Markov) {.muito-grande .tabela-grande}
 
-[Como evolui?]{.familia .modelos}
+| Matemática | Tradução para língua humana |
+|---|---|
+| $y = X\beta + \varepsilon$ | Relação linear entre $y$ e $X$ |
+| $X$ é uma matriz $n \times k$ de posto cheio | As colunas de $X$ são independentes |
+| $E(\varepsilon\varepsilon' \mid X) = \sigma^2 I$ | Homocedasticidade e ausência de autocorrelação |
+| $\varepsilon \mid X \sim N(0, \sigma^2 I)$ | Resíduos normais, com média zero e variância homogênea |
 
-## Ornstein-Uhlenbeck (OU) {.grande}
+## A linha que ninguém desenha {.grande}
 
-- Captura a ideia de **evolução estabilizadora**
-- O valor de um caráter contínuo tende a se mover para um **valor ótimo**
-- Um movimento browniano com um "puxão"
-- Parâmetros: valor inicial ($z_0$), taxa ($\sigma^2$), ótimo ($\theta$) e
-  força de restrição ($\alpha$)
+Independência e homocedasticidade são **duas afirmações sobre a mesma
+matriz**:
 
-::: {.fragment}
-**Vantagens**: tratável matematicamente; parâmetros com interpretação
-biológica; α limita o BM; θ pode representar regimes, ótimos ou zonas
-adaptativas.
-:::
+$$
+\operatorname{var}[\varepsilon_i \mid X] = \sigma^2
+\qquad
+\operatorname{cov}[\varepsilon_i, \varepsilon_j \mid X] = 0 \;\; (i \neq j)
+$$
 
-## O processo de Ornstein-Uhlenbeck {.grande}
-
-- Modelo para a velocidade de uma partícula browniana sob atrito, proposto
-  por dois físicos holandeses, Leonard Ornstein (1880–1941) e George
-  Uhlenbeck (1900–1988)
-- Também chamado de movimento de "reversão à média"
-- A partícula pode ser atraída para uma média diferente da inicial
-- É como atributos que evoluem em direção a **picos adaptativos**, que podem
-  limitar a diversificação
+$$
+E(\varepsilon\varepsilon' \mid X) =
+\begin{bmatrix}
+\sigma^2 & 0 & \cdots & 0 \\
+0 & \sigma^2 & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & \sigma^2
+\end{bmatrix}
+= \sigma^2 I
+$$
 
 ::: {.ref}
-[Uhlenbeck & Ornstein (1930)](https://doi.org/10.1103/physrev.36.823), *Phys. Rev.* 36: 823–841.
+Reaproveitado do curso de Análise de Dados Univariados. Ver [Zuur et al. (2009)](https://doi.org/10.1007/978-0-387-87458-6).
 :::
 
-## A equação do OU {.muito-grande}
+## Toda violação é um buraco nessa matriz {.grande}
+
+$$
+\underbrace{\sigma^2\begin{bmatrix}1&0&0&0\\0&1&0&0\\0&0&1&0\\0&0&0&1\end{bmatrix}}_{\text{OLS}}
+\qquad
+\underbrace{\begin{bmatrix}\sigma_1^2&0&0&0\\0&\sigma_2^2&0&0\\0&0&\sigma_3^2&0\\0&0&0&\sigma_4^2\end{bmatrix}}_{\text{variância desigual}}
+\qquad
+\underbrace{\sigma^2\begin{bmatrix}1{,}44&1{,}26&0{,}20&0{,}20\\1{,}26&1{,}44&0{,}20&0{,}20\\0{,}20&0{,}20&1{,}44&1{,}42\\0{,}20&0{,}20&1{,}42&1{,}44\end{bmatrix}}_{\text{filogenia: } \sigma^2\mathbf{C}}
+$$
+
+::: {.definicao}
+A filogenia preenche o que está **fora da diagonal**, com a matriz **C** da
+Aula 2 (aqui, as espécies 1 a 4 da árvore-guia).
+:::
+
+## O estimador GLS
 
 <br>
 
-$$\Large dX = \color{#527238}{\alpha}\,\big[\color{#a15e3f}{\theta} - X\big]\,dt + \color{#1c6e8c}{\sigma\, dB}$$
+$$\Large \hat\beta_{\text{GLS}} = \big(X' \color{#1c6e8c}{\mathbf{C}^{-1}} X\big)^{-1} X' \color{#1c6e8c}{\mathbf{C}^{-1}} y$$
 
 <br>
 
 ::: {.fragment}
-[$\sigma\,dB$]{style="color:#1c6e8c"}: o movimento browniano (Aula 2)
+Com $\color{#1c6e8c}{\mathbf{C}} = I$ (uma estrela), volta a ser o OLS:
+$\hat\beta = (X'X)^{-1}X'y$.
 :::
 
 ::: {.fragment}
-[$\alpha[\theta - X]\,dt$]{style="color:#527238"}: a mudança em direção ao ótimo
-[$\theta$]{style="color:#a15e3f"}
+**PGLS** é o GLS com a matriz **C** da filogenia (ou uma transformação dela
+por um modelo evolutivo).
 :::
-
-## A equação do OU: o puxão {.muito-grande}
-
-- A força da seleção é proporcional à **distância** entre o valor do
-  atributo e o ótimo: quanto maior a distância, maior o "puxão"
-- $\alpha$ diz a força desse puxão
-
-::: {.fragment}
-$$dX = \color{#527238}{0}\cdot[\theta - X]\,dt + \sigma\,dB = \sigma\,dB$$
-
-Com $\alpha = 0$, o OU vira um BM.
-:::
-
-## Simulando o OU: o ótimo θ
-
-```{r}
-#| fig-alt: "Quinze trajetórias de OU partindo de zero com theta igual a 4 e igual a 8: as trajetórias sobem e oscilam em torno do ótimo, marcado com uma linha tracejada."
-fig_ou_param("theta")
-```
-
-## Simulando o OU: a força α
-
-```{r}
-#| fig-alt: "Com alfa igual a 0,03, as trajetórias chegam devagar ao ótimo e espalham muito; com alfa igual a 0,3, chegam rápido e ficam concentradas em torno dele."
-fig_ou_param("alfa")
-```
-
-α maior: o ótimo é alcançado mais rápido, e a variância é menor.
-
-## Simulando o OU: a taxa σ²
-
-```{r}
-#| fig-height: 4.0
-#| fig-alt: "Com sigma ao quadrado igual a 0,1, as trajetórias ficam próximas do ótimo; com 1, oscilam muito mais em torno dele."
-fig_ou_param("sigma2")
-```
-
-σ² maior: mais variância em torno do ótimo.
 
 ::: {.ref}
-Simulações inspiradas em [Butler & King (2004)](https://doi.org/10.1086/426002) e em Harmon (2019).
+Filogenia, espaço e tempo são o mesmo problema estatístico, dados correlacionados: [Ives & Zhu (2006)](https://doi.org/10.1890/04-0702), *Ecol. Appl.* 16: 20–32.
 :::
 
-## BM é diversificante; OU é de equilíbrio
+## GLS na árvore-guia
+
+```{r}
+#| fig-height: 3.7
+#| fig-alt: "Atributo B contra A nas 7 espécies da árvore-guia, com duas retas: a do OLS, quase plana, inclinação 0,13; e a do GLS com C, íngreme, inclinação 1,40."
+fig_ols_gls()
+```
+
+[OLS (**C** = **I**)]{style="color:#a15e3f"}: inclinação `r num(gp$b_ols[2], 3)`; [GLS com **C**]{style="color:#1c6e8c"}: `r num(gp$b_gls[2], 3)`, a mesma dos contrastes independentes da Aula 2. Sob BM, a equivalência é exata.
+
+::: {.ref}
+[Blomberg, Lefevre, Wells & Waterhouse (2012)](https://doi.org/10.1093/sysbio/syr118), *Syst. Biol.* 61: 382–391.
+:::
+
+## Quando usar o PGLS {.muito-grande}
+
+- Normalmente, para testar a associação entre atributos
+- Muito flexível: preditores contínuos, discretos (binários ou com vários
+  estados) e combinações
+- Resposta binária: regressão logística filogenética (`phylolm::phyloglm`)
+- Pode incorporar diferentes modelos evolutivos, manipulando a estrutura
+  de **C**
+
+::: {.ref}
+[Grafen (1989)](https://doi.org/10.1098/rstb.1989.0106), *Phil. Trans. R. Soc. B* 326: 119–157.
+:::
+
+# 2. PGLS na prática {.secao}
+
+[Estão associados?]{.familia .relacao}
+
+## A estimativa depende do modelo em **C**
 
 ```{r}
 #| fig-height: 3.9
-#| fig-alt: "Variância entre 1500 réplicas ao longo do tempo: sob BM cresce em linha reta; sob OU estabiliza logo, perto de sigma ao quadrado sobre 2 alfa."
-fig_bm_vs_ou()
+#| fig-alt: "Membro posterior contra SVL dos Anolis, com quatro retas quase sobrepostas, uma para cada estrutura de covariância: OLS, BM, lambda igual a 0,5 e OU com alfa 5; as inclinações vão de 1,03 a 1,06."
+fig_modelos_C()
 ```
 
-Sob BM, a variância cresce como $\sigma^2 t$; sob OU, estabiliza em
-$\sigma^2/2\alpha$. Tempo para percorrer metade do caminho até o ótimo:
-a **meia-vida filogenética**, $\ln 2/\alpha$.
-
-## O OU na biologia evolutiva {.grande .tabela-grande}
-
-| Ano | Trabalho | Contribuição |
-|---|---|---|
-| 1976 | [Lande](https://doi.org/10.2307/2407703) | seleção natural e deriva na evolução fenotípica |
-| 1979 | [Lande](https://doi.org/10.2307/2407630) | genética quantitativa da evolução multivariada (alometria cérebro–corpo) |
-| 1988 | [Felsenstein](https://doi.org/10.1146/annurev.es.19.110188.002305) | o OU como "elástico" que puxa a população para o pico seletivo |
-| 1997 | [Hansen](https://doi.org/10.2307/2411186) | seleção estabilizadora e análise comparativa da adaptação |
-| 2004 | [Butler & King](https://doi.org/10.1086/426002) | OU com vários regimes (`ouch`) |
-
-# 3. *Early burst* e tendência {.secao}
-
-[Como evolui?]{.familia .modelos}
-
-## *Early burst* (EB) {.grande}
-
-- A taxa de evolução **desacelera** com o tempo: é maior perto da raiz
-- Corresponde à ideia de **radiação adaptativa**: linhagens que entram em
-  novas zonas adaptativas diversificam rápido, e a taxa cai à medida que os
-  nichos são preenchidos
-- Parâmetros: valor inicial ($z_0$), taxa inicial ($\sigma_0^2$) e taxa de
-  mudança ($r$)
-
-$$V(t) = \sigma_0^2\, \frac{e^{rt} - 1}{r}$$
+Assume linearidade; a estimativa depende do modelo evolutivo (λ: Aula 3; OU: Aula 4). Nos
+*Anolis*, a inclinação muda pouco, mas em outros dados pode mudar muito.
 
 ::: {.ref}
-O EB vem do modelo ACDC (*accelerating–decelerating*) de [Blomberg, Garland & Ives (2003)](https://doi.org/10.1554/0014-3820(2003)057[0717:tfpsic]2.0.co;2), *Evolution* 57: 717–745: é o caso em que a taxa desacelera. Nome *early burst*: [Harmon et al. (2010)](https://doi.org/10.1111/j.1558-5646.2010.01025.x). Zonas adaptativas: Simpson (1944), *Tempo and mode in evolution*.
+[Symonds & Blomberg (2014)](https://doi.org/10.1007/978-3-662-43550-2_5); ideia da figura: [Mazel et al. (2016)](https://doi.org/10.1890/15-0086.1), *Ecology* 97: 286–293.
 :::
 
-## *Early burst* e *late burst*
+## Erro comum num PGLS {.muito-grande}
 
-```{r}
-#| fig-height: 4.0
-#| fig-alt: "Vinte trajetórias sob early burst, que se espalham rápido no início e depois quase param, e sob late burst, que começam juntas e se espalham no fim."
-fig_acdc()
-```
-
-Com $r < 0$, desacelera (EB); com $r > 0$, acelera.
-
-::: {.ref}
-O modelo ACDC de [Blomberg, Garland & Ives (2003)](https://doi.org/10.1554/0014-3820(2003)057[0717:tfpsic]2.0.co;2): desacelerado (DC) = EB; acelerado (AC) = *late burst*.
-:::
-
-## Onde está a variação?
-
-```{r}
-#| fig-height: 4.0
-#| fig-alt: "Proporção da variação do atributo que fica dentro dos 8 maiores clados dos Anolis, em 200 simulações: cerca de 60 por cento sob BM, perto de 90 por cento sob OU forte e cerca de 20 por cento sob early burst."
-fig_dentro_entre()
-```
-
-Sob EB, a variação se concentra **entre** os clados antigos; sob OU forte,
-**dentro** deles.
-
-::: {.ref}
-Ideia da figura de [Harmon et al. (2010)](https://doi.org/10.1111/j.1558-5646.2010.01025.x).
-:::
-
-## Movimento browniano com tendência {.muito-grande}
-
-- Incorpora a ideia de mudança **direcional** do fenótipo ao longo do tempo
-- Regra de Cope (ou de Depéret): o tamanho do corpo aumenta ao longo do
-  tempo dentro das linhagens
-
-$$dX = \mu\, dt + \sigma\, dB$$
-
-::: {.ref}
-[Bokma, Godinot, Maridet et al. (2016)](https://doi.org/10.1093/sysbio/syv075), *Syst. Biol.* 65: 98–108; [Lamsdell & Braddy (2010)](https://doi.org/10.1098/rsbl.2009.0700), *Biol. Lett.* 6: 265–269.
-:::
-
-## BM com tendência
-
-```{r}
-#| fig-height: 3.4
-#| fig-alt: "Dez trajetórias com tendência positiva, que sobem, e dez com tendência negativa, que descem."
-fig_tendencia()
-```
-
-::: {.medio}
-O mesmo σ² nos dois grupos; muda só o sinal de μ.
-:::
-
-## A equação, termo a termo {.grande}
-
-$$\Large dX = \color{#a15e3f}{\mu\, dt} + \color{#1c6e8c}{\sigma\, dB}$$
-
-::: {.fragment}
-- [μ *dt*]{style="color:#a15e3f"}: o passo **determinístico**; a cada
-  intervalo *dt*, o atributo anda μ *dt* na mesma direção (μ > 0 sobe,
-  μ < 0 desce)
-- [σ *dB*]{style="color:#1c6e8c"}: o passo **aleatório** do BM, com
-  variância σ² *dt*
-:::
-
-::: {.fragment}
-Somando os passos de 0 a *t*:
-
-$$E[X(t)] = z_0 + \mu t \qquad \text{Var}[X(t)] = \sigma^2 t$$
-
-A tendência desloca a **média**; a variância cresce como no BM.
-:::
-
-::: {.fragment}
-Com μ = 0, volta o BM: $dX = \sigma\, dB$.
-:::
-
-## Por que é preciso fósseis {.grande}
-
-Numa árvore ultramétrica, todas as pontas estão à mesma distância *T* da
-raiz:
-
-$$E[X_i] = z_0 + \mu T \quad \text{para toda espécie } i$$
-
-::: {.fragment}
-Os dados só informam a soma $z_0 + \mu T$: um ancestral pequeno com
-tendência positiva e um grande sem tendência preveem as mesmas pontas. μ e
-*z*~0~ **não são identificáveis**.
-:::
-
-::: {.fragment}
 ::: {.definicao}
-Com fósseis, as pontas ficam a distâncias $t_i$ diferentes da raiz e
-$E[X_i] = z_0 + \mu t_i$ muda de uma ponta para outra: μ passa a ser
-estimável.
+**Errado**: testar o sinal filogenético na variável resposta ou na
+preditora para decidir se usa o PGLS.
+
+**Certo**: o pressuposto é sobre os **resíduos**.
 :::
-:::
+
+::: {.fragment}
+O melhor é ajustar um único modelo que estima, por máxima verossimilhança,
+o λ dos resíduos **junto** com os coeficientes da regressão.
 
 ::: {.ref}
-Nos Caniformia, incluir os fósseis muda as estimativas do tamanho ancestral: [Finarelli & Flynn (2006)](https://doi.org/10.1080/10635150500541698), *Syst. Biol.* 55: 301–313.
+[Revell (2010)](https://doi.org/10.1111/j.2041-210x.2010.00044.x), *Methods Ecol. Evol.* 1: 319–329.
+:::
 :::
 
-# 4. Comparando modelos {.secao}
+## Variáveis com sinal, resíduos sem sinal
 
-[Como evolui?]{.familia .modelos}
+```{r}
+#| fig-height: 4.1
+#| fig-alt: "Barras do K de Blomberg: 1,15 para X, 1,00 para Y e 0,22 para os resíduos da regressão de Y em X."
+fig_sinal_residuos(s)
+```
 
-## Seleção de modelos e AIC {.grande}
+X e Y simulados com sinal forte, mas Y = 1 + 1,2X + um erro **sem**
+estrutura filogenética: o λ dos resíduos é `r num(s$lambda_res, 2)`, e o OLS
+seria adequado.
 
-> "All models are wrong, but some are useful" (George E. P. Box)
+## Membros posteriores dos *Anolis*
 
-- Compara o suporte de cada modelo
-- AIC e BIC levam em conta o ajuste (verossimilhança) e o número de
-  parâmetros: mais parâmetros sempre ajustam melhor
-- BM, OU, EB e tendência têm números diferentes de parâmetros
-- Escolha o modelo que é a aproximação mais eficiente da "verdade"; com
-  poucas espécies, use o AICc e os pesos de Akaike
+```{r}
+#| fig-alt: "Log do membro posterior contra log do SVL de 82 espécies de Anolis, coloridas por ecomorfo; a reta do OLS (tracejada) e a do PGLS com lambda (contínua) quase coincidem."
+fig_anolis_pgls(m)
+```
 
-::: {.ref}
-Burnham & Anderson, [*Model selection and multimodel inference*](https://doi.org/10.1007/b97636), Springer.
-:::
-
-## O tamanho do corpo dos *Anolis* {.muito-grande .tabela-grande}
+## O modelo em R {.muito-grande}
 
 ```{r}
 #| echo: true
 #| eval: false
-geiger::fitContinuous(arvore, svl, model = "BM")   # e "OU", "EB"
+nlme::gls(hll ~ svl, data = dados, method = "ML",
+          correlation = ape::corPagel(1, arvore, form = ~sp))
 ```
 
-| Modelo | k | log L | AICc | ΔAICc | *w*~i~ |
-|---|---:|---:|---:|---:|---:|
-| `r ta$modelo[1]` | `r ta$k[1]` | `r num(ta$logL[1])` | `r num(ta$AICc[1])` | `r num(ta$dAICc[1])` | `r num(ta$peso[1])` |
-| `r ta$modelo[2]` | `r ta$k[2]` | `r num(ta$logL[2])` | `r num(ta$AICc[2])` | `r num(ta$dAICc[2])` | `r num(ta$peso[2])` |
-| `r ta$modelo[3]` | `r ta$k[3]` | `r num(ta$logL[3])` | `r num(ta$AICc[3])` | `r num(ta$dAICc[3])` | `r num(ta$peso[3])` |
+::: {.tabela-grande}
 
-Nenhum modelo se destaca: o EB tem o maior peso, mas o BM fica perto.
+| | Estimativa | EP | *p* |
+|---|---:|---:|---:|
+| Intercepto | `r num(tt[1, 1], 3)` | `r num(tt[1, 2], 3)` | `r pval(tt[1, 4])` |
+| log SVL | `r num(tt[2, 1], 3)` | `r num(tt[2, 2], 3)` | `r pval(tt[2, 4])` |
 
-## Duas lições da literatura {.muito-grande}
+:::
 
-**O EB é raro**: pouco suporte para o EB no tamanho e na forma do corpo,
-mesmo em exemplos clássicos de radiação adaptativa; e o BM às vezes ajusta
-mal.
+λ estimado: `r num(m$lambda, 3)`.
+
+::: {.nota}
+O `corPagel` pode dar λ um pouco acima de 1.
+:::
+
+## Quanto o modelo explica? {.grande}
+
+O R² do OLS não serve para modelos com resíduos correlacionados. O pacote
+`rr2` calcula três R² para PGLS, `phylolm` e modelos mistos:
+
+```{r}
+#| echo: true
+#| eval: false
+rr2::R2(pgls)
+```
+
+```{r}
+r2 <- rr2::R2(m$pgls)
+```
+
+::: {.tabela-grande}
+
+| R² | Ideia | *Anolis* |
+|:--|:--------------|--:|
+| R²~lik~ | verossimilhança contra o modelo só com intercepto | `r num(r2[["R2_lik"]], 3)` |
+| R²~resid~ | variância dos resíduos | `r num(r2[["R2_resid"]], 3)` |
+| R²~pred~ | variância das predições, com a parte filogenética | `r num(r2[["R2_pred"]], 3)` |
+
+:::
 
 ::: {.ref}
-[Harmon, Losos, Davies et al. (2010)](https://doi.org/10.1111/j.1558-5646.2010.01025.x), *Evolution*.
+[Ives (2019)](https://doi.org/10.1093/sysbio/syy060), *Syst. Biol.* 68: 234–251; [Ives & Li (2018)](https://doi.org/10.21105/joss.01028), *J. Open Source Softw.* 3: 1028. R² do OLS nos mesmos dados: `r num(summary(m$ols)$r.squared, 3)`.
 :::
 
-::: {.fragment}
-**O erro de medida** (e a variação intraespecífica) deve entrar sempre no
-modelo: ignorá-lo favorece modelos mais complexos, como o OU.
+# 3. Diagnóstico {.secao}
 
-::: {.ref}
-[Silvestro et al. (2015)](https://doi.org/10.1111/2041-210x.12337), *Methods Ecol. Evol.* 6: 340–346. Em `fitContinuous`: argumento `SE`.
-:::
-:::
+[Estão associados?]{.familia .relacao}
 
-# 5. Adequação do modelo {.secao}
-
-[Como evolui?]{.familia .modelos}
-
-## Ajuste relativo × adequação {.muito-grande}
-
-- A abordagem de teoria da informação (AIC) aponta o **melhor** modelo
-  entre os disponíveis; o peso de Akaike ajuda a ver o quanto melhor
-- Mas o melhor pode explicar pouco dos dados (R² baixo, por exemplo)
-- O que fazer? Testar a **adequação** do modelo: os dados se parecem com o
-  que o modelo gera?
-
-::: {.ref}
-Arbutus: [Pennell, FitzJohn, Cornwell & Harmon (2015)](https://doi.org/10.1086/682022), *Am. Nat.* 186: E33–E50. Monte Carlo filogenético: [Boettiger, Coop & Ralph (2012)](https://doi.org/10.1111/j.1558-5646.2011.01574.x), *Evolution* 66: 2240–2251.
-:::
-
-## O ciclo do Arbutus
+## Diagnosticando um PGLS
 
 ```{r}
 #| fig-height: 3.6
-#| fig-alt: "Seis caixas em ciclo: ajustar o modelo aos dados; transformar a árvore pelo modelo ajustado; calcular estatísticas nos dados observados; simular muitos conjuntos na árvore transformada; calcular as estatísticas nos simulados; comparar."
-fig_arbutus()
+#| fig-alt: "Quatro gráficos de diagnóstico do PGLS dos Anolis com resíduos normalizados: contra os valores ajustados, gráfico quantil-quantil, histograma e contra o SVL; um grupo de resíduos negativos aparece separado."
+fig_diagnostico(m)
 ```
 
-A ideia: modificar a árvore para descrever a história do atributo; quanto
-mais os dados observados se parecem com os simulados, melhor o modelo.
-Também serve para o PGLS.
+Use os resíduos **normalizados** (`resid(modelo, type = "normalized")`):
+os resíduos brutos de um GLS continuam correlacionados pela filogenia.
 
-# 6. Além dos quatro: BBM, FPK e evolução pulsada {.secao}
+::: {.nota}
+O grupo de resíduos negativos são os *twig*, de membros curtos: um
+preditor que falta no modelo (bloco 4).
+:::
 
-[Como evolui?]{.familia .modelos}
+## Armadilhas comuns {.muito-grande}
 
-## BM com limites (BBM)
+- **Nomes**: as pontas da árvore e as linhas da tabela precisam bater
+  (`geiger::name.check()`)
+- **Ordem das linhas**: no `nlme::gls`, diga qual coluna identifica a
+  espécie (`form = ~sp`); sem isso, a correlação é aplicada na ordem das
+  linhas
+- **Árvore**: ultramétrica e com comprimentos de ramo (Aula 1)
+
+# 4. ANOVA e ANCOVA filogenéticas {.secao}
+
+[Estão associados?]{.familia .relacao}
+
+## Um preditor categórico: o ecomorfo
 
 ```{r}
-#| fig-height: 3.7
-#| fig-alt: "Oito trajetórias de movimento browniano refletidas entre dois limites, marcados com linhas vermelhas."
-fig_bbm()
+#| fig-height: 4.1
+#| fig-alt: "Membro posterior relativo (resíduo do PGLS) por ecomorfo: trunk-ground e grass-bush com membros longos, twig com membros curtos, os demais no meio; linhas pretas marcam as médias."
+fig_ecomorfos(m)
 ```
 
-O atributo evolui como BM, mas entre **limites** (fisiológicos, por
-exemplo). Ajuda a separar um OU de um BM limitado.
+Membro posterior relativo: resíduo da regressão no SVL.
 
 ::: {.ref}
-[Boucher & Démery (2016)](https://doi.org/10.1093/sysbio/syw015), *Syst. Biol.* 65: 651–661.
+Ecomorfos dos *Anolis*: [Losos (1990)](https://doi.org/10.2307/1943062), *Ecol. Monogr.* 60: 369–388.
 :::
 
-## Paisagens macroevolutivas: o modelo FPK
+## ANOVA filogenética
 
 ```{r}
-#| fig-height: 3.4
-#| fig-alt: "Quatro curvas de potencial: plana para o BM, um poço para o OU, uma caixa para o BBM e uma curva com dois vales para o FPK."
-fig_potenciais()
+#| fig-height: 3.8
+#| fig-alt: "Histograma de valores de F simulados sob BM na árvore dos Anolis, quase todos abaixo de 10, com o F crítico da ANOVA comum perto de 2,3 e o F observado, 55,6, muito à direita."
+fig_anova_filo(av)
 ```
 
-O atributo "desce" para os vales do potencial. BM, OU e BBM são casos
-particulares; o FPK estima a **forma** da paisagem a partir dos dados.
+O valor crítico de F vem de simulações sob BM na árvore, e não da tabela
+F: F = `r num(av$F, 1)`, *p* `r pval(av$p)`.
 
 ::: {.ref}
-[Boucher, Démery, Conti, Harmon & Uyeda (2018)](https://doi.org/10.1093/sysbio/syx075), *Syst. Biol.* 67: 304–319.
+[Garland, Dickerman, Janis & Jones (1993)](https://doi.org/10.2307/2992464), *Syst. Biol.* 42: 265. Em R: `phytools::phylANOVA`.
 :::
 
-## Evolução pulsada
+## Cuidados com a ANOVA filogenética {.grande}
 
-```{r}
-#| fig-height: 3.7
-#| fig-alt: "Doze trajetórias de um movimento browniano com saltos raros e grandes."
-fig_levy()
-```
-
-Saltos raros e grandes sobre um BM (processos de Lévy): a evolução pulsada
-explica melhor o tamanho do corpo dos vertebrados do que mudanças graduais.
+- Permutar os **resíduos** (RRPP) tem mais poder que simular dados sob BM
+  na árvore, e serve para ANOVA e regressão, uni e multivariadas
+- Grupos **agregados** na árvore (cada grupo é um clado) se confundem com a
+  filogenia: o poder cai, e poucas transições entre grupos lembram a
+  pseudorreplicação da Aula 6
+- Em R: `RRPP::lm.rrpp` ou `geomorph::procD.pgls`
 
 ::: {.ref}
-[Landis & Schraiber (2017)](https://doi.org/10.1073/pnas.1710920114), *PNAS* 114: 13224–13229.
+[Adams & Collyer (2018)](https://doi.org/10.1111/evo.13492), *Evolution* 72: 1204–1215.
 :::
 
-# 7. Paisagens adaptativas e radiação {.secao}
-
-[Como evolui?]{.familia .modelos}
-
-## Radiação adaptativa {.grande}
-
-Critérios de Simpson (a "paisagem de Simpson") para detectar radiações:
-
-- dispersão para novas áreas geográficas
-- surgimento de um atributo-chave
-- extinção em massa de competidores
-- ocupação de novos "nichos" ou zonas adaptativas
-
-::: {.fragment}
-Se os atributos evoluem com **taxas** diferentes em linhagens diferentes,
-comparamos modelos com $\sigma^2$ e $\theta$ diferentes.
-:::
-
-::: {.ref}
-Simpson (1944), *Tempo and mode in evolution*.
-:::
-
-## A metáfora da paisagem adaptativa
-
-![](../assets/terceiros/wilke-paisagem-adaptativa.png){fig-alt="Perfil de uma paisagem de aptidão com três picos, A, B e C, sendo B o mais alto. Setas sobem as encostas em direção a cada pico; uma população num vale sobe, por setas vermelhas, até o pico B." width="64%" fig-align="center"}
-
-Picos de aptidão (Wright 1932) e zonas adaptativas (Simpson 1944); as
-paisagens também mudam no tempo. Em *Cyprinodon* das Bahamas, a paisagem
-medida no campo tem vários picos, que ajudam a explicar a radiação.
-
-::: {.ref}
-[Martin & Wainwright (2013)](https://doi.org/10.1126/science.1227710), *Science* 339: 208–211. Figura: C. O. Wilke, [domínio público](https://commons.wikimedia.org/wiki/File:Fitness-landscape-cartoon.png), via Wikimedia Commons.
-:::
-
-## As paisagens também mudam no tempo
-
-![](../assets/terceiros/paisagem-dinamica.gif){fig-alt="Animação de uma paisagem de aptidão em três dimensões: um pico vermelho se desloca e muda de altura ao longo do tempo, e uma nuvem de indivíduos da população se move pela superfície acompanhando o pico." width="60%" fig-align="center"}
-
-::: {.medio}
-O ótimo se desloca, e a população o acompanha: a ideia por trás de θ que
-muda entre regimes ao longo da árvore.
-:::
-
-::: {.ref}
-Randy Olson & Bjørn Østman (2014), [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/), via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Visualization_of_a_population_evolving_in_a_dynamic_fitness_landscape.gif) (quadros alternados, 520 px).
-:::
-
-# 8. Várias taxas e vários regimes {.secao}
-
-[Como evolui?]{.familia .modelos}
-
-## BM com várias taxas {.grande}
-
-- Taxas ($\sigma^2$) diferentes em clados identificados **a priori** (o
-  programa Brownie)
-- Centrarchidae, abertura da boca: σ² = `r num(bs$sig2.multiple["non"], 3)`
-  nos não piscívoros e `r num(bs$sig2.multiple["pisc"], 3)` nos piscívoros;
-  razão de verossimilhança *p* = `r num(bs$P.chisq, 3)`
+## ANCOVA filogenética {.muito-grande}
 
 ```{r}
 #| echo: true
 #| eval: false
-phytools::brownie.lite(arvore_com_regimes, abertura)
+nlme::gls(hll ~ svl + eco, data = dados,
+          correlation = ape::corBrownian(1, arvore, form = ~sp))
 ```
 
-::: {.fragment}
-Sem definir os clados: uma abordagem bayesiana (rjMCMC) procura onde a taxa muda (`geiger::rjmcmc.bm`; [Eastman et al. 2011](https://doi.org/10.1111/j.1558-5646.2011.01401.x)).
+::: {.tabela-grande}
+
+| Termo | gl | F | *p* |
+|---|---:|---:|---:|
+| log SVL | `r anc[2, "numDF"]` | `r num(anc[2, "F-value"], 1)` | `r pval(anc[2, "p-value"])` |
+| ecomorfo | `r anc[3, "numDF"]` | `r num(anc[3, "F-value"], 1)` | `r pval(anc[3, "p-value"])` |
+
 :::
+
+Os grupos podem diferir também na **taxa** de evolução, e não só no
+intercepto e na inclinação: a ANCOVA filogenética de Fuentes-G. et al.
+(2016) estima as duas coisas.
 
 ::: {.ref}
-[O'Meara, Ané, Sanderson & Wainwright (2006)](https://doi.org/10.1554/05-130.1); [Thomas, Freckleton & Székely (2006)](https://doi.org/10.1098/rspb.2006.3488).
+[Revell & Harmon (2022)](https://press.princeton.edu/books/paperback/9780691219035/phylogenetic-comparative-methods-in-r), seção 3.5; [Fuentes-G., Housworth, Weber & Martins (2016)](https://doi.org/10.1086/688917), *Am. Nat.* 188: 615–627.
 :::
 
-## Os ecomorfos dos *Anolis* {.grande .tabela-grande}
+# 5. Além do PGLS: GLM filogenético {.secao}
 
-OU com vários regimes (θ, σ² e α por regime): `ouch` ([Butler & King 2004](https://doi.org/10.1086/426002)), `OUwie` ([Beaulieu et al. 2012](https://doi.org/10.1111/j.1558-5646.2012.01619.x)). Aqui, o SVL com os ecomorfos mapeados (árvore com altura 1), no `mvMORPH`:
+[Estão associados?]{.familia .relacao}
 
-| Modelo | O que muda entre ecomorfos | log L | AICc | ΔAICc | *w*~i~ |
-|---|---|---:|---:|---:|---:|
-| BM1 | nada | `r num(tr_$logL[1], 1)` | `r num(tr_$AICc[1], 1)` | `r num(tr_$AICc[1] - min(tr_$AICc), 1)` | `r num(tr_$peso[1], 3)` |
-| BMM | a taxa σ² | `r num(tr_$logL[2], 1)` | `r num(tr_$AICc[2], 1)` | `r num(tr_$AICc[2] - min(tr_$AICc), 1)` | `r num(tr_$peso[2], 3)` |
-| OU1 | nada (um ótimo) | `r num(tr_$logL[3], 1)` | `r num(tr_$AICc[3], 1)` | `r num(tr_$AICc[3] - min(tr_$AICc), 1)` | `r num(tr_$peso[3], 3)` |
-| OUM | o ótimo θ | `r num(tr_$logL[4], 1)` | `r num(tr_$AICc[4], 1)` | `r num(tr_$AICc[4] - min(tr_$AICc), 1)` | `r num(tr_$peso[4], 3)` |
-
-## Um ótimo por ecomorfo
+## Respostas binárias e contagens
 
 ```{r}
 #| fig-height: 3.8
-#| fig-alt: "SVL das espécies de Anolis por ecomorfo, com o ótimo estimado de cada um como um losango: crown-giant perto de 5,1; grass-bush perto de 3,7; os demais entre 3,9 e 4,1."
-fig_otimos(ar)
+#| fig-alt: "À esquerda, ser trunk-ground (0 ou 1) contra o membro posterior relativo, com a curva logística ajustada subindo. À direita, número de lamelas contra log SVL, com a curva de Poisson ajustada."
+fig_glm_filo(gl)
 ```
 
-Losangos: os ótimos θ do OUM. Espécies de ilhas diferentes convergem para o
-mesmo ótimo do seu ecomorfo.
+```{r}
+#| echo: true
+#| eval: false
+phylolm::phyloglm(tg ~ membro, data = dados, phy = arvore, method = "logistic_MPLE")
+phylolm::phyloglm(lamelas ~ svl, data = dados, phy = arvore, method = "poisson_GEE")
+```
 
 ::: {.ref}
-Convergência nos *Anolis*: [Mahler, Ingram, Revell & Losos (2013)](https://doi.org/10.1126/science.1232392), *Science* 341: 292–295.
+[Ives & Garland (2010)](https://doi.org/10.1093/sysbio/syp074); [Paradis & Claude (2002)](https://doi.org/10.1006/jtbi.2002.3066); [Ho & Ané (2014)](https://doi.org/10.1093/sysbio/syu005).
 :::
 
-## Convergência nos *Anolis* do Caribe {.muito-grande}
+## Lendo os dois modelos {.grande .tabela-grande}
 
-- Padrões repetidos de convergência dos ecomorfos nas ilhas
-- Espécies distantes ocupam os mesmos hábitats e desenvolvem a mesma
-  morfologia: restrições do hábitat, preenchimento do espaço de nicho
-- A evolução pode ser predita?
+| Modelo | Coeficiente | Estimativa | *p* |
+|---|---|---:|---:|
+| Logística | membro posterior (DP) | `r num(cl[2, 1])` | `r pval(cl[2, 4])` |
+| Poisson | log SVL | `r num(cp[2, 1])` | `r pval(cp[2, 4])` |
 
-::: {.ref}
-[Mahler, Ingram, Revell & Losos (2013)](https://doi.org/10.1126/science.1232392), *Science* 341: 292–295.
-:::
-
-## Mudanças de regime detectadas automaticamente {.grande}
-
-Sem atribuir os regimes a priori:
-
-- `bayou`: bayesiano (MCMC), com prior para o número de mudanças; detecta
-  convergência; um atributo por vez
-- `l1ou`: rápido, por verossimilhança penalizada (LASSO)
-- PhylogeneticEM: vários atributos correlacionados
-
-::: {.ref}
-[Uyeda & Harmon (2014)](https://doi.org/10.1093/sysbio/syu057); [Khabbazian et al. (2016)](https://doi.org/10.1111/2041-210x.12534); [Bastide et al. (2018)](https://doi.org/10.1093/sysbio/syy005).
-:::
-
-# 9. Cautelas com o OU {.secao}
-
-[Como evolui?]{.familia .modelos}
-
-## Dificuldades de inferência {.grande}
-
-- É difícil estimar os parâmetros do OU, sobretudo as mudanças de regime
-- Importa a razão entre o número de espécies e o de parâmetros
-- O estimador de máxima verossimilhança tem problemas
-- A posição das mudanças de regime depende pouco do tamanho da árvore
-- AIC e BIC tendem a favorecer modelos mais complexos
-- Muitas vezes há **pouca informação** nos dados para estimar os parâmetros
-  com precisão (Cressler et al. 2015)
-
-::: {.ref}
-[Ho & Ané (2014)](https://doi.org/10.1111/2041-210x.12285), *Methods Ecol. Evol.* 5: 1133–1146.
-:::
-
-## Recomendações de Ho & Ané (2014) {.grande}
-
-1. Use um BIC corrigido pela filogenia
-2. Implementações bayesianas sofrem menos que a seleção de modelos passo a
-   passo; teste a influência do prior
-3. Compare a meia-vida ($\ln 2/\alpha$) com a altura da árvore: se a
-   meia-vida for muito grande, α pode estar mal estimado
-4. A ausência de uma mudança pode ser falta de poder, mesmo em árvores
-   grandes
+DP: desvio padrão do membro posterior relativo. *Trunk-ground* têm membros posteriores relativamente longos; espécies
+maiores têm mais lamelas.
 
 ::: {.nota}
-No OUM dos *Anolis*, a meia-vida é `r num(log(2) / oum_a, 2)` da altura da
-árvore: o puxão é forte, e α deve ser lido com cuidado.
+Lamelas: contagem reconstruída do log dos dados do `phytools`
+(`round(exp(LAM))`, de 13 a 42).
 :::
 
-## Uma nota de cautela {.grande}
+# 6. Quando a correlação muda na árvore {.secao}
 
-- O erro tipo I é alto com amostras pequenas
-- Evite testes de razão de verossimilhança; prefira a seleção de modelos
-  (bayesiana)
-- O erro de medida infla o erro tipo I
-- α é difícil de estimar: veja se o valor faz sentido para os seus dados e
-  use a meia-vida
+[Estão associados?]{.familia .relacao}
+
+## Matrizes de covariância evolutiva por regime {.muito-grande}
+
+E se a correlação entre dois atributos for diferente em partes da árvore
+(não estacionariedade)?
 
 ::: {.ref}
-[Cooper, Thomas, Venditti, Meade & Freckleton (2016)](https://doi.org/10.1111/bij.12701), *Biol. J. Linn. Soc.* 118: 64–77. Desempenho depende da discriminabilidade, da razão sinal/ruído e do número de espécies: [Cressler, Butler & King (2015)](https://doi.org/10.1093/sysbio/syv043).
+[Revell & Collar (2009)](https://doi.org/10.1111/j.1558-5646.2009.00616.x), *Evolution* 63: 1090–1100.
 :::
 
-## A resposta: as cautelas são exageradas {.grande}
+::: {.fragment}
+Versão bayesiana, com a incerteza das correlações: o pacote `ratematrix`.
 
-Três contra-argumentos a Cooper et al. (2016):
+::: {.ref}
+[Caetano & Harmon (2017)](https://doi.org/10.1111/2041-210x.12826), *Methods Ecol. Evol.* 8: 1920–1927.
+:::
+:::
 
-1. O teste padrão de adaptação compara **ótimos diferentes** (ex.: um por
-   ambiente, OUM × OU1); Cooper et al. avaliaram só OU × BM com um ótimo
-2. Olhe as **estimativas** dos parâmetros (α, meia-vida, θ), não só a
-   significância: elas costumam levar à inferência correta
-3. O viés do erro de medida se corrige com métodos padrão (incluir o erro
-   no modelo)
+## Os peixes Centrarchidae
+
+```{r}
+#| fig-height: 4.6
+#| fig-alt: "À esquerda, a filogenia de 28 espécies de Centrarchidae com os ramos piscívoros em vermelho e os não piscívoros em azul. À direita, abertura da boca contra comprimento bucal, ambos corrigidos pelo tamanho, com os piscívoros em vermelho."
+fig_sunfish()
+```
+
+Os regimes (piscívoro ou não) são definidos **a priori** e mapeados nos
+ramos, como no BM com várias taxas (Aula 4).
+
+## Uma ou duas matrizes? {.grande .tabela-grande}
+
+| Modelo | var(abertura) | cov | var(bucal) | log L |
+|---|---:|---:|---:|---:|
+| Uma matriz | `r num(ev$R.single[1, 1], 3)` | `r num(ev$R.single[1, 2], 3)` | `r num(ev$R.single[2, 2], 3)` | `r num(ev$logL1, 2)` |
+| Não piscívoros | `r num(ev$R.multiple[1, 1, 1], 3)` | `r num(ev$R.multiple[1, 2, 1], 3)` | `r num(ev$R.multiple[2, 2, 1], 3)` | `r num(ev$logL.multiple, 2)` |
+| Piscívoros | `r num(ev$R.multiple[1, 1, 2], 3)` | `r num(ev$R.multiple[1, 2, 2], 3)` | `r num(ev$R.multiple[2, 2, 2], 3)` | |
+
+Razão de verossimilhança: *p* `r pval(ev$P.chisq)`. Nos piscívoros, os dois
+atributos evoluem juntos; nos outros, quase não covariam.
 
 ::: {.nota}
-Conclusão dos autores: não há problema estatístico específico do OU.
+Calculado com `phytools::evol.vcv` nos dados `sunfish` do `phytools`. O log
+L de uma matriz bate com o do artigo (72,19); o de duas não (lá, 76,85), e
+as taxas estão em outra escala.
 :::
 
+# 7. Incerteza filogenética {.secao}
+
+[Estão associados?]{.familia .relacao}
+
+## A árvore também é uma estimativa
+
+```{r}
+#| fig-height: 3.6
+#| fig-alt: "Histograma das inclinações do PGLS de membro posterior contra SVL em 100 árvores com comprimentos de ramo perturbados, entre cerca de 1,01 e 1,09, com a linha da árvore original no meio."
+fig_incerteza(inc)
+```
+
+Refaça a análise numa amostra de árvores (uma posterior bayesiana, por
+exemplo) e relate a variação. Aqui, 100 árvores com ramos perturbados:
+inclinação de `r num(quantile(inc$b, .025), 3)` a `r num(quantile(inc$b, .975), 3)`.
+
 ::: {.ref}
-[Grabowski, Pienaar, Voje et al. (2023)](https://doi.org/10.1093/sysbio/syad012), *Syst. Biol.* 72: 955–963.
-:::
-
-## O "lado escuro" dos métodos comparativos {.grande}
-
-- Com pouco erro de medida (ou ignorando a variação intraespecífica), o OU
-  tende a ajustar melhor mesmo com um parâmetro a mais, porque acomoda mais
-  variância perto das pontas, e não necessariamente por uma causa biológica
-- Leia com cuidado antes de usar os métodos no R
-- Seja sempre crítico com os resultados
-- Relate as análises com ferramentas de reprodutibilidade (Quarto)
-
-::: {.ref}
-[Cooper, Thomas & FitzJohn (2016)](https://doi.org/10.1111/2041-210x.12533), *Methods Ecol. Evol.* 7: 693–699.
+Ilustração simulada. [Rangel et al. (2015)](https://doi.org/10.1111/evo.12644), *Evolution* 69: 1301–1312.
 :::
 
 # Para fechar {.secao}
@@ -664,15 +505,15 @@ Conclusão dos autores: não há problema estatístico específico do OU.
 
 ```{r}
 #| fig-height: 5.0
-#| fig-alt: "O mapa dos métodos de novo, com a célula dos modelos de atributos contínuos destacada."
+#| fig-alt: "O mapa dos métodos de novo, com a célula dos atributos contínuos associados destacada."
 mapa_plot(aula = 5)
 ```
 
 ## Leituras {.muito-grande}
 
-- [Revell & Harmon (2022)](https://press.princeton.edu/books/paperback/9780691219035/phylogenetic-comparative-methods-in-r), *Phylogenetic Comparative Methods in R*: seções 4.7–4.8, 5.1–5.2 e 5.4
-- [Butler & King (2004)](https://doi.org/10.1086/426002): o OU com vários regimes
-- [Ho & Ané (2014)](https://doi.org/10.1111/2041-210x.12285) e [Cooper et al. (2016)](https://doi.org/10.1111/bij.12701): as cautelas
+- [Revell & Harmon (2022)](https://press.princeton.edu/books/paperback/9780691219035/phylogenetic-comparative-methods-in-r), *Phylogenetic Comparative Methods in R*: cap. 3 (PGLS, ANOVA e ANCOVA filogenéticas)
+- [Symonds & Blomberg (2014)](https://doi.org/10.1007/978-3-662-43550-2_5): um guia do PGLS
+- [Revell (2010)](https://doi.org/10.1111/j.2041-210x.2010.00044.x): sinal nos resíduos
 
 ::: {.definicao}
 Antes de usar qualquer método, leia o artigo que o propôs. Não fazer isso
@@ -682,11 +523,11 @@ pode causar a rejeição do seu manuscrito.
 ## Agora é com vocês
 
 ::: {.meme}
-![](../assets/memes/efeitos-do-sol.jpg){fig-alt="Pintura Efeitos do sol, de Belmiro de Almeida: uma moça de lenço na cabeça lê um papel num jardim iluminado, com o rosto meio encoberto. Legenda: o AIC escolheu o OU; e o alfa? difícil de estimar." height="560px"}
+![](../assets/memes/idilio-campestre.jpg){fig-alt="Pintura Bom tempo ou Idílio campestre, de Belmiro de Almeida: uma moça sorridente sentada num muro de pedra; atrás dela, um rapaz de chapéu se inclina para falar ao seu ouvido. Legenda: X e Y, um casal? Não: parentes." height="560px"}
 
-[O AIC escolheu o OU]{.meme-topo} [E o α? Difícil de estimar]{.meme-base}
+[X e Y, um casal?]{.meme-topo} [Não: parentes]{.meme-base}
 :::
 
 ::: {.ref}
-Belmiro de Almeida, *Efeitos do sol* (1892), domínio público, via Wikimedia Commons. Prática: o walkthrough da Aula 5 e o desafio.
+Belmiro de Almeida, *Bom tempo* ou *Idílio campestre* (1893), domínio público, via Wikimedia Commons. Prática: o walkthrough da Aula 5 e o desafio.
 :::

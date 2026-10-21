@@ -21,14 +21,14 @@ mapa_celulas <- tibble::tribble(
   1, 3, "K de Blomberg · λ de Pagel\nI de Moran · Mantel\nPVR",    list(3),
   1, 2, "D de Fritz · estatística δ",                              list(3),
   1, 1, "K multivariado",                                          list(8),
-  2, 3, "BM · OU · EB · tendência\nmulti-taxas\nmulti-regime",     list(5),
+  2, 3, "BM · OU · EB · tendência\nmulti-taxas\nmulti-regime",     list(4),
   2, 2, "Mk: ER · SYM · ARD\ntaxas ocultas",                       list(6),
   2, 1, "mvMORPH\ntaxas por módulo\nPhylogeneticEM",               list(8),
   3, 3, "máxima verossimilhança\ncontMap",                         list(7),
   3, 2, "marginal · conjunta\nmapeamento\nestocástico",             list(7),
   3, 1, "filomorfoespaço",                                         list(c(7, 8)),
-  4, 3, "PIC · PGLS\nANOVA filogenética\nGLM filogenético",        list(c(2, 4)),
-  4, 2, "Pagel (1994) · corHMM\nthreshold · regressão\nlogística filogenética", list(c(4, 6)),
+  4, 3, "PIC · PGLS\nANOVA filogenética\nGLM filogenético",        list(c(2, 5)),
+  4, 2, "Pagel (1994) · corHMM\nthreshold · regressão\nlogística filogenética", list(c(5, 6)),
   4, 1, "PGLS multivariado\nPCA filogenética",                     list(8)
 )
 

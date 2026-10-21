@@ -93,7 +93,7 @@ fig_tres_matrizes <- function() {
                                        v = as.vector(M) / max(M), modelo = nome)
   d <- bind_rows(para_long(C, "BM"),
                  para_long(lam, "λ = 0,5 (Aula 3)"),
-                 para_long(ou, "OU, α = 2 (Aula 5)")) |>
+                 para_long(ou, "OU, α = 2 (Aula 4)")) |>
     mutate(modelo = factor(modelo, levels = unique(modelo)))
   ggplot(d, aes(j, -i, fill = v)) +
     geom_tile(colour = cores[["papel"]], linewidth = .8) +

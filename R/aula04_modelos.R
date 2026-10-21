@@ -1,4 +1,4 @@
-# Aula 5: modelos de evolução contínua (verossimilhança do BM, OU, EB,
+# Aula 4: modelos de evolução contínua (verossimilhança do BM, OU, EB,
 # tendência, seleção e adequação de modelos, BBM/FPK/Lévy, vários regimes).
 library(patchwork)
 source(here::here("R/aula03_base.R"))

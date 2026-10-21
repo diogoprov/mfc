@@ -225,4 +225,4 @@ threshBayes(arvore, cbind(x_discreto, y_continuo), types = c("discrete", "contin
 
 O Mk e o teste de Pagel da edição de 2020 estão nos roteiros das
 [Aulas 2](../aula-02-bm-matriz-c/walkthrough-aula-2-terca.html) e
-[5](../aula-05-modelos/walkthrough-aula-quinta.html).
+[5](../aula-04-modelos/walkthrough-aula-quinta.html).

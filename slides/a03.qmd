@@ -309,7 +309,7 @@ independentes).
 O λ escala os elementos **fora da diagonal** de **C**. Pode passar de 1, mas
 só até a covariância igualar a variância (aqui, λ = 2): além disso, **C**
 deixa de ser uma matriz de covariância válida. É por isso que o λ de 1,013
-da Aula 4 é possível.
+da Aula 5 é possível.
 
 ::: {.ref}
 Fig. 1 de [Pearse, Davies & Wolkovich (2025)](https://doi.org/10.1111/geb.70012), *Glob. Ecol. Biogeogr.* 34: e70012, CC BY 4.0.

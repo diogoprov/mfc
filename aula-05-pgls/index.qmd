@@ -1,13 +1,15 @@
 ---
-title: "Aula 04 — Regressão filogenética (PGLS)"
-order: 4
+title: "Aula 05 — Regressão filogenética (PGLS)"
+order: 5
 description: "Do OLS ao GLS com a matriz C. PGLS na prática, diagnóstico e sinal nos resíduos, R² com rr2, ANOVA e ANCOVA filogenéticas, GLM filogenético (phylolm), matrizes de taxas que mudam na árvore e incerteza filogenética."
 gancho: "Como fazer uma regressão entre atributos quando as espécies são aparentadas?"
 familias: [relacao]
+aliases:
+  - "../aula-04-pgls/index.html"
 ---
 
 ::: {.aula-meta}
-**Aula 4** · [Estão associados?]{.familia .relacao} · Métodos Filogenéticos Comparativos (PPGBA/UFMS)
+**Aula 5** · [Estão associados?]{.familia .relacao} · Métodos Filogenéticos Comparativos (PPGBA/UFMS)
 :::
 
 No mapa dos métodos, esta aula cobre a coluna **Estão associados?** para
@@ -16,10 +18,10 @@ exemplos usam os *Anolis* (`phytools`).
 
 ## Slides
 
-[{{< fa solid display >}} Abrir slides](../slides/a04.html){.btn .btn-outline-primary}
+[{{< fa solid display >}} Abrir slides](../slides/a05.html){.btn .btn-outline-primary}
 
 As figuras dos slides foram geradas em R; o código está em
-[`R/aula04_pgls.R`](https://github.com/diogoprov/mfc/tree/main/R).
+[`R/aula05_pgls.R`](https://github.com/diogoprov/mfc/tree/main/R).
 
 ## Em 3 minutos
 
@@ -49,7 +51,7 @@ As figuras dos slides foram geradas em R; o código está em
   `evol.vcv` e incerteza filogenética. O código roda na página.*
 - Na edição de 2020: seções `#---PGLS` e `#---ANOVA filogenética` do
   [roteiro da Aula 2](../aula-02-bm-matriz-c/walkthrough-aula-2-terca.html) e
-  `#---evol.vcv` do [roteiro da Aula 5](../aula-05-modelos/walkthrough-aula-quinta.html).
+  `#---evol.vcv` do [roteiro da Aula 4](../aula-04-modelos/walkthrough-aula-quinta.html).
 
 Pacotes: `ape`, `nlme`, `phytools`, `phylolm`, `rr2`.
 
@@ -57,7 +59,7 @@ Pacotes: `ape`, `nlme`, `phytools`, `phylolm`, `rr2`.
 
 Os *Anolis* do pacote `phytools` (`data(anoletree, anole.data)`), os mesmos
 dos slides; os dados dos roteiros estão nas páginas das Aulas
-[2](../aula-02-bm-matriz-c/index.qmd) e [5](../aula-05-modelos/index.qmd).
+[2](../aula-02-bm-matriz-c/index.qmd) e [5](../aula-04-modelos/index.qmd).
 
 ## Desafio
 

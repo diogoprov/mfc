@@ -50,7 +50,7 @@ As figuras dos slides foram geradas em R; o código está em
 - Na edição de 2020: o Mk nos Squamata no
   [roteiro da Aula 2](../aula-02-bm-matriz-c/walkthrough-aula-2-terca.html)
   e o teste de Pagel e o limiar no
-  [roteiro da Aula 5](../aula-05-modelos/walkthrough-aula-quinta.html).
+  [roteiro da Aula 4](../aula-04-modelos/walkthrough-aula-quinta.html).
 
 Pacotes: `ape`, `phytools`, `geiger`, `corHMM`.
 

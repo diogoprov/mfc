@@ -321,7 +321,7 @@ fig_fenograma95()
 - Se o modelo usado para estimar os estados ancestrais não for o adequado
   para aquele atributo, as estimativas serão erradas
 - Ex.: BM × BM com tendência; a tendência é difícil de detectar sem
-  fósseis (Aula 5)
+  fósseis (Aula 4)
 - Métodos bayesianos permitem incorporar os fósseis como *priors*
 
 ::: {.ref}
@@ -552,9 +552,9 @@ Dados simulados: dois clados de 16 espécies (azul e verde); nós cinza nas esti
 | Padrão | Sugere | Como testar |
 |---|---|---|
 | **Sobreposição** | os clados exploram o mesmo espaço de fenótipos | — |
-| **Divergência** | regiões próprias por clado ou ecótipo: radiação adaptativa, convergência de ecótipos | ANOVA filogenética (Aula 4); testes de convergência |
+| **Divergência** | regiões próprias por clado ou ecótipo: radiação adaptativa, convergência de ecótipos | ANOVA filogenética (Aula 5); testes de convergência |
 | **Disparidade diferente** | liberação seletiva, taxas diferentes, ou um clado que repete os mesmos fenótipos | comparação de disparidade; de taxas (Aula 8) |
-| **Tendência** | fenótipos acentuados numa mesma direção ao longo do tempo | modelos com tendência (Aula 5) |
+| **Tendência** | fenótipos acentuados numa mesma direção ao longo do tempo | modelos com tendência (Aula 4) |
 
 O gráfico sugere; o teste decide. E é uma projeção em 2 dimensões: os
 testes usam todos os atributos.

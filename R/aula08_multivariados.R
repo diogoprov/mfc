@@ -42,7 +42,7 @@ multivar_resultados <- function(pin = pleth_ind(), ps = pleth_sp()) {
 
 #' Anolis: log SVL e log cauda, BM com uma matriz de taxas × uma por ecomorfo
 anolis_bmm <- function() {
-  source(here::here("R/aula05_modelos.R"), local = TRUE)
+  source(here::here("R/aula04_modelos.R"), local = TRUE)
   tr <- anolis_simmap()$arvore
   e <- new.env(); utils::data("anole.data", package = "phytools", envir = e)
   X <- as.matrix(e$anole.data[tr$tip.label, c("SVL", "TL")])   # já em log

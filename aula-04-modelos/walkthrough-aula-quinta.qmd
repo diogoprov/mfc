@@ -11,6 +11,7 @@ execute:
   eval: false
 aliases:
   - "../aula-04-ou-multi-regime/walkthrough-aula-quinta.html"
+  - "../aula-05-modelos/walkthrough-aula-quinta.html"
 ---
 
 ::: {.callout-note appearance="minimal"}
@@ -20,7 +21,7 @@ script `.R` original e os dados na [página da aula](./).
 :::
 
 ::: {.callout-tip appearance="minimal"}
-Roteiro da edição de 2020, usado nas aulas novas assim: Aula 5 (OU multi-regime, `bayou`; o SURFACE saiu do curso), Aula 4 (`evol.vcv`) e Aula 6 (teste de Pagel, modelo de limiar).
+Roteiro da edição de 2020, usado nas aulas novas assim: Aula 4 (OU multi-regime, `bayou`; o SURFACE saiu do curso), Aula 5 (`evol.vcv`) e Aula 6 (teste de Pagel, modelo de limiar).
 :::
 
 ```{r}

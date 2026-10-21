@@ -165,7 +165,7 @@ fig_quatro_modelos()
 ```
 
 ::: {.nota}
-Hoje, o BM, o modelo nulo. Os outros três ficam para a Aula 5.
+Hoje, o BM, o modelo nulo. Os outros três ficam para a Aula 4.
 :::
 
 # 2. O movimento browniano {.secao}
@@ -259,7 +259,7 @@ Dois parâmetros:
 ::: {.definicao .fragment}
 Cuidado com a notação: em muitos textos o valor
 inicial aparece como $\theta$. Neste curso, $\theta$ fica reservado para o
-**ótimo** do modelo Ornstein-Uhlenbeck (Aula 5).
+**ótimo** do modelo Ornstein-Uhlenbeck (Aula 4).
 :::
 
 ## Movimento browniano: o processo de Wiener {.grande}
@@ -574,7 +574,7 @@ fig_tres_matrizes()
 ```
 
 Cada **modelo evolutivo** transforma a árvore numa matriz diferente: é
-assim que o λ (Aula 3) e o OU (Aula 5) entram nos métodos.
+assim que o λ (Aula 3) e o OU (Aula 4) entram nos métodos.
 
 # 4. O BM numa árvore {.secao}
 
@@ -626,7 +626,7 @@ de dois clados: a regressão comum acusa relação em `r num(100 * et1$taxa[1], 
 das vezes; com **C** no modelo (PGLS), em `r num(100 * et1$taxa[2], 1)` %.
 
 ::: {.ref}
-É o "pior caso" de [Felsenstein (1985)](https://doi.org/10.1086/284325). O PGLS é o tema da Aula 4.
+É o "pior caso" de [Felsenstein (1985)](https://doi.org/10.1086/284325). O PGLS é o tema da Aula 5.
 :::
 
 # 5. Contrastes independentes {.secao}

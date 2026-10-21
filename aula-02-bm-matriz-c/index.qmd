@@ -49,8 +49,8 @@ As figuras dos slides foram geradas em R; o código está em
   regressão pela origem. O código roda na página.*
 - {{< fa solid eye >}} [Roteiro da edição de 2020](walkthrough-aula-2-terca.html)
   · [{{< fa solid file-code >}} `aula-2-terca.R`](aula-2-terca.R)\
-  *BM simulado; o mesmo roteiro segue com OU e tendência (Aula 5), o Mk nos
-  Squamata (Aula 6) e PGLS (Aula 4).*
+  *BM simulado; o mesmo roteiro segue com OU e tendência (Aula 4), o Mk nos
+  Squamata (Aula 6) e PGLS (Aula 5).*
 - A simulação do efeito da correlação filogenética está no
   [roteiro da Aula 1](../aula-01-arvore-dados/roteiro.html#por-que-a-árvore-importa-dois-atributos-independentes).
 

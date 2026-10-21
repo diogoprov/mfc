@@ -43,10 +43,10 @@ website:
             text: "2 · O BM e a matriz C"
           - href: aula-03-sinal/index.qmd
             text: "3 · Sinal filogenético"
-          - href: aula-04-pgls/index.qmd
-            text: "4 · PGLS"
-          - href: aula-05-modelos/index.qmd
-            text: "5 · Modelos contínuos"
+          - href: aula-04-modelos/index.qmd
+            text: "4 · Modelos contínuos"
+          - href: aula-05-pgls/index.qmd
+            text: "5 · PGLS"
           - href: aula-06-discretos/index.qmd
             text: "6 · Atributos discretos"
           - href: aula-07-ancestrais/index.qmd

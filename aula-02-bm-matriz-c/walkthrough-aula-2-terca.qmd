@@ -20,7 +20,7 @@ script `.R` original e os dados na [página da aula](./).
 :::
 
 ::: {.callout-tip appearance="minimal"}
-Roteiro da edição de 2020, usado nas aulas novas assim: Aula 2 (BM simulado), Aula 5 (OU, tendência, comparação e adequação de modelos), Aula 6 (Mk nos Squamata) e Aula 4 (PGLS, ANOVA filogenética).
+Roteiro da edição de 2020, usado nas aulas novas assim: Aula 2 (BM simulado), Aula 4 (OU, tendência, comparação e adequação de modelos), Aula 6 (Mk nos Squamata) e Aula 5 (PGLS, ANOVA filogenética).
 :::
 
 ```{r}

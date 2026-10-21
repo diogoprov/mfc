@@ -83,7 +83,7 @@ fig_hansen_martins <- function(etapa = 1) {
   traj + dg + plot_layout(widths = c(1.15, 1))
 }
 
-#' Os quatro modelos de evolução fenotípica, lado a lado (prévia da Aula 5)
+#' Os quatro modelos de evolução fenotípica, lado a lado (prévia da Aula 4)
 fig_quatro_modelos <- function(n = 25) {
   d <- bind_rows(
     sim_bm_tempo(n, seed = 2) |> mutate(modelo = "BM"),

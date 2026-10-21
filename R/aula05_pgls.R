@@ -1,4 +1,4 @@
-# Aula 4: regressão filogenética (PGLS), diagnóstico, ANOVA/ANCOVA
+# Aula 5: regressão filogenética (PGLS), diagnóstico, ANOVA/ANCOVA
 # filogenéticas, GLM filogenético, matrizes por regime e incerteza.
 library(nlme)
 source(here::here("R/aula03_base.R"))   # anolis(), lambda_arvore(), vcv_ou_arvore(), sim_mvn()

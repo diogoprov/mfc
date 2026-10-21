@@ -85,7 +85,7 @@ Clique numa aula para ir direto a ela.
 
 *que processo gerou o padrão?*
 
-- [5 · Modelos contínuos](aula-05-modelos/index.qmd)
+- [4 · Modelos contínuos](aula-04-modelos/index.qmd)
 - [6 · Atributos discretos](aula-06-discretos/index.qmd)
 - [8 · Modelos multivariados](aula-08-multivariados/index.qmd)
 :::
@@ -103,7 +103,7 @@ Clique numa aula para ir direto a ela.
 
 *dois atributos evoluem juntos?*
 
-- [4 · PGLS](aula-04-pgls/index.qmd)
+- [5 · PGLS](aula-05-pgls/index.qmd)
 - [6 · Pagel e `corHMM`](aula-06-discretos/index.qmd)
 - [8 · PGLS multivariado](aula-08-multivariados/index.qmd)
 :::

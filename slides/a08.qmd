@@ -266,7 +266,7 @@ $$\sigma^2_{\text{mult}} = \frac{\mathbf{PD}'_{U,0}\,\mathbf{PD}_{U,0}}{N}$$
 
 ## PGLS multivariado {.muito-grande}
 
-O PGLS (Aula 4) com uma resposta de alta dimensão: a forma inteira como
+O PGLS (Aula 5) com uma resposta de alta dimensão: a forma inteira como
 variável resposta, com permutação dos resíduos.
 
 ```{r}
@@ -302,7 +302,7 @@ A árvore no espaço da forma, com os nós estimados por ML (Aula 7); `geomorph:
 
 ## Seleção de modelos para atributos multivariados {.grande}
 
-- Os modelos da Aula 5 (BM, OU, EB) com uma **matriz de taxas** em vez de
+- Os modelos da Aula 4 (BM, OU, EB) com uma **matriz de taxas** em vez de
   um σ²: variâncias e covariâncias evolutivas entre os atributos
 - Com muitas variáveis (marcos), a verossimilhança comum falha (*p* > *n*):
   verossimilhança **penalizada** e o critério GIC

@@ -59,8 +59,8 @@ períodos livres para prática, dúvidas e projetos.
 | Dia | Manhã | Tarde |
 |---|---|---|
 | Segunda | [Aula 1 · A árvore e os dados](aula-01-arvore-dados/index.qmd) | [Aula 2 · O BM e a matriz C](aula-02-bm-matriz-c/index.qmd) |
-| Terça | [Aula 3 · Sinal filogenético](aula-03-sinal/index.qmd) | [Aula 4 · PGLS](aula-04-pgls/index.qmd) |
-| Quarta | [Aula 5 · Modelos contínuos](aula-05-modelos/index.qmd) | prática livre e dúvidas |
+| Terça | [Aula 3 · Sinal filogenético](aula-03-sinal/index.qmd) | [Aula 4 · Modelos contínuos](aula-04-modelos/index.qmd) |
+| Quarta | [Aula 5 · PGLS](aula-05-pgls/index.qmd) | prática livre e dúvidas |
 | Quinta | [Aula 6 · Atributos discretos](aula-06-discretos/index.qmd) | [Aula 7 · Estados ancestrais](aula-07-ancestrais/index.qmd) |
 | Sexta | [Aula 8 · Multivariados](aula-08-multivariados/index.qmd) | projetos dos alunos |
 

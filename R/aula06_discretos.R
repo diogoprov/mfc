@@ -31,8 +31,8 @@ ajustes_squamata <- function() {
 }
 
 pagel_pratica <- function() {
-  X <- read.csv(here::here("aula-05-modelos/fitPagel-data.csv"), row.names = 1)
-  tr <- ape::read.tree(here::here("aula-05-modelos/fitPagel-tree.tre"))
+  X <- read.csv(here::here("aula-04-modelos/fitPagel-data.csv"), row.names = 1)
+  tr <- ape::read.tree(here::here("aula-04-modelos/fitPagel-tree.tre"))
   phytools::fitPagel(tr, setNames(X$x, rownames(X)), setNames(X$y, rownames(X)))
 }
 
@@ -305,8 +305,8 @@ fig_limiar <- function(n = 6, passos = 400, seed = 603) {
 #' da prática: modelos independente e correlacionado, com e sem uma segunda
 #' classe de taxas (corHMM::fitCorrelationTest; ~3 min)
 correlacao_corhmm <- function() {
-  X <- read.csv(here::here("aula-05-modelos/fitPagel-data.csv"), row.names = 1)
-  tr <- ape::read.tree(here::here("aula-05-modelos/fitPagel-tree.tre"))
+  X <- read.csv(here::here("aula-04-modelos/fitPagel-data.csv"), row.names = 1)
+  tr <- ape::read.tree(here::here("aula-04-modelos/fitPagel-tree.tre"))
   set.seed(1)   # o corHMM sorteia pontos de partida; sementes 1 a 4 dão o mesmo resultado
   invisible(capture.output(   # o corHMM imprime mensagens de progresso
     r <- corHMM::fitCorrelationTest(tr, data.frame(sp = rownames(X), x = X$x, y = X$y))))

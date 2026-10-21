@@ -17,8 +17,8 @@ utilizados*, na página da aula.
 | 1 | [A árvore e os dados](aula-01-arvore-dados/roteiro.qmd) | o objeto `phylo`; Newick passo a passo; Nexus; enraizamento e politomias; casar árvore e tabela; dois atributos independentes que parecem associados; bootstrap; forma da árvore; árvores da Open Tree | `geiger`, `rotl` |
 | 2 | [O BM e a matriz C](aula-02-bm-matriz-c/roteiro.qmd) | BM no tempo e na árvore; distância patrística e **C**; a covariância das réplicas é σ²**C**; contrastes passo a passo e a regressão dos contrastes | — |
 | 3 | [Sinal filogenético](aula-03-sinal/roteiro.qmd) | K e λ; atributos de referência; I de Moran e C de Abouheif; Mantel; PVR; o D de Fritz & Purvis | `geiger`, `adephylo`, `phylobase`, `caper` |
-| 4 | [PGLS](aula-04-pgls/roteiro.qmd) | o GLS à mão; PGLS; R²; diagnóstico; ANOVA e ANCOVA filogenéticas; GLM filogenético; `evol.vcv`; incerteza filogenética | `nlme`, `phylolm`, `rr2`, `geomorph` |
-| 5 | [Modelos contínuos](aula-05-modelos/roteiro.qmd) | a verossimilhança do BM à mão; OU, EB e tendência; comparação por AICc; adequação; taxas por regime; OU com vários ótimos | `geiger`, `mvMORPH` |
+| 4 | [Modelos contínuos](aula-04-modelos/roteiro.qmd) | a verossimilhança do BM à mão; OU, EB e tendência; comparação por AICc; adequação; taxas por regime; OU com vários ótimos | `geiger`, `mvMORPH` |
+| 5 | [PGLS](aula-05-pgls/roteiro.qmd) | o GLS à mão; PGLS; R²; diagnóstico; ANOVA e ANCOVA filogenéticas; GLM filogenético; `evol.vcv`; incerteza filogenética | `nlme`, `phylolm`, `rr2`, `geomorph` |
 | 6 | [Atributos discretos](aula-06-discretos/roteiro.qmd) | *P*(*t*) = e^**Q***t*^; ER e ARD nos Squamata; simulação do Mk; multiestado; taxas ocultas; Pagel × `fitCorrelationTest`; limiar | `geiger`, `corHMM` |
 | 7 | [Estados ancestrais](aula-07-ancestrais/roteiro.qmd) | parcimônia × ML; o nó 13 e o re-enraizamento; incerteza; `contMap` e fenograma; tendência com fósseis; marginal × conjunta; mapeamento estocástico; filomorfoespaço | — |
 | 8 | [Multivariados](aula-08-multivariados/roteiro.qmd) | Procrustes à mão e GPA; morfoespaço; K e PGLS multivariados; PCA filogenética; `mvgls`; uma matriz de taxas por regime; modularidade e integração | `geomorph`, `mvMORPH` |
@@ -38,11 +38,11 @@ rodam** nessas páginas: copie e cole no seu R.
 | Roteiro | Seções | Aulas |
 |---|---|---|
 | [R, árvores e `phyndr`](aula-01-arvore-dados/walkthrough-aula-1-segunda.html) | R básico; Newick e Nexus; efeito da correlação filogenética; `phyndr` | [1](aula-01-arvore-dados/index.qmd), [2](aula-02-bm-matriz-c/index.qmd) |
-| [BM, modelos, Mk e PGLS](aula-02-bm-matriz-c/walkthrough-aula-2-terca.html) | BM simulado; OU e tendência; comparação e adequação de modelos; Mk nos Squamata; PGLS; ANOVA filogenética | [2](aula-02-bm-matriz-c/index.qmd), [5](aula-05-modelos/index.qmd), [6](aula-06-discretos/index.qmd), [4](aula-04-pgls/index.qmd) |
+| [BM, modelos, Mk e PGLS](aula-02-bm-matriz-c/walkthrough-aula-2-terca.html) | BM simulado; OU e tendência; comparação e adequação de modelos; Mk nos Squamata; PGLS; ANOVA filogenética | [2](aula-02-bm-matriz-c/index.qmd), [4](aula-04-modelos/index.qmd), [6](aula-06-discretos/index.qmd), [5](aula-05-pgls/index.qmd) |
 | [Estados ancestrais e sinal](aula-03-sinal/walkthrough-aula-3-quarta-modificada.html) | estados ancestrais contínuos e discretos; mapeamento estocástico; K, λ, D de Fritz, PVR, Moran, Mantel | [7](aula-07-ancestrais/index.qmd), [3](aula-03-sinal/index.qmd) |
 | [Distograma filogenético](aula-03-sinal/walkthrough-phylogenetic-distogram.html) | distograma e correlograma | [3](aula-03-sinal/index.qmd) |
 | [Decomposição da diversidade](aula-03-sinal/walkthrough-supfileac.html) | decomposição pelos nós (Pavoine) | [3](aula-03-sinal/index.qmd) |
-| [OU multi-regime, Pagel e limiar](aula-05-modelos/walkthrough-aula-quinta.html) | SURFACE (fora do curso); `bayou`; `evol.vcv`; teste de Pagel; modelo de limiar | [5](aula-05-modelos/index.qmd), [4](aula-04-pgls/index.qmd), [6](aula-06-discretos/index.qmd) |
+| [OU multi-regime, Pagel e limiar](aula-04-modelos/walkthrough-aula-quinta.html) | SURFACE (fora do curso); `bayou`; `evol.vcv`; teste de Pagel; modelo de limiar | [4](aula-04-modelos/index.qmd), [5](aula-05-pgls/index.qmd), [6](aula-06-discretos/index.qmd) |
 | [Gráficos, PVR e PCA filogenética](aula-07-ancestrais/walkthrough-aula-5-sexta.html) | gráficos do `phytools` e do `phylosignal`; PCA filogenética; PVR | [7](aula-07-ancestrais/index.qmd), [3](aula-03-sinal/index.qmd), [8](aula-08-multivariados/index.qmd) |
 
 O código das figuras dos slides está na pasta
@@ -58,8 +58,8 @@ ajudam:
 1. [A árvore não bate com os dados](aula-01-arvore-dados/index.qmd#desafio) (`geospiza`)
 2. [A matriz C à mão](aula-02-bm-matriz-c/index.qmd#desafio) (árvore-guia)
 3. [Quanto sinal há em cada atributo?](aula-03-sinal/index.qmd#desafio) (*Anolis*)
-4. [OLS, PIC e PGLS](aula-04-pgls/index.qmd#desafio) (*Anolis*)
-5. [Que modelo para a massa corporal?](aula-05-modelos/index.qmd#desafio) (mamíferos)
+4. [Que modelo para a massa corporal?](aula-04-modelos/index.qmd#desafio) (mamíferos)
+5. [OLS, PIC e PGLS](aula-05-pgls/index.qmd#desafio) (*Anolis*)
 6. [Correlação ou pseudorreplicação?](aula-06-discretos/index.qmd#desafio) (dados da prática)
 7. [O ancestral dos Centrarchidae](aula-07-ancestrais/index.qmd#desafio) (`sunfish`)
 8. [Uma matriz de taxas ou várias?](aula-08-multivariados/index.qmd#desafio) (*Anolis*)
