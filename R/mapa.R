@@ -90,3 +90,44 @@ mapa_plot <- function(aula = NULL, base = 4.8) {
           panel.background = element_rect(fill = cores[["papel"]], colour = NA),
           plot.margin = margin(2, 4, 2, 4))
 }
+
+# ---- Links do mapa na página inicial ------------------------------------------------
+
+paginas_aulas <- c("aula-01-arvore-dados", "aula-02-bm-matriz-c", "aula-03-sinal",
+                   "aula-04-modelos", "aula-05-pgls", "aula-06-discretos",
+                   "aula-07-ancestrais", "aula-08-multivariados")
+titulos_aulas <- c("A árvore e os dados", "O BM e a matriz C", "Sinal filogenético",
+                   "Modelos de evolução contínua", "Regressão filogenética (PGLS)",
+                   "Atributos discretos", "Estados ancestrais", "Atributos multivariados")
+
+#' Links transparentes sobre as células do mapa (para a figura de 10 × 5 pol.)
+#'
+#' Converte as coordenadas de `mapa_plot()` em porcentagens da figura,
+#' com os mesmos limites e margens (xlim, ylim, plot.margin). Uma célula de
+#' duas aulas aponta para a aula em que os métodos são o tema principal
+#' (a última da lista, salvo o filomorfoespaço, que é tema da Aula 7); a
+#' dica (title) cita as duas.
+mapa_links <- function(larg = 10, alt = 5) {
+  xl <- c(-0.9, 13.5); yl <- c(.78, 7.65); m <- c(t = 2, r = 4, b = 2, l = 4) / 72
+  px <- \(x) 100 * (m[["l"]] + (x - xl[1]) / diff(xl) * (larg - m[["l"]] - m[["r"]])) / larg
+  py <- \(y) 100 * (m[["t"]] + (yl[2] - y) / diff(yl) * (alt - m[["t"]] - m[["b"]])) / alt
+  caixa <- function(x, y, w, h, aulas) {
+    a <- unlist(aulas)
+    principal <- if (identical(a, c(7, 8))) 7 else max(a)
+    tibble::tibble(esq = px(x - w / 2), topo = py(y + h / 2),
+                   larg = px(x + w / 2) - px(x - w / 2), alt = py(y - h / 2) - py(y + h / 2),
+                   href = paste0(paginas_aulas[principal], "/index.html"),
+                   dica = paste(paste0("Aula ", a, " · ", titulos_aulas[a]), collapse = "; "))
+  }
+  cel <- purrr::pmap_dfr(mapa_celulas, \(col, lin, aulas, ...) caixa(col * 3, lin * 1.6 + 1.2, 2.85, 1.3, aulas))
+  fx <- purrr::map2_dfr(c(1.78, 1.12), c(2, 1), \(y, a) caixa(7.5, y, 11.85, .55, list(a)))
+  dplyr::bind_rows(cel, fx)
+}
+
+#' HTML dos links, para um chunk com `output: asis` logo depois do mapa
+mapa_links_html <- function() {
+  l <- mapa_links()
+  a <- sprintf('<a href="%s" title="%s" aria-label="%s" style="left:%.2f%%;top:%.2f%%;width:%.2f%%;height:%.2f%%"></a>',
+               l$href, l$dica, l$dica, l$esq, l$topo, l$larg, l$alt)
+  cat('<div class="mapa-links">', a, '</div>', sep = "\n")
+}

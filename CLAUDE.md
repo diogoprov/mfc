@@ -214,7 +214,10 @@ quando ele decidir.
 
 - `R/tema.R`: `cores`, `cores_familia` (perguntas do mapa), `cores_linhagem`,
   `tema_aula()`, `separa_rotulos()`.
-- `R/mapa.R`: `mapa_plot(aula = ...)`; células em `mapa_celulas`.
+- `R/mapa.R`: `mapa_plot(aula = ...)`; células em `mapa_celulas`;
+  `mapa_links_html()` põe links transparentes sobre as células do mapa da
+  página inicial (mesmos limites e margens do `mapa_plot()`: mudou um, mude
+  o outro).
 - `R/arvore.R`: `arvore_guia()`, `atributos_guia()`, `coord_arvore()`,
   `caminho_raiz()`, `caminho_comum()`, `plot_arvore()`, `sim_bm_arvore()`,
   `fenograma()`.

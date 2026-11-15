@@ -208,3 +208,19 @@ a.cartao-link:hover { text-decoration: none; }
 /* --- Caixa "Em 3 minutos" nas páginas das aulas --- */
 .em-3-minutos { border-left-color: var(--bsl-accent) !important; }
 .em-3-minutos ol { margin-bottom: .5rem; }
+
+/* Mapa dos métodos clicável (index.qmd): links transparentes sobre as
+   células, posicionados por R/mapa.R::mapa_links() numa caixa com a mesma
+   proporção da figura (10 × 5) */
+.mapa-clicavel { position: relative; }
+.mapa-links {
+  position: absolute; top: 0; left: 0; width: 100%;
+  aspect-ratio: 2 / 1; pointer-events: none;
+}
+.mapa-links a {
+  position: absolute; display: block; pointer-events: auto;
+  border-radius: 6px; transition: box-shadow .15s;
+}
+.mapa-links a:hover, .mapa-links a:focus-visible {
+  box-shadow: 0 0 0 3px #2d3748; outline: none;
+}
